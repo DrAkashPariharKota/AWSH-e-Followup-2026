@@ -4,756 +4,184 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#0e7490">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<title>Asha Wellness - Patient Manager</title>
+<title>Asha Wellness - Patient Manager Pro</title>
 <style>
+/* CORE STYLES */
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{font-family:Arial,sans-serif;background:#f0fafa;color:#0c4a6e;min-height:100vh;}
 .screen{display:none;min-height:100vh;background:#f0fafa;}
 .screen.active{display:block;}
 .hdr{padding:18px 20px 14px;display:flex;align-items:center;}
-.hdr-blue{background:#0e7490;}.hdr-orange{background:#d97706;}.hdr-green{background:#059669;}
-.hdr-purple{background:#4c1d95;}.hdr-teal{background:#0f766e;}.hdr-amber{background:#b45309;}
+.hdr-blue{background:#0e7490;}.hdr-amber{background:#b45309;}.hdr-green{background:#059669;}
 .back-btn{background:rgba(255,255,255,0.25);border:none;color:#fff;font-size:22px;border-radius:10px;width:40px;height:40px;cursor:pointer;flex-shrink:0;margin-right:12px;}
 .hdr-title{color:#fff;font-size:20px;font-weight:bold;}
-.hdr-sub{font-size:12px;margin-top:2px;}.hdr-sub-light{color:#a5f3fc;}.hdr-sub-warm{color:#fef3c7;}
 .card{background:#fff;border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,0.08);border:1.5px solid #e0f2fe;}
-.card-green{background:#f0fdf4;border:2.5px solid #6ee7b7;}
-.card-orange{background:#fffbeb;border:2.5px solid #f59e0b;}
-.card-dashed{border:2px dashed #bae6fd;text-align:center;}
-.card-dashed-orange{background:#fff7ed;border:2px dashed #fed7aa;text-align:center;}
-.btn{width:100%;padding:17px;border-radius:14px;border:none;color:#fff;font-size:16px;font-weight:bold;cursor:pointer;margin-bottom:10px;display:block;text-align:center;font-family:Arial,sans-serif;}
-.btn-blue{background:#0e7490;}.btn-green{background:#059669;}.btn-orange{background:#d97706;}
-.btn-red{background:#b91c1c;}.btn-purple{background:#6d28d9;}.btn-amber{background:#b45309;}
-.btn-gray{background:transparent;border:2px solid #bae6fd;color:#0e7490;}
-.inp{width:100%;padding:14px 16px;border-radius:12px;border:2px solid #bae6fd;background:#f0fafa;color:#0c4a6e;font-size:15px;font-weight:bold;outline:none;margin-bottom:10px;font-family:Arial,sans-serif;}
-.inp-lg{font-size:18px;}
-.txta{width:100%;padding:14px;border-radius:12px;border:2px solid #bae6fd;background:#f0fafa;color:#0c4a6e;font-size:14px;outline:none;resize:vertical;font-family:Arial,sans-serif;margin-bottom:10px;}
+.btn{width:100%;padding:17px;border-radius:14px;border:none;color:#fff;font-size:16px;font-weight:bold;cursor:pointer;margin-bottom:10px;display:block;text-align:center;}
+.btn-blue{background:#0e7490;}.btn-green{background:#059669;}.btn-gray{background:transparent;border:2px solid #bae6fd;color:#0e7490;}
+.inp{width:100%;padding:14px 16px;border-radius:12px;border:2px solid #bae6fd;background:#f0fafa;color:#0c4a6e;font-size:15px;font-weight:bold;outline:none;margin-bottom:10px;}
+.txta{width:100%;padding:14px;border-radius:12px;border:2px solid #bae6fd;background:#f0fafa;color:#0c4a6e;font-size:14px;outline:none;resize:vertical;margin-bottom:10px;}
 .lbl{color:#0e7490;font-size:13px;font-weight:bold;margin-bottom:6px;display:block;margin-top:4px;}
-.stats-row{display:flex;padding:14px 16px 0;}
-.stat-box{flex:1;border-radius:14px;padding:12px 4px;text-align:center;margin-right:8px;}
-.stat-box:last-child{margin-right:0;}
-.stat-num{font-size:22px;font-weight:bold;line-height:1;}.stat-lbl{font-size:10px;font-weight:bold;margin-top:2px;}
-.menu-btn{background:#fff;border-radius:16px;padding:18px 20px;margin-bottom:12px;border:2.5px solid #bae6fd;cursor:pointer;display:flex;align-items:center;width:100%;box-shadow:0 2px 10px rgba(0,0,0,0.07);}
-.menu-icon{font-size:30px;border-radius:12px;width:50px;height:50px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-right:14px;}
-.menu-title{font-size:16px;font-weight:bold;color:#0c4a6e;text-align:left;}
-.menu-sub{font-size:12px;color:#0e7490;margin-top:2px;text-align:left;}
-.q-banner{background:linear-gradient(135deg,#b45309,#d97706);border-radius:18px;padding:18px 20px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 16px rgba(180,83,9,0.3);cursor:pointer;}
-.q-banner-left{color:#fff;}
-.q-banner-tag{font-size:10px;font-weight:bold;letter-spacing:2px;color:#fef3c7;margin-bottom:4px;}
-.q-banner-count{font-size:28px;font-weight:bold;line-height:1;}
-.q-banner-sub{font-size:12px;color:#fef3c7;margin-top:3px;}
-.q-open-btn{background:#fff;color:#b45309;border:none;border-radius:12px;padding:12px 18px;font-size:14px;font-weight:bold;cursor:pointer;flex-shrink:0;}
-.qcard{border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 10px rgba(0,0,0,0.08);}
-.qcard-waiting{background:#fffbeb;border:2.5px solid #f59e0b;}
-.qcard-consulting{background:#eff6ff;border:2.5px solid #3b82f6;}
-.qcard-done{background:#f0fdf4;border:2px solid #86efac;opacity:0.85;}
-.qbadge{display:inline-block;padding:3px 12px;border-radius:20px;font-size:11px;font-weight:bold;margin-bottom:10px;}
-.qb-waiting{background:#fef3c7;color:#92400e;}
-.qb-consulting(background:#dbeafe;color:#1d4ed8;}
-.qb-done{background:#d1fae5;color:#065f46;}
-.token{background:#f59e0b;color:#fff;border-radius:50%;width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;font-weight:bold;font-size:15px;flex-shrink:0;margin-right:10px;}
-.mq-pills{display:flex;flex-wrap:wrap;margin-bottom:10px;}
+.menu-btn{background:#fff;border-radius:16px;padding:18px 20px;margin-bottom:12px;border:2.5px solid #bae6fd;cursor:pointer;display:flex;align-items:center;width:100%;}
+.menu-icon{font-size:30px;margin-right:14px;}
+.q-banner{background:linear-gradient(135deg,#b45309,#d97706);border-radius:18px;padding:18px 20px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;color:#fff;}
+.qcard{border-radius:16px;padding:16px;margin-bottom:12px;background:#fffbeb;border:2.5px solid #f59e0b;}
 .mq-pill{padding:11px 15px;border-radius:10px;cursor:pointer;font-size:15px;font-weight:bold;margin:0 8px 8px 0;border:2px solid #6ee7b7;background:#d1fae5;color:#065f46;}
 .mq-pill.sel{background:#059669;color:#fff;border-color:#059669;}
-.modal-bg{display:none;position:fixed;top:0;right:0;bottom:0;left:0;background:rgba(0,0,0,0.6);z-index:800;}
-.modal-bg.open{display:flex;align-items:flex-end;justify-content:center;}
-.modal-box{background:#fff;border-radius:24px 24px 0 0;padding:24px;width:100%;max-height:92vh;overflow-y:auto;}
-.modal-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
-.close-btn{background:#f0fafa;border:2px solid #bae6fd;border-radius:10px;width:36px;height:36px;cursor:pointer;font-size:16px;color:#0e7490;font-weight:bold;}
-.tag{display:inline-block;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:bold;}
-.tag-green{background:#d1fae5;color:#059669;}.tag-red{background:#fee2e2;color:#dc2626;}
-.tag-orange{background:#fef3c7;color:#d97706;}
-#toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#0e7490;color:#fff;padding:14px 28px;border-radius:14px;z-index:9999;font-weight:bold;font-size:15px;box-shadow:0 8px 30px rgba(0,0,0,0.25);display:none;max-width:90%;text-align:center;}
-.contact-row{display:flex;margin-bottom:10px;}
-.contact-btn{flex:1;padding:14px 6px;border-radius:14px;border:none;color:#fff;font-size:14px;font-weight:bold;cursor:pointer;text-align:center;text-decoration:none;display:block;margin-right:8px;}
-.contact-btn:last-child{margin-right:0;}
-.act-row{display:flex;margin-bottom:10px;}
-.act-btn{flex:1;padding:11px 4px;border-radius:12px;border:none;color:#fff;font-size:12px;font-weight:bold;cursor:pointer;text-align:center;text-decoration:none;display:block;margin-right:6px;}
-.act-btn:last-child{margin-right:0;}
-.med-pills{display:flex;flex-wrap:wrap;margin-bottom:10px;}
-.med-pill{padding:10px 13px;border-radius:10px;cursor:pointer;font-size:14px;font-weight:bold;margin:0 6px 6px 0;border:2px solid #bae6fd;background:#e0f2fe;color:#0e7490;}
-.med-pill.sel{background:#0e7490;color:#fff;border-color:#0e7490;}
-.reason-pill{padding:9px 13px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:bold;margin:0 6px 6px 0;border:2px solid #fde68a;background:#fef3c7;color:#92400e;}
-.reason-pill.sel{background:#d97706;color:#fff;border-color:#d97706;}
-.v-card{background:#f8fafc;border-radius:10px;padding:10px 12px;margin-bottom:8px;}
-.sec-lbl{font-size:11px;font-weight:bold;color:#94a3b8;margin-bottom:8px;letter-spacing:1px;}
-.sex-row{display:flex;margin-bottom:14px;}
-.sex-btn{flex:1;padding:13px;border-radius:12px;cursor:pointer;font-size:15px;font-weight:bold;background:#f0fafa;border:2px solid #bae6fd;color:#0e7490;margin-right:8px;}
-.sex-btn:last-child{margin-right:0;}
-.sex-btn.sel{background:#0e7490;border-color:#0e7490;color:#fff;}
-.cat-wrap{display:flex;flex-wrap:wrap;margin-bottom:16px;}
-.cat-btn{padding:10px 14px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:bold;background:#e0f2fe;border:2px solid #bae6fd;color:#0e7490;margin:0 8px 8px 0;}
-.cat-btn.sel{background:#0e7490;border-color:#0e7490;color:#fff;}
-.login-btn{width:100%;padding:20px 24px;border-radius:18px;color:#fff;font-size:18px;font-weight:bold;cursor:pointer;display:flex;align-items:center;margin-bottom:12px;background:rgba(255,255,255,0.1);border:2.5px solid #ccc;}
-.login-icon{font-size:28px;width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-right:14px;}
-.pad{padding:20px;}.pad-b{padding:16px 16px 80px;}
-.nxt-bar{background:#ecfdf5;border:2px solid #6ee7b7;border-radius:10px;padding:10px 14px;color:#065f46;font-size:14px;font-weight:bold;text-align:center;margin-top:8px;display:none;}
-.done-bar{padding:8px 12px;background:#f0fdf4;border-radius:8px;font-size:12px;color:#059669;font-weight:bold;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
-.section-divider{border-top:2px solid #bbf7d0;padding-top:16px;margin-top:16px;}
-.pt-card{border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,0.08);}
-.empty-state{text-align:center;padding:70px 20px;}
-.dl-opt{display:flex;align-items:center;background:#f8fafc;border:2px solid #e2e8f0;border-radius:14px;padding:16px;margin-bottom:12px;cursor:pointer;width:100%;}
-.dl-opt-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;margin-right:14px;}
-.dl-opt-title{font-size:15px;font-weight:bold;color:#0c4a6e;}.dl-opt-sub{font-size:12px;color:#64748b;margin-top:2px;}
-.pwd-box{background:#fff;border-radius:20px;padding:28px;width:90%;max-width:340px;box-shadow:0 8px 32px rgba(0,0,0,0.25);}
-.pwd-modal{display:none;position:fixed;top:0;right:0;bottom:0;left:0;background:rgba(0,0,0,0.65);z-index:900;align-items:center;justify-content:center;}
-.pwd-modal.open{display:flex;}
 .sync-bar{display:flex;align-items:center;justify-content:space-between;background:#e0f2fe;border-radius:12px;padding:10px 14px;margin-bottom:14px;}
-.sync-dot{width:10px;height:10px;border-radius:50%;background:#059669;flex-shrink:0;margin-right:8px;}
+.sync-dot{width:10px;height:10px;border-radius:50%;background:#059669;margin-right:8px;}
 .sync-dot.offline{background:#dc2626;}.sync-dot.syncing{background:#f59e0b;}
-.import-preview{background:#f8fafc;border-radius:12px;padding:12px;margin-bottom:12px;max-height:200px;overflow-y:auto;font-size:12px;}
-.import-row{display:flex;border-bottom:1px solid #e2e8f0;padding:4px 0;}
-.import-cell{flex:1;padding:2px 4px;color:#0c4a6e;}.import-cell-hdr{font-weight:bold;color:#0e7490;}
-.admin-only-badge{background:#fef3c7;color:#92400e;border:1px solid #fde68a;border-radius:6px;font-size:10px;font-weight:bold;padding:2px 7px;margin-left:6px;}
-.consult-pt-box{background:#fff7ed;border:2px solid #fed7aa;border-radius:14px;padding:14px 16px;margin-bottom:16px;}
+#toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#0e7490;color:#fff;padding:14px 28px;border-radius:14px;z-index:9999;font-weight:bold;display:none;}
+.modal-bg{display:none;position:fixed;top:0;right:0;bottom:0;left:0;background:rgba(0,0,0,0.6);z-index:800;align-items:flex-end;justify-content:center;}
+.modal-bg.open{display:flex;}
+.modal-box{background:#fff;border-radius:24px 24px 0 0;padding:24px;width:100%;max-height:92vh;overflow-y:auto;}
+.token{background:#f59e0b;color:#fff;border-radius:50%;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;margin-right:10px;font-weight:bold;}
 </style>
 </head>
 <body>
-<div id="toast"></div>
 
-<div id="pwd-modal" class="pwd-modal">
-  <div class="pwd-box">
-    <div style="font-size:22px;font-weight:bold;color:#4c1d95;margin-bottom:4px;">Admin Access</div>
-    <div style="font-size:13px;color:#64748b;margin-bottom:18px;">Enter admin password to continue</div>
-    <input id="pwd-input" class="inp" type="password" placeholder="Enter password" style="font-size:18px;letter-spacing:4px;">
-    <div id="pwd-error" style="color:#dc2626;font-size:13px;margin-bottom:10px;display:none;">Wrong password. Try again.</div>
-    <button class="btn btn-purple" onclick="checkAdminPwd()">Unlock Admin</button>
-    <button class="btn btn-gray" onclick="closePwdModal()">Cancel</button>
-  </div>
-</div>
+<div id="toast"></div>
 
 <div id="consult-modal" class="modal-bg">
   <div class="modal-box">
-    <div class="modal-top">
-      <div>
-        <div style="font-size:21px;font-weight:bold;color:#059669;">Complete Consultation</div>
-        <div style="font-size:12px;color:#64748b;margin-top:3px;">Enter medicine days to close this visit</div>
-      </div>
-      <button class="close-btn" onclick="closeConsultModal()">X</button>
+    <div style="font-size:21px;font-weight:bold;color:#059669;margin-bottom:12px;">🩺 Complete Consultation</div>
+    <div id="cm-patient-info" style="background:#f0fdf4; padding:15px; border-radius:12px; margin-bottom:15px;">
+        Token #<span id="cm-token"></span>: <b id="cm-name"></b> (<span id="cm-meta"></span>)
     </div>
-    <div class="consult-pt-box">
-      <div style="display:flex;align-items:center;margin-bottom:6px;">
-        <div class="token" id="cm-token">1</div>
-        <div>
-          <div style="font-size:19px;font-weight:bold;color:#92400e;" id="cm-name"></div>
-          <div style="font-size:13px;color:#78716c;" id="cm-meta"></div>
-        </div>
-      </div>
-      <div style="font-size:14px;color:#b45309;font-weight:bold;" id="cm-type"></div>
-    </div>
-    <div class="lbl" style="font-size:15px;color:#059669;">Medicine prescribed for how many days? *</div>
-    <div id="cm-med-pills" class="mq-pills"></div>
-    <input id="cm-med-custom" class="inp" type="number" placeholder="Or type custom days e.g. 12" oninput="onCmMedInput(this.value)">
-    <div id="cm-next-bar" class="nxt-bar"></div>
-    <div class="lbl" style="margin-top:10px;">Doctor Notes / Diagnosis (optional)</div>
-    <textarea id="cm-notes" class="txta" rows="2" placeholder="e.g. Continue medicine, review in 10 days..."></textarea>
-    <div class="lbl">Prescription Given?</div>
-    <div style="display:flex;margin-bottom:16px;">
-      <button id="rx-yes" class="sex-btn" onclick="selectRx('yes')" style="margin-right:8px;">Yes</button>
-      <button id="rx-no" class="sex-btn" onclick="selectRx('no')" style="margin-right:8px;">No</button>
-      <button id="rx-na" class="sex-btn" onclick="selectRx('na')">N/A</button>
-    </div>
-    <button id="cm-save-btn" class="btn btn-green" onclick="saveConsultation()" style="opacity:0.4;cursor:not-allowed;">
-      Complete Consultation and Set Follow-Up
-    </button>
-    <div style="height:16px;"></div>
-  </div>
-</div>
-
-<div id="addqueue-modal" class="modal-bg">
-  <div class="modal-box">
-    <div class="modal-top">
-      <div style="font-size:20px;font-weight:bold;color:#b45309;">Add Patient to Queue</div>
-      <button class="close-btn" onclick="closeAddToQueueModal()">X</button>
-    </div>
-    <div class="lbl">Patient UID</div>
-    <input id="aq-uid" class="inp inp-lg" placeholder="e.g. AWH0012" oninput="this.value=this.value.toUpperCase();aqClearFound()">
-    <button class="btn btn-amber" onclick="aqSearch()">Find Patient</button>
-    <div id="aq-not-found" style="display:none;background:#fff7ed;border:2px solid #fed7aa;border-radius:12px;padding:14px;margin-bottom:12px;text-align:center;">
-      <div style="font-weight:bold;color:#92400e;">UID not found</div>
-      <div style="font-size:13px;color:#78716c;margin-top:4px;">Add as new patient first</div>
-    </div>
-    <div id="aq-found" style="display:none;">
-      <div style="background:#f0fdf4;border:2px solid #6ee7b7;border-radius:14px;padding:14px;margin-bottom:14px;">
-        <div style="font-size:18px;font-weight:bold;color:#065f46;" id="aq-name"></div>
-        <div style="font-size:13px;color:#64748b;margin-top:3px;" id="aq-meta"></div>
-        <div style="font-size:14px;color:#059669;font-weight:bold;margin-top:4px;" id="aq-phone"></div>
-      </div>
-      <div class="lbl">Visit Type</div>
-      <div style="display:flex;flex-wrap:wrap;margin-bottom:14px;" id="aq-type-pills">
-        <button class="cat-btn" onclick="selectAqType('Regular Visit')">Regular Visit</button>
-        <button class="cat-btn" onclick="selectAqType('Follow-Up')">Follow-Up</button>
-        <button class="cat-btn" onclick="selectAqType('New Patient')">New Patient</button>
-        <button class="cat-btn" onclick="selectAqType('Emergency')">Emergency</button>
-      </div>
-      <button class="btn btn-amber" onclick="addPatientToQueue()">Add to Queue</button>
-    </div>
-  </div>
-</div>
-
-<div id="early-modal" class="modal-bg">
-  <div class="modal-box">
-    <div class="modal-top">
-      <div><div style="font-size:20px;font-weight:bold;color:#92400e;">Early / Walk-In Visit</div><div style="font-size:12px;color:#78716c;margin-top:3px;">Logged by: <span id="em-user"></span></div></div>
-      <button class="close-btn" onclick="closeEarlyModal()">X</button>
-    </div>
-    <div style="background:#fff7ed;border:2px solid #fed7aa;border-radius:14px;padding:12px 16px;margin-bottom:16px;">
-      <div style="font-size:18px;font-weight:bold;color:#92400e;" id="em-name"></div>
-      <div style="font-size:13px;color:#78716c;margin-top:3px;" id="em-meta"></div>
-      <div style="font-size:13px;color:#b45309;margin-top:6px;font-weight:bold;" id="em-schedule"></div>
-    </div>
-    <div class="lbl">Reason for early visit *</div>
-    <div id="em-reasons" style="display:flex;flex-wrap:wrap;margin-bottom:10px;"></div>
-    <input id="em-custom-reason" class="inp" placeholder="Describe reason..." style="display:none;">
-    <div class="lbl">Medicine days? *</div>
-    <div id="em-med-pills" class="med-pills"></div>
-    <input id="em-med-custom" class="inp" type="number" placeholder="Or type custom days" oninput="onEmMedInput(this.value)">
-    <div id="em-next-bar" class="nxt-bar"></div>
-    <div class="lbl" style="margin-top:10px;">Notes (optional)</div>
-    <textarea id="em-notes" class="txta" rows="2" placeholder="Doctor observations..."></textarea>
-    <button id="em-save-btn" class="btn btn-orange" onclick="saveEarlyVisit()" style="opacity:0.4;cursor:not-allowed;">Log Early Visit</button>
-    <div style="height:16px;"></div>
-  </div>
-</div>
-
-<div id="download-modal" class="modal-bg">
-  <div class="modal-box">
-    <div class="modal-top">
-      <div style="font-size:20px;font-weight:bold;color:#4c1d95;">Download Patient Data</div>
-      <button class="close-btn" onclick="closeDownloadModal()">X</button>
-    </div>
-    <div style="font-size:13px;color:#64748b;margin-bottom:20px;" id="dl-count-line"></div>
-    <button class="dl-opt" onclick="downloadExcel()">
-      <div class="dl-opt-icon" style="background:#d1fae5;">📊</div>
-      <div><div class="dl-opt-title" style="color:#1a6b3c;">All Patients - Excel (.csv)</div><div class="dl-opt-sub">Opens in Microsoft Excel, Google Sheets</div></div>
-    </button>
-    <button class="dl-opt" onclick="downloadWord()">
-      <div class="dl-opt-icon" style="background:#dbeafe;">📄</div>
-      <div><div class="dl-opt-title" style="color:#1e40af;">Full Report - Word (.doc)</div><div class="dl-opt-sub">Opens in Microsoft Word</div></div>
-    </button>
-    <button class="dl-opt" onclick="downloadTodayExcel()">
-      <div class="dl-opt-icon" style="background:#fef3c7;">📅</div>
-      <div><div class="dl-opt-title" style="color:#92400e;">Today's List - Excel (.csv)</div><div class="dl-opt-sub">Only today's pending follow-ups</div></div>
-    </button>
-    <button class="btn btn-gray" style="margin-top:4px;" onclick="closeDownloadModal()">Cancel</button>
+    <div class="lbl">Medicine Days? *</div>
+    <div id="cm-med-pills" style="display:flex; flex-wrap:wrap; margin-bottom:10px;"></div>
+    <input id="cm-med-custom" class="inp" type="number" placeholder="Custom days" oninput="selCmMedDays(this.value)">
+    <textarea id="cm-notes" class="txta" placeholder="Doctor notes..."></textarea>
+    <button id="cm-save-btn" class="btn btn-green" onclick="saveConsultation()" style="opacity:0.4;">Finish & Set Follow-up</button>
+    <button class="btn btn-gray" onclick="closeConsultModal()">Cancel</button>
   </div>
 </div>
 
 <div id="screen-login" class="screen active">
-  <div style="min-height:100vh;background:#0c4a6e;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;">
-    <div style="font-size:58px;margin-bottom:8px;">🏥</div>
-    <div style="color:#a5f3fc;font-size:12px;letter-spacing:3px;font-weight:bold;margin-bottom:4px;">ASHA WELLNESS SANCTUARY</div>
-    <div style="color:#fff;font-size:26px;font-weight:bold;margin-bottom:4px;">Patient Manager</div>
-    <div style="color:#7dd3fc;font-size:15px;margin-bottom:32px;">Who is logging in today?</div>
-    <div style="width:100%;max-width:400px;" id="login-buttons"></div>
+  <div style="min-height:100vh;background:#0c4a6e;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;">
+    <div style="font-size:60px;">🏥</div>
+    <div style="color:#fff;font-size:26px;font-weight:bold;margin:10px 0;">Asha Wellness Sanctuary</div>
+    <div id="login-buttons" style="width:100%;max-width:400px;margin-top:20px;"></div>
   </div>
 </div>
 
 <div id="screen-home" class="screen">
-  <div style="background:#0e7490;padding:20px 20px 16px;">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-      <div>
-        <div style="color:#a5f3fc;font-size:10px;letter-spacing:2px;font-weight:bold;">ASHA WELLNESS SANCTUARY</div>
-        <div style="color:#fff;font-size:21px;font-weight:bold;margin-top:2px;">Patient Manager</div>
-        <div style="margin-top:7px;" id="home-user-badge"></div>
-      </div>
-      <div style="text-align:right;">
-        <div style="color:#fff;font-size:28px;font-weight:bold;" id="home-pending">0</div>
-        <div style="color:#7dd3fc;font-size:10px;font-weight:bold;">PENDING</div>
-      </div>
-    </div>
-  </div>
-  <div class="stats-row" id="home-stats"></div>
-  <div class="pad" style="padding-bottom:80px;padding-top:14px;">
+  <div class="hdr hdr-blue"><div style="color:#fff; font-weight:bold;">Asha Wellness Sanctuary</div></div>
+  <div class="pad" style="padding:20px;">
     <div class="sync-bar">
-      <div style="display:flex;align-items:center;">
-        <div class="sync-dot" id="sync-dot"></div>
-        <span style="font-size:13px;font-weight:bold;color:#0e7490;" id="sync-status-txt">Cloud Sync Ready</span>
-      </div>
-      <button id="sync-btn" onclick="doCloudSync()" style="background:#0e7490;border:none;color:#fff;font-size:12px;font-weight:bold;padding:7px 14px;border-radius:8px;cursor:pointer;">Sync Now</button>
+      <div style="display:flex;align-items:center;"><div class="sync-dot" id="sync-dot"></div><span id="sync-status-txt">Cloud Ready</span></div>
+      <button style="padding:6px 12px; border-radius:8px; font-size:12px; border:none; background:#0e7490; color:#fff;" onclick="doCloudSync()">Sync Now</button>
     </div>
     <div class="q-banner" onclick="showScreen('queue')">
-      <div class="q-banner-left">
-        <div class="q-banner-tag">TODAY'S CONSULTATION QUEUE</div>
-        <div class="q-banner-count" id="home-queue-count">0 waiting</div>
-        <div class="q-banner-sub">Tap to open - enter medicine days after consultation</div>
-      </div>
-      <button class="q-open-btn">Open Queue</button>
+      <div><div style="font-size:12px;">CONSULTATION QUEUE</div><div id="home-queue-count" style="font-size:24px; font-weight:bold;">0 waiting</div></div>
+      <div style="background:#fff; color:#b45309; padding:8px 15px; border-radius:10px; font-weight:bold;">OPEN</div>
     </div>
-    <button class="menu-btn" style="border-color:#0e7490;" onclick="showScreen('today')">
-      <div class="menu-icon" style="background:#e0f2fe;">📋</div>
-      <div><div class="menu-title">Today's Follow-Up List</div><div class="menu-sub" id="home-today-sub">0 patients to call</div></div>
-    </button>
-    <button class="menu-btn" style="border-color:#0891b2;" onclick="showScreen('search')">
-      <div class="menu-icon" style="background:#e0f2fe;">🔍</div>
-      <div><div class="menu-title">Search Patient</div><div class="menu-sub">Search by UID and record visit</div></div>
-    </button>
-    <button class="menu-btn" style="border-color:#059669;background:#f0fdf4;" onclick="showScreen('addNew')">
-      <div class="menu-icon" style="background:#d1fae5;">➕</div>
-      <div><div class="menu-title" style="color:#065f46;">Add New Patient</div><div class="menu-sub" style="color:#059669;">Register a new patient</div></div>
-    </button>
-    <button class="menu-btn" style="border-color:#f59e0b;background:#fffbeb;" onclick="showScreen('earlySearch')">
-      <div class="menu-icon" style="background:#fef3c7;">⚡</div>
-      <div><div class="menu-title" style="color:#92400e;">Early / Walk-In Visit</div><div class="menu-sub" style="color:#b45309;">Patient came before scheduled date</div></div>
-    </button>
-    <button class="menu-btn" style="border-color:#0f766e;background:#f0fdfa;" onclick="showScreen('importOld')">
-      <div class="menu-icon" style="background:#ccfbf1;">📥</div>
-      <div><div class="menu-title" style="color:#0f766e;">Import Old OPD Records</div><div class="menu-sub" style="color:#0f766e;">Enter past patient data</div></div>
-    </button>
-    <button class="menu-btn" style="border-color:#6d28d9;background:#faf5ff;" onclick="openDownloadModal()">
-      <div class="menu-icon" style="background:#ede9fe;">⬇️</div>
-      <div><div class="menu-title" style="color:#4c1d95;">Download Patient Data</div><div class="menu-sub" style="color:#7c3aed;">Export to Excel or Word</div></div>
-    </button>
-    <button class="menu-btn" style="border-color:#ddd6fe;background:#faf5ff;" onclick="requireAdmin('log')">
-      <div class="menu-icon" style="background:#ede9fe;">📜</div>
-      <div><div class="menu-title" style="color:#4c1d95;">Activity Log <span class="admin-only-badge">ADMIN</span></div><div class="menu-sub" style="color:#7c3aed;">All staff actions</div></div>
-    </button>
-    <button class="btn btn-gray" onclick="switchUser()">Switch User</button>
+    <button class="menu-btn" onclick="showScreen('addNew')"><div class="menu-icon">➕</div><div><div class="menu-title">Add New Patient</div></div></button>
+    <button class="menu-btn" onclick="showScreen('search')"><div class="menu-icon">🔍</div><div><div class="menu-title">Search & History</div></div></button>
+    <button class="btn btn-gray" onclick="switchUser()" style="margin-top:20px;">Switch User</button>
   </div>
 </div>
 
 <div id="screen-queue" class="screen">
-  <div class="hdr hdr-amber">
-    <button class="back-btn" onclick="showScreen('home')">&#8592;</button>
-    <div style="flex:1;">
-      <div class="hdr-title">Today's Consultation Queue</div>
-      <div class="hdr-sub hdr-sub-warm" id="queue-date-sub"></div>
-    </div>
-    <button onclick="showAddToQueueModal()" style="background:#fff;color:#b45309;border:none;border-radius:10px;padding:8px 14px;font-size:13px;font-weight:bold;cursor:pointer;">+ Add</button>
-  </div>
-  <div style="display:flex;background:#fff;border-bottom:1px solid #e2e8f0;">
-    <div style="flex:1;text-align:center;padding:12px 4px;border-right:1px solid #e2e8f0;">
-      <div style="font-size:22px;font-weight:bold;color:#d97706;" id="q-waiting-count">0</div>
-      <div style="font-size:10px;font-weight:bold;color:#d97706;">WAITING</div>
-    </div>
-    <div style="flex:1;text-align:center;padding:12px 4px;border-right:1px solid #e2e8f0;">
-      <div style="font-size:22px;font-weight:bold;color:#3b82f6;" id="q-consulting-count">0</div>
-      <div style="font-size:10px;font-weight:bold;color:#3b82f6;">WITH DOCTOR</div>
-    </div>
-    <div style="flex:1;text-align:center;padding:12px 4px;">
-      <div style="font-size:22px;font-weight:bold;color:#059669;" id="q-done-count">0</div>
-      <div style="font-size:10px;font-weight:bold;color:#059669;">COMPLETED</div>
-    </div>
-  </div>
-  <div class="pad-b" id="queue-list"></div>
-</div>
-
-<div id="screen-today" class="screen">
-  <div class="hdr hdr-blue">
-    <button class="back-btn" onclick="showScreen('home')">&#8592;</button>
-    <div><div class="hdr-title">Today's Follow-Up List</div><div class="hdr-sub hdr-sub-light" id="today-date-sub"></div></div>
-  </div>
-  <div class="pad-b" id="today-list"></div>
-</div>
-
-<div id="screen-search" class="screen">
-  <div class="hdr hdr-blue">
-    <button class="back-btn" onclick="goHome()">&#8592;</button>
-    <div><div class="hdr-title">Search Patient</div><div class="hdr-sub hdr-sub-light">Enter UID to find patient</div></div>
-  </div>
-  <div class="pad">
-    <div class="lbl">Patient UID Number</div>
-    <input id="search-uid" class="inp inp-lg" placeholder="e.g. AWH0012" oninput="this.value=this.value.toUpperCase();clearFoundPt()">
-    <button class="btn btn-blue" onclick="doSearch()">Search Patient</button>
-    <div id="search-not-found" style="display:none;" class="card card-dashed">
-      <div style="font-size:17px;font-weight:bold;color:#0c4a6e;margin-bottom:6px;">UID Not Found</div>
-      <div style="color:#64748b;font-size:13px;margin-bottom:12px;">No patient with this UID.</div>
-      <button class="btn btn-green" style="padding:14px;" onclick="goToAddNewFromSearch()">Register as New Patient</button>
-    </div>
-    <div id="search-found" style="display:none;" class="card card-green">
-      <div style="font-size:11px;font-weight:bold;color:#059669;margin-bottom:8px;letter-spacing:1px;">✅ PATIENT FOUND</div>
-      <div style="font-size:21px;font-weight:bold;color:#0c4a6e;" id="sf-name"></div>
-      <div style="font-size:14px;color:#64748b;margin-top:3px;" id="sf-meta"></div>
-      <div style="font-size:13px;color:#0e7490;margin-top:4px;" id="sf-schedule"></div>
-      <div style="font-size:11px;color:#94a3b8;margin-top:4px;" id="sf-createdby"></div>
-      <div class="contact-row" id="sf-contact-row" style="margin-top:14px;"></div>
-      <div class="section-divider">
-        <div style="font-size:14px;font-weight:bold;color:#0c4a6e;margin-bottom:12px;">RECORD THIS VISIT</div>
-        <div class="lbl">Medicine prescribed for how many days?</div>
-        <div id="fu-med-pills" class="med-pills"></div>
-        <input id="fu-med-custom" class="inp" type="number" placeholder="Or type custom days e.g. 12" oninput="onFuMedInput(this.value)">
-        <div id="fu-next-bar" class="nxt-bar"></div>
-        <div class="lbl" style="margin-top:10px;">Clinical notes (optional)</div>
-        <textarea id="fu-notes" class="txta" rows="2" placeholder="Doctor observations..."></textarea>
-        <button class="btn btn-green" onclick="saveFollowUp()">Save Visit and Set Follow-Up</button>
-      </div>
-      <div style="margin-top:10px;">
-        <button class="btn btn-red" onclick="requireAdmin('delete')" style="padding:12px;">Delete Patient <span class="admin-only-badge">ADMIN ONLY</span></button>
-      </div>
-      <div id="sf-history" style="display:none;margin-top:16px;border-top:1px solid #e2e8f0;padding-top:12px;">
-        <div class="sec-lbl">VISIT HISTORY</div>
-        <div id="sf-history-list"></div>
-      </div>
-    </div>
-  </div>
+  <div class="hdr hdr-amber"><button class="back-btn" onclick="showScreen('home')">←</button><div class="hdr-title">Consultation Queue</div></div>
+  <div class="pad" id="queue-list" style="padding:20px;"></div>
 </div>
 
 <div id="screen-addNew" class="screen">
-  <div class="hdr hdr-green">
-    <button class="back-btn" onclick="goHome()">&#8592;</button>
-    <div><div class="hdr-title">Add New Patient</div><div class="hdr-sub hdr-sub-light">Register new patient record</div></div>
-  </div>
-  <div class="pad" style="padding-bottom:60px;">
-    <div style="background:#d1fae5;border:2px solid #6ee7b7;border-radius:12px;padding:12px 16px;margin-bottom:14px;font-size:13px;color:#065f46;font-weight:bold;">
-      After saving, patient will appear in Today's Consultation Queue
+  <div class="hdr hdr-green"><button class="back-btn" onclick="showScreen('home')">←</button><div class="hdr-title">New Registration</div></div>
+  <div class="pad" style="padding:20px;">
+    <input id="an-uid" class="inp" placeholder="UID (e.g. AWH001)" oninput="this.value=this.value.toUpperCase()">
+    <input id="an-name" class="inp" placeholder="Patient Name">
+    <input id="an-phone" class="inp" type="tel" placeholder="Phone Number">
+    <div class="lbl">Add to Queue?</div>
+    <div style="display:flex; margin-bottom:15px;">
+        <button id="an-q-yes" class="btn-green mq-pill sel" style="flex:1" onclick="selectAnQueue('yes')">Yes</button>
+        <button id="an-q-no" class="mq-pill" style="flex:1" onclick="selectAnQueue('no')">No</button>
     </div>
-    <div class="lbl">Patient UID Number *</div>
-    <input id="an-uid" class="inp inp-lg" placeholder="e.g. AWH0012" oninput="this.value=this.value.toUpperCase()">
-    <div class="lbl">Patient Full Name *</div>
-    <input id="an-name" class="inp" type="text" placeholder="e.g. Ramesh Kumar">
-    <div class="lbl">Phone Number *</div>
-    <input id="an-phone" class="inp" type="tel" placeholder="e.g. 9876543210">
-    <div class="lbl">Age</div>
-    <input id="an-age" class="inp" type="number" placeholder="e.g. 34">
-    <div class="lbl">Full Address</div>
-    <input id="an-address" class="inp" type="text" placeholder="e.g. Vigyan Nagar, Kota">
-    <div class="lbl">Sex</div>
-    <div class="sex-row" id="sex-row">
-      <button class="sex-btn" onclick="selectSex('Male')">Male</button>
-      <button class="sex-btn" onclick="selectSex('Female')">Female</button>
-      <button class="sex-btn" onclick="selectSex('Other')">Other</button>
-    </div>
-    <div class="lbl">Category</div>
-    <div class="cat-wrap" id="cat-wrap">
-      <button class="cat-btn" onclick="selectCat('Psychiatry')">Psychiatry</button>
-      <button class="cat-btn" onclick="selectCat('De-addiction')">De-addiction</button>
-      <button class="cat-btn" onclick="selectCat('Counselling')">Counselling</button>
-      <button class="cat-btn" onclick="selectCat('Child Psychiatry')">Child Psychiatry</button>
-      <button class="cat-btn" onclick="selectCat('Other')">Other</button>
-    </div>
-    <div class="lbl">Add to Today's Queue?</div>
-    <div style="display:flex;margin-bottom:16px;">
-      <button id="an-q-yes" class="sex-btn sel" onclick="selectAnQueue('yes')" style="margin-right:8px;">Yes - Add to Queue</button>
-      <button id="an-q-no" class="sex-btn" onclick="selectAnQueue('no')">No</button>
-    </div>
-    <button class="btn btn-green" onclick="saveNewPatient()">Save New Patient</button>
-    <div style="color:#94a3b8;font-size:12px;text-align:center;margin-top:8px;">Saving as: <span id="addnew-user"></span></div>
+    <button class="btn btn-green" onclick="saveNewPatient()">Register Patient</button>
   </div>
 </div>
 
-<div id="screen-earlySearch" class="screen">
-  <div class="hdr hdr-orange">
-    <button class="back-btn" onclick="goHome()">&#8592;</button>
-    <div><div class="hdr-title">Early / Walk-In Visit</div><div class="hdr-sub hdr-sub-warm">Search patient by UID</div></div>
+<div id="screen-search" class="screen">
+  <div class="hdr hdr-blue"><button class="back-btn" onclick="showScreen('home')">←</button><div class="hdr-title">Search Patient</div></div>
+  <div class="pad" style="padding:20px;">
+    <input id="search-uid" class="inp" placeholder="Enter UID" oninput="this.value=this.value.toUpperCase()">
+    <button class="btn btn-blue" onclick="doSearch()">Find History</button>
+    <div id="search-result" style="margin-top:15px;"></div>
   </div>
-  <div class="pad">
-    <div class="lbl">Patient UID Number</div>
-    <input id="early-uid" class="inp inp-lg" placeholder="e.g. AWH0012" oninput="this.value=this.value.toUpperCase();clearEarlyFound()">
-    <button class="btn btn-orange" onclick="doEarlySearch()">Search Patient</button>
-    <div id="early-not-found" style="display:none;" class="card card-dashed-orange">
-      <div style="font-size:17px;font-weight:bold;color:#92400e;">UID Not Found</div>
-      <div style="color:#b45309;font-size:13px;margin-top:4px;">Please add patient first</div>
-    </div>
-    <div id="early-found" style="display:none;" class="card card-orange">
-      <div style="font-size:11px;font-weight:bold;color:#d97706;margin-bottom:6px;letter-spacing:1px;">PATIENT FOUND</div>
-      <div style="font-size:20px;font-weight:bold;color:#92400e;" id="ef-name"></div>
-      <div style="font-size:14px;color:#78716c;margin-top:3px;" id="ef-meta"></div>
-      <div style="font-size:13px;color:#b45309;margin-top:6px;font-weight:bold;" id="ef-schedule"></div>
-      <div id="ef-contact-row" class="contact-row" style="margin-top:12px;"></div>
-      <button class="btn btn-orange" style="margin-top:4px;padding:14px;" onclick="openEarlyModal()">Log Early Visit</button>
-    </div>
-  </div>
-</div>
-
-<div id="screen-importOld" class="screen">
-  <div class="hdr hdr-teal">
-    <button class="back-btn" onclick="goHome()">&#8592;</button>
-    <div><div class="hdr-title">Import Old OPD Records</div><div class="hdr-sub hdr-sub-light">Enter past patient data</div></div>
-  </div>
-  <div class="pad" style="padding-bottom:60px;">
-    <div class="card" style="border-color:#0f766e;">
-      <div style="font-size:15px;font-weight:bold;color:#0f766e;margin-bottom:4px;">Add One Old Patient</div>
-      <div class="lbl">UID *</div><input id="imp-uid" class="inp" placeholder="e.g. AWH0001" oninput="this.value=this.value.toUpperCase()">
-      <div class="lbl">Patient Name *</div><input id="imp-name" class="inp" type="text" placeholder="Full name">
-      <div class="lbl">Phone *</div><input id="imp-phone" class="inp" type="tel" placeholder="10-digit mobile">
-      <div class="lbl">Age</div><input id="imp-age" class="inp" type="number" placeholder="e.g. 45">
-      <div class="lbl">Sex</div>
-      <div class="sex-row" id="imp-sex-row">
-        <button class="sex-btn" onclick="selectImpSex('Male')">Male</button>
-        <button class="sex-btn" onclick="selectImpSex('Female')">Female</button>
-        <button class="sex-btn" onclick="selectImpSex('Other')">Other</button>
-      </div>
-      <div class="lbl">Category</div>
-      <div class="cat-wrap" id="imp-cat-wrap">
-        <button class="cat-btn" onclick="selectImpCat('Psychiatry')">Psychiatry</button>
-        <button class="cat-btn" onclick="selectImpCat('De-addiction')">De-addiction</button>
-        <button class="cat-btn" onclick="selectImpCat('Counselling')">Counselling</button>
-        <button class="cat-btn" onclick="selectImpCat('Child Psychiatry')">Child Psychiatry</button>
-        <button class="cat-btn" onclick="selectImpCat('Other')">Other</button>
-      </div>
-      <div class="lbl">Address</div><input id="imp-address" class="inp" type="text" placeholder="Colony / Area">
-      <div class="lbl">Last Visit Date</div><input id="imp-lastvisit" class="inp" type="date">
-      <div class="lbl">Medicine Given - How Many Days?</div>
-      <div class="med-pills" id="imp-med-pills"></div>
-      <input id="imp-med-custom" class="inp" type="number" placeholder="Or type custom days" oninput="onImpMedInput(this.value)">
-      <div id="imp-next-bar" class="nxt-bar"></div>
-      <div class="lbl">Clinical Notes / Diagnosis</div>
-      <textarea id="imp-notes" class="txta" rows="2" placeholder="Diagnosis, medicines..."></textarea>
-      <button class="btn" style="background:#0f766e;" onclick="saveImportedPatient()">Save Old Patient Record</button>
-    </div>
-    <div class="card" style="border-color:#0f766e;margin-top:4px;">
-      <div style="font-size:15px;font-weight:bold;color:#0f766e;margin-bottom:4px;">Bulk Paste from Excel</div>
-      <div style="font-size:12px;color:#64748b;margin-bottom:8px;">Format: UID, Name, Phone, Age, Sex, Category, Address, LastVisitDate(YYYY-MM-DD), MedicineDays</div>
-      <div style="background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:10px;font-size:11px;color:#92400e;margin-bottom:10px;">
-        Example: AWH001, Ram Kumar, 9876543210, 45, Male, Psychiatry, Kota, 2024-11-15, 15
-      </div>
-      <textarea id="bulk-paste" class="txta" rows="5" placeholder="Paste your Excel data here..."></textarea>
-      <button class="btn btn-orange" onclick="parseBulkPaste()">Preview Bulk Data</button>
-      <div id="bulk-preview" style="display:none;">
-        <div class="import-preview" id="bulk-preview-table"></div>
-        <div style="font-size:13px;color:#059669;font-weight:bold;margin-bottom:10px;" id="bulk-preview-count"></div>
-        <button class="btn btn-green" onclick="saveBulkImport()">Import All Records</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="screen-log" class="screen">
-  <div class="hdr hdr-purple">
-    <button class="back-btn" onclick="goHome()">&#8592;</button>
-    <div><div class="hdr-title">Activity Log</div><div class="hdr-sub hdr-sub-light" id="log-count"></div></div>
-  </div>
-  <div class="pad-b" id="log-list"></div>
 </div>
 
 <script>
-var SK="asha_pts_v8",LK="asha_logs_v8",QK="asha_queue_v8";
-var ADMIN_PWD="112233445566";
-var CLOUD_URL="https://script.google.com/macros/s/AKfycbz2rsy6IYHuIj4v8OH0Usk64MrT7hQV1NBJZAxsAbmyfFnnr9a2adEDymPGmkvKo_s/exec";
-var QDAYS=[3,5,7,10,14,15,21,30];
-var REASONS=["Side effect","Chest pain","Reports ready","Not feeling well","Emergency","Other"];
-var STAFF=[
-  {name:"Meenu",icon:"M",color:"#f472b6"},
-  {name:"Arvind",icon:"A",color:"#60a5fa"},
-  {name:"Sandeep",icon:"S",color:"#34d399"},
-  {name:"Neeraj",icon:"N",color:"#fbbf24"},
-  {name:"Dr. Akash",icon:"D",color:"#a78bfa",isAdmin:true}
+// --- CONFIG ---
+var CLOUD_URL = "https://script.google.com/macros/s/AKfycbxHN42QU-aSByIeJZet9bgJhzIFSrZX0Vn2yWe8qcXkEasBCl0MYIuqoxu73n_Na6sQ/exec";
+var SK="asha_pts_v8", QK="asha_queue_v8";
+var QDAYS = [3,5,7,10,14,15,21,30];
+var STAFF = [
+  {name:"Meenu", icon:"M", color:"#f472b6"},
+  {name:"Arvind", icon:"A", color:"#60a5fa"},
+  {name:"Sandeep", icon:"S", color:"#34d399"},
+  {name:"Neeraj", icon:"N", color:"#fbbf24"},
+  {name:"Dr. Akash", icon:"D", color:"#a78bfa", isAdmin:true}
 ];
-var curUser=null,isAdminUser=false;
-var patients=[],logs=[],queue=[];
-var selSex="",selCat="",selFuDays="",selEmReason="",selEmDays="";
-var selImpSex="",selImpCat="",selImpMed="";
-var currentSelectedCmMedDays="",selRxVal="",selAqType="",anAddToQueue="yes";
-var earlyPt=null,foundPt=null,earlyFndPt=null,consultPt=null,aqFoundPt=null;
-var pendingAdminAction=null,bulkParsed=[];
 
-function pad2(n){return n<10?"0"+n:String(n);}
-function todayStr(){var d=new Date();return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate());}
-function fmt(d){if(!d)return"-";var p=d.split("-");return p[2]+"/"+p[1]+"/"+p[0];}
-function addDaysToDate(base,n){var d=new Date(base);d.setDate(d.getDate()+parseInt(n,10));return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate());}
-function addDays(n){return addDaysToDate(todayStr(),n);}
-function daysDiff(d){var diff=Math.round((new Date(d)-new Date(todayStr()))/86400000);if(diff===0)return"TODAY";if(diff<0)return Math.abs(diff)+"d OVERDUE";return"In "+diff+"d";}
-function eh(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+// --- STATE ---
+var patients = [], queue = [], curUser = null;
+var currentSelectedCmMedDays = "", consultPt = null;
+
+// --- HELPERS ---
+function todayStr(){ return new Date().toISOString().split('T')[0]; }
+function addDays(n){ var d=new Date(); d.setDate(d.getDate()+parseInt(n)); return d.toISOString().split('T')[0]; }
+function toast(m){ var e=document.getElementById("toast"); e.textContent=m; e.style.display="block"; setTimeout(()=>e.style.display="none",3000); }
+
+function showScreen(n){ 
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.getElementById("screen-"+n).classList.add("active");
+  if(n==='home') renderHome();
+  if(n==='queue') renderQueue();
+}
+
+// --- DATA ---
 function loadData(){
-  try{var p=localStorage.getItem(SK);if(p)patients=JSON.parse(p);}catch(e){}
-  try{var l=localStorage.getItem(LK);if(l)logs=JSON.parse(l);}catch(e){}
-  try{var q=localStorage.getItem(QK);if(q){var parsed=JSON.parse(q);var t=todayStr();queue=parsed.filter(function(x){return x.date===t;});}else{queue=[];}}catch(e){queue=[];}
+  try {
+    patients = JSON.parse(localStorage.getItem(SK) || "[]");
+    queue = JSON.parse(localStorage.getItem(QK) || "[]").filter(q => q.date === todayStr());
+  } catch(e) { console.error("Load failed"); }
 }
-function savePts(){try{localStorage.setItem(SK,JSON.stringify(patients));}catch(e){}}
-function saveQueue(){try{localStorage.setItem(QK,JSON.stringify(queue));}catch(e){}}
-function addLog(action,name,uid){
-  var e={action:action,patientName:name||"",uid:uid||"",staff:curUser,time:new Date().toLocaleString("en-IN")};
-  logs.unshift(e);if(logs.length>300)logs=logs.slice(0,300);
-  try{localStorage.setItem(LK,JSON.stringify(logs));}catch(e){}
-}
-function sInfo(name){for(var i=0;i<STAFF.length;i++){if(STAFF[i].name===name)return STAFF[i];}return{color:"#64748b",icon:"?"};}
-function badge(name,small){
-  var s=sInfo(name);var pad=small?"2px 8px":"5px 11px";var fs=small?"11px":"13px";
-  return'<span style="background:'+s.color+'22;color:'+s.color+';border:1.5px solid '+s.color+'55;border-radius:8px;padding:'+pad+';font-size:'+fs+';font-weight:bold;">'+s.icon+' '+eh(name)+'</span>';
-}
-var _tt;
-function toast(msg){var el=document.getElementById("toast");el.textContent=msg;el.style.display="block";clearTimeout(_tt);_tt=setTimeout(function(){el.style.display="none";},3200);}
-function showScreen(name){
-  var all=document.querySelectorAll(".screen");for(var i=0;i<all.length;i++)all[i].classList.remove("active");
-  document.getElementById("screen-"+name).classList.add("active");window.scrollTo(0,0);
-  if(name==="today")renderToday();
-  if(name==="home")renderHome();
-  if(name==="log")renderLog();
-  if(name==="queue")renderQueue();
-  if(name==="addNew"){document.getElementById("addnew-user").innerHTML=badge(curUser,true);resetAddNew();}
-  if(name==="importOld")renderImpMedPills("");
-}
-function goHome(){clearSearch();clearEarlySearch();showScreen("home");}
-function contactRow(phone,name){
-  var wa=encodeURIComponent("Namaste "+name+", aapka follow-up scheduled hai Asha Wellness Sanctuary mein. Kripya clinic mein aayen. Dhanyawad.");
-  return'<a href="tel:'+eh(phone)+'" class="contact-btn" style="background:#0e7490;">Call Now</a>'
-    +'<a href="https://wa.me/91'+eh(phone.replace(/\D/g,""))+'?text='+wa+'" target="_blank" class="contact-btn" style="background:#25D366;">WhatsApp</a>';
-}
+function savePts() { localStorage.setItem(SK, JSON.stringify(patients)); }
+function saveQueue() { localStorage.setItem(QK, JSON.stringify(queue)); }
 
-// ADMIN
-function requireAdmin(action){
-  if(isAdminUser){if(action==="log")showScreen("log");else if(action==="delete")deleteFoundPatient();return;}
-  pendingAdminAction=action;document.getElementById("pwd-input").value="";document.getElementById("pwd-error").style.display="none";document.getElementById("pwd-modal").classList.add("open");
-}
-function checkAdminPwd(){
-  if(document.getElementById("pwd-input").value.trim()===ADMIN_PWD){
-    document.getElementById("pwd-modal").classList.remove("open");
-    if(pendingAdminAction==="log")showScreen("log");else if(pendingAdminAction==="delete")deleteFoundPatient();
-    pendingAdminAction=null;
-  }else{document.getElementById("pwd-error").style.display="block";document.getElementById("pwd-input").value="";}
-}
-function closePwdModal(){document.getElementById("pwd-modal").classList.remove("open");pendingAdminAction=null;}
-
-// LOGIN
+// --- LOGIN ---
 function renderLogin(){
   let h = "";
   STAFF.forEach(s => {
-    let al = s.isAdmin ? '<div style="color:'+s.color+';font-size:12px;font-weight:bold;margin-top:2px;">ADMIN - Full Access</div>' : "";
-    h += `<button class="login-btn" style="border-color:${s.color}" onclick="doLogin('${s.name}')">
-            <div class="login-icon" style="background:${s.color}33;">${s.icon}</div>
-            <div><div style="color:#fff;font-size:19px;font-weight:bold;">${s.name}</div>${al}</div>
-          </button>`;
+    h += `<button class="btn" style="background:${s.color}" onclick="doLogin('${s.name}')">${s.icon} ${s.name}</button>`;
   });
   document.getElementById("login-buttons").innerHTML = h;
 }
-function doLogin(name){curUser=name;isAdminUser=sInfo(name).isAdmin===true;renderHome();showScreen("home");}
-function switchUser(){curUser=null;isAdminUser=false;showScreen("login");}
+function doLogin(n){ curUser=n; showScreen('home'); }
+function switchUser(){ curUser=null; showScreen('login'); }
 
-// HOME
-function renderHome(){
-  var t=todayStr();
-  var tpts=patients.filter(function(p){return p.followupDate<=t&&p.status==="pending";});
-  var due=tpts.filter(function(p){return p.followupDate===t;}).length;
-  var ovd=tpts.filter(function(p){return p.followupDate<t;}).length;
-  var waiting=queue.filter(function(q){return q.status==="waiting"||q.status==="consulting";}).length;
-  document.getElementById("home-pending").textContent=tpts.length;
-  document.getElementById("home-today-sub").textContent=tpts.length+" patients to call";
-  document.getElementById("home-user-badge").innerHTML=badge(curUser,false)+(isAdminUser?'<span class="admin-only-badge" style="margin-left:8px;">ADMIN</span>':"");
-  document.getElementById("home-queue-count").textContent=waiting+" waiting";
-  document.getElementById("home-stats").innerHTML=sBox(due,"Due Today","#0e7490","#e0f2fe")+sBox(ovd,"Overdue","#dc2626","#fee2e2")+sBox(patients.length,"Total","#059669","#d1fae5")+sBox(waiting,"In Queue","#d97706","#fef3c7");
-}
-function sBox(v,l,c,bg){return'<div class="stat-box" style="background:'+bg+';">'+'<div class="stat-num" style="color:'+c+';">'+v+'</div><div class="stat-lbl" style="color:'+c+';">'+l+'</div></div>';}
-
-// QUEUE
-function renderQueue(){
-  var consulting=queue.filter(function(q){return q.status==="consulting";});
-  var waiting=queue.filter(function(q){return q.status==="waiting";});
-  var done=queue.filter(function(q){return q.status==="done";});
-  document.getElementById("q-waiting-count").textContent=waiting.length;
-  document.getElementById("q-consulting-count").textContent=consulting.length;
-  document.getElementById("q-done-count").textContent=done.length;
-  if(queue.length===0){document.getElementById("queue-list").innerHTML='<div class="empty-state">Queue is empty</div>';return;}
-  var ordered=consulting.concat(waiting).concat(done);
-  var h="";
-  ordered.forEach(qe => {
-    var p=patients.find(pt=>pt.uid===qe.uid);
-    if(!p)return;
-    var cardCls=qe.status==="consulting"?"qcard-consulting":qe.status==="done"?"qcard-done":"qcard-waiting";
-    h+=`<div class="qcard ${cardCls}">
-          <div style="display:flex;align-items:center;">
-            <div class="token">${qe.token}</div>
-            <div><b>${p.name}</b> (${p.uid})</div>
-          </div>
-          ${qe.status!=='done' ? `<button class="btn btn-green" style="margin-top:10px;" onclick="openConsultModal('${qe.id}')">Complete</button>` : ''}
-        </div>`;
-  });
-  document.getElementById("queue-list").innerHTML=h;
-}
-function openConsultModal(qid){
-  var qe=queue.find(q=>q.id===qid);
-  var p=patients.find(pt=>pt.uid===qe.uid);
-  consultPt={qid:qid,uid:p.uid,name:p.name};
-  document.getElementById("cm-token").textContent=qe.token;
-  document.getElementById("cm-name").textContent=p.name;
-  document.getElementById("cm-meta").textContent=p.uid;
-  renderCmMedPills();
-  document.getElementById("consult-modal").classList.add("open");
-}
-function closeConsultModal(){document.getElementById("consult-modal").classList.remove("open");}
-function renderCmMedPills(sel){
-  var h="";
-  QDAYS.forEach(d => {
-    var s=String(sel)===String(d)?" sel":"";
-    h+=`<button class="mq-pill${s}" onclick="selCmMedDays('${d}')">${d}d</button>`;
-  });
-  document.getElementById("cm-med-pills").innerHTML=h;
-}
-function selCmMedDays(val){
-  currentSelectedCmMedDays=val;
-  document.getElementById("cm-med-custom").value=val;
-  renderCmMedPills(val);
-  document.getElementById("cm-save-btn").style.opacity="1";
-  document.getElementById("cm-save-btn").style.cursor="pointer";
-}
-function onCmMedInput(v){selCmMedDays(v);}
-function selectRx(v){selRxVal=v;}
-function saveConsultation(){
-  if(!currentSelectedCmMedDays)return;
-  var qe=queue.find(q=>q.id===consultPt.qid);
-  var p=patients.find(pt=>pt.uid===consultPt.uid);
-  var nd=addDays(currentSelectedCmMedDays);
-  qe.status="done";
-  p.followupDate=nd;
-  p.visits.unshift({date:todayStr(),medDays:currentSelectedCmMedDays,notes:document.getElementById("cm-notes").value});
-  savePts();saveQueue();closeConsultModal();renderQueue();renderHome();
-  toast("Consultation Saved");
-}
-function addNewPatientToQueue(uid,name){
-  var tok=queue.length+1;
-  queue.push({id:"q"+Date.now(),uid:uid,token:tok,status:"waiting",date:todayStr()});
-  saveQueue();
-}
-
-// CLOUD SYNC
-function setSyncStatus(state,msg){
-  var dot=document.getElementById("sync-dot");
-  if(!dot)return;
-  dot.className="sync-dot "+(state||"");
-  document.getElementById("sync-status-txt").textContent=msg;
-}
-function doCloudSync(){
-  setSyncStatus("syncing","Syncing...");
-  fetch(CLOUD_URL, {
-    method: "POST",
-    mode: "no-cors",
-    headers: {"Content-Type": "text/plain"},
-    body: JSON.stringify({action:"sync",patients:patients})
-  }).then(() => {
-    setSyncStatus("online","Synced: "+new Date().toLocaleTimeString());
-    toast("Sync successful!");
-  }).catch(() => {
-    setSyncStatus("offline","Sync failed");
-  });
-}
-function fetchFromCloud(){
-  fetch(CLOUD_URL+"?action=get").then(r=>r.json()).then(data=>{
-    if(data.patients){patients=data.patients;savePts();renderHome();}
-  }).catch(e=>console.log("Offline mode"));
-}
-
-// INIT
-window.onload = function() {
-    loadData();
-    renderLogin();
-    setTimeout(fetchFromCloud, 1500);
-};
-
-/* Preserving existing functions for Search, Add, etc. */
-function clearFoundPt(){document.getElementById("search-found").style.display="none";}
-function doSearch(){
-  var uid=document.getElementById("search-uid").value;
-  var p=patients.find(x=>x.uid===uid);
-  if(p){
-    document.getElementById("search-found").style.display="block";
-    document.getElementById("sf-name").textContent=p.name;
-    document.getElementById("sf-meta").textContent=p.uid;
-  }
-}
-function saveNewPatient(){
-  var uid=document.getElementById("an-uid").value.toUpperCase();
-  var name=document.getElementById("an-name").value;
-  patients.push({uid:uid,name:name,phone:document.getElementById("an-phone").value,followupDate:todayStr(),visits:[],status:"pending"});
-  savePts();
-  if(document.getElementById("an-q-yes").classList.contains("sel")) addNewPatientToQueue(uid,name);
-  toast("Patient Saved");
-  goHome();
-}
+// --- QUEUE & REGISTRATION ---
 function selectAnQueue(v){
   if(v==='yes'){document.getElementById("an-q-yes").classList.add("sel");document.getElementById("an-q-no").classList.remove("sel");}
   else {document.getElementById("an-q-no").classList.add("sel");document.getElementById("an-q-yes").classList.remove("sel");}
 }
-</script>
-</body>
-</html>
+
+function saveNewPatient(){
+  let uid = document.getElementById("an-uid").value.trim().toUpperCase();
+  let name = document.getElementById("an-name").value.trim();
+  if(!uid || !name) return toast("Fill UID and Name");
+  if(patients.find(p=>p.uid===uid)) return toast("UID already exists");
+  
+  patients.push({ uid, name, phone: document.getElementById("an-phone").value, followupDate: todayStr(), visits: [], status:"pending" });
+  savePts();
+
+  if(document.getElementById("an-q-yes").classList.contains("sel")) {
+    let token = queue.length > 0 ? Math.max(...queue.map(q=>q.token)) + 1 : 1;
+    queue.push({ id: "q"+Date.now(), uid, token, status: "waiting", date: todayStr() });
+    saveQueue();
+    toast("Registered & Added to Queue");
+    showScreen('queue');
+  } else {
+    toast("Registered Successfully");
+    showScreen('home');
+  }
