@@ -185,3 +185,97 @@ function saveNewPatient(){
     toast("Registered Successfully");
     showScreen('home');
   }
+}
+
+function renderQueue(){
+  let h = "";
+  queue.filter(q=>q.status!=='done').forEach(q => {
+    let p = patients.find(pt=>pt.uid===q.uid);
+    if(!p) return;
+    h += `<div class="qcard">
+      <div style="font-size:18px; font-weight:bold;"><span class="token">${q.token}</span> ${p.name} (${p.uid})</div>
+      <button class="btn btn-green" style="margin-top:10px; background:#059669;" onclick="openConsultModal('${q.id}')">Complete Consultation</button>
+    </div>`;
+  });
+  document.getElementById("queue-list").innerHTML = h || "Queue is empty";
+}
+
+function openConsultModal(qid){
+  let q = queue.find(x=>x.id===qid);
+  let p = patients.find(x=>x.uid===q.uid);
+  consultPt = { qid, uid: p.uid };
+  document.getElementById("cm-token").textContent = q.token;
+  document.getElementById("cm-name").textContent = p.name;
+  document.getElementById("cm-meta").textContent = p.uid;
+  renderCmMedPills();
+  document.getElementById("consult-modal").classList.add("open");
+}
+
+function renderCmMedPills(sel){
+  let h = "";
+  QDAYS.forEach(d => {
+    let cl = String(d) === String(sel) ? "sel" : "";
+    h += `<button class="mq-pill ${cl}" onclick="selCmMedDays('${d}')">${d}d</button>`;
+  });
+  document.getElementById("cm-med-pills").innerHTML = h;
+}
+
+function selCmMedDays(v){
+  currentSelectedCmMedDays = v;
+  document.getElementById("cm-med-custom").value = v;
+  document.getElementById("cm-save-btn").style.opacity = v ? "1" : "0.4";
+  renderCmMedPills(v);
+}
+
+function saveConsultation(){
+  if(!currentSelectedCmMedDays) return;
+  let q = queue.find(x=>x.id===consultPt.qid);
+  let p = patients.find(x=>x.uid===consultPt.uid);
+  let nd = addDays(currentSelectedCmMedDays);
+  p.followupDate = nd;
+  p.visits.unshift({ date: todayStr(), medDays: currentSelectedCmMedDays, notes: document.getElementById("cm-notes").value });
+  q.status = "done";
+  savePts(); saveQueue(); closeConsultModal(); showScreen('home');
+  toast("Prescription Saved. Next: " + nd);
+}
+
+function closeConsultModal(){ document.getElementById("consult-modal").classList.remove("open"); }
+
+// --- SYNC ---
+function doCloudSync(){
+  document.getElementById("sync-dot").className = "sync-dot syncing";
+  fetch(CLOUD_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "text/plain" },
+    body: JSON.stringify({ action: "sync", patients: patients })
+  }).then(() => {
+    document.getElementById("sync-dot").className = "sync-dot";
+    toast("Sync Successful");
+  }).catch(() => {
+    document.getElementById("sync-dot").className = "sync-dot offline";
+    toast("Sync Failed");
+  });
+}
+
+function renderHome(){
+  document.getElementById("home-queue-count").textContent = queue.filter(q=>q.status!=='done').length + " waiting";
+}
+
+function doSearch(){
+  let uid = document.getElementById("search-uid").value.toUpperCase();
+  let p = patients.find(x=>x.uid===uid);
+  if(!p) return document.getElementById("search-result").innerHTML = "Patient not found";
+  let h = `<div class="card"><b>${p.name}</b><br>Next Follow-up: ${p.followupDate}</div><hr>`;
+  p.visits.forEach(v => { h += `<div class='card'>Date: ${v.date}<br>Med: ${v.medDays}d<br>Notes: ${v.notes || '-'}</div>`; });
+  document.getElementById("search-result").innerHTML = h;
+}
+
+// --- INIT ---
+window.onload = function() {
+    loadData();
+    renderLogin();
+};
+</script>
+</body>
+</html>
