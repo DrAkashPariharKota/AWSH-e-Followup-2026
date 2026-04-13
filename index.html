@@ -94,7 +94,7 @@ body{font-family:Arial,sans-serif;background:#f0fafa;color:#0c4a6e;min-height:10
     <input id="an-phone" class="inp" type="tel" placeholder="Phone Number">
     <div class="lbl">Add to Queue?</div>
     <div style="display:flex; margin-bottom:15px;">
-        <button id="an-q-yes" class="btn-green mq-pill sel" style="flex:1" onclick="selectAnQueue('yes')">Yes</button>
+        <button id="an-q-yes" class="mq-pill sel" style="flex:1" onclick="selectAnQueue('yes')">Yes</button>
         <button id="an-q-no" class="mq-pill" style="flex:1" onclick="selectAnQueue('no')">No</button>
     </div>
     <button class="btn btn-green" onclick="saveNewPatient()">Register Patient</button>
@@ -112,7 +112,7 @@ body{font-family:Arial,sans-serif;background:#f0fafa;color:#0c4a6e;min-height:10
 
 <script>
 // --- CONFIG ---
-var CLOUD_URL = "https://script.google.com/macros/s/AKfycbxHN42QU-aSByIeJZet9bgJhzIFSrZX0Vn2yWe8qcXkEasBCl0MYIuqoxu73n_Na6sQ/exec";
+var CLOUD_URL = "https://script.google.com/macros/s/AKfycbzzJiGu32AbR4zhfy6YTQoSzxnpaMDFH4bylWv2qW3Xyk3ImHm-ZxP1Nx-37XdlB0vI/exec";
 var SK="asha_pts_v8", QK="asha_queue_v8";
 var QDAYS = [3,5,7,10,14,15,21,30];
 var STAFF = [
@@ -151,131 +151,3 @@ function saveQueue() { localStorage.setItem(QK, JSON.stringify(queue)); }
 
 // --- LOGIN ---
 function renderLogin(){
-  let h = "";
-  STAFF.forEach(s => {
-    h += `<button class="btn" style="background:${s.color}" onclick="doLogin('${s.name}')">${s.icon} ${s.name}</button>`;
-  });
-  document.getElementById("login-buttons").innerHTML = h;
-}
-function doLogin(n){ curUser=n; showScreen('home'); }
-function switchUser(){ curUser=null; showScreen('login'); }
-
-// --- QUEUE & REGISTRATION ---
-function selectAnQueue(v){
-  if(v==='yes'){document.getElementById("an-q-yes").classList.add("sel");document.getElementById("an-q-no").classList.remove("sel");}
-  else {document.getElementById("an-q-no").classList.add("sel");document.getElementById("an-q-yes").classList.remove("sel");}
-}
-
-function saveNewPatient(){
-  let uid = document.getElementById("an-uid").value.trim().toUpperCase();
-  let name = document.getElementById("an-name").value.trim();
-  if(!uid || !name) return toast("Fill UID and Name");
-  if(patients.find(p=>p.uid===uid)) return toast("UID already exists");
-  
-  patients.push({ uid, name, phone: document.getElementById("an-phone").value, followupDate: todayStr(), visits: [], status:"pending" });
-  savePts();
-
-  if(document.getElementById("an-q-yes").classList.contains("sel")) {
-    let token = queue.length > 0 ? Math.max(...queue.map(q=>q.token)) + 1 : 1;
-    queue.push({ id: "q"+Date.now(), uid, token, status: "waiting", date: todayStr() });
-    saveQueue();
-    toast("Registered & Added to Queue");
-    showScreen('queue');
-  } else {
-    toast("Registered Successfully");
-    showScreen('home');
-  }
-}
-
-function renderQueue(){
-  let h = "";
-  queue.filter(q=>q.status!=='done').forEach(q => {
-    let p = patients.find(pt=>pt.uid===q.uid);
-    if(!p) return;
-    h += `<div class="qcard">
-      <div style="font-size:18px; font-weight:bold;"><span class="token">${q.token}</span> ${p.name} (${p.uid})</div>
-      <button class="btn btn-green" style="margin-top:10px; background:#059669;" onclick="openConsultModal('${q.id}')">Complete Consultation</button>
-    </div>`;
-  });
-  document.getElementById("queue-list").innerHTML = h || "Queue is empty";
-}
-
-function openConsultModal(qid){
-  let q = queue.find(x=>x.id===qid);
-  let p = patients.find(x=>x.uid===q.uid);
-  consultPt = { qid, uid: p.uid };
-  document.getElementById("cm-token").textContent = q.token;
-  document.getElementById("cm-name").textContent = p.name;
-  document.getElementById("cm-meta").textContent = p.uid;
-  renderCmMedPills();
-  document.getElementById("consult-modal").classList.add("open");
-}
-
-function renderCmMedPills(sel){
-  let h = "";
-  QDAYS.forEach(d => {
-    let cl = String(d) === String(sel) ? "sel" : "";
-    h += `<button class="mq-pill ${cl}" onclick="selCmMedDays('${d}')">${d}d</button>`;
-  });
-  document.getElementById("cm-med-pills").innerHTML = h;
-}
-
-function selCmMedDays(v){
-  currentSelectedCmMedDays = v;
-  document.getElementById("cm-med-custom").value = v;
-  document.getElementById("cm-save-btn").style.opacity = v ? "1" : "0.4";
-  renderCmMedPills(v);
-}
-
-function saveConsultation(){
-  if(!currentSelectedCmMedDays) return;
-  let q = queue.find(x=>x.id===consultPt.qid);
-  let p = patients.find(x=>x.uid===consultPt.uid);
-  let nd = addDays(currentSelectedCmMedDays);
-  p.followupDate = nd;
-  p.visits.unshift({ date: todayStr(), medDays: currentSelectedCmMedDays, notes: document.getElementById("cm-notes").value });
-  q.status = "done";
-  savePts(); saveQueue(); closeConsultModal(); showScreen('home');
-  toast("Prescription Saved. Next: " + nd);
-}
-
-function closeConsultModal(){ document.getElementById("consult-modal").classList.remove("open"); }
-
-// --- SYNC ---
-function doCloudSync(){
-  document.getElementById("sync-dot").className = "sync-dot syncing";
-  fetch(CLOUD_URL, {
-    method: "POST",
-    mode: "no-cors",
-    headers: { "Content-Type": "text/plain" },
-    body: JSON.stringify({ action: "sync", patients: patients })
-  }).then(() => {
-    document.getElementById("sync-dot").className = "sync-dot";
-    toast("Sync Successful");
-  }).catch(() => {
-    document.getElementById("sync-dot").className = "sync-dot offline";
-    toast("Sync Failed");
-  });
-}
-
-function renderHome(){
-  document.getElementById("home-queue-count").textContent = queue.filter(q=>q.status!=='done').length + " waiting";
-}
-
-function doSearch(){
-  let uid = document.getElementById("search-uid").value.toUpperCase();
-  let p = patients.find(x=>x.uid===uid);
-  if(!p) return document.getElementById("search-result").innerHTML = "Patient not found";
-  let h = `<div class="card"><b>${p.name}</b><br>Next Follow-up: ${p.followupDate}</div><hr>`;
-  p.visits.forEach(v => { h += `<div class='card'>Date: ${v.date}<br>Med: ${v.medDays}d<br>Notes: ${v.notes || '-'}</div>`; });
-  document.getElementById("search-result").innerHTML = h;
-}
-
-// --- INIT ---
-window.onload = function() {
-    loadData();
-    renderLogin();
-};
-</script>
-</body>
-</html>
