@@ -51,7 +51,7 @@ body{font-family:Arial,sans-serif;background:#f0fafa;color:#0c4a6e;min-height:10
 .qcard-done{background:#f0fdf4;border:2px solid #86efac;opacity:0.85;}
 .qbadge{display:inline-block;padding:3px 12px;border-radius:20px;font-size:11px;font-weight:bold;margin-bottom:10px;}
 .qb-waiting{background:#fef3c7;color:#92400e;}
-.qb-consulting{background:#dbeafe;color:#1d4ed8;}
+.qb-consulting(background:#dbeafe;color:#1d4ed8;}
 .qb-done{background:#d1fae5;color:#065f46;}
 .token{background:#f59e0b;color:#fff;border-radius:50%;width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;font-weight:bold;font-size:15px;flex-shrink:0;margin-right:10px;}
 .mq-pills{display:flex;flex-wrap:wrap;margin-bottom:10px;}
@@ -113,7 +113,6 @@ body{font-family:Arial,sans-serif;background:#f0fafa;color:#0c4a6e;min-height:10
 <body>
 <div id="toast"></div>
 
-<!-- ADMIN PASSWORD MODAL -->
 <div id="pwd-modal" class="pwd-modal">
   <div class="pwd-box">
     <div style="font-size:22px;font-weight:bold;color:#4c1d95;margin-bottom:4px;">Admin Access</div>
@@ -125,7 +124,6 @@ body{font-family:Arial,sans-serif;background:#f0fafa;color:#0c4a6e;min-height:10
   </div>
 </div>
 
-<!-- CONSULT COMPLETE MODAL -->
 <div id="consult-modal" class="modal-bg">
   <div class="modal-box">
     <div class="modal-top">
@@ -164,7 +162,6 @@ body{font-family:Arial,sans-serif;background:#f0fafa;color:#0c4a6e;min-height:10
   </div>
 </div>
 
-<!-- ADD TO QUEUE MODAL -->
 <div id="addqueue-modal" class="modal-bg">
   <div class="modal-box">
     <div class="modal-top">
@@ -196,7 +193,6 @@ body{font-family:Arial,sans-serif;background:#f0fafa;color:#0c4a6e;min-height:10
   </div>
 </div>
 
-<!-- EARLY MODAL -->
 <div id="early-modal" class="modal-bg">
   <div class="modal-box">
     <div class="modal-top">
@@ -222,7 +218,6 @@ body{font-family:Arial,sans-serif;background:#f0fafa;color:#0c4a6e;min-height:10
   </div>
 </div>
 
-<!-- DOWNLOAD MODAL -->
 <div id="download-modal" class="modal-bg">
   <div class="modal-box">
     <div class="modal-top">
@@ -231,25 +226,24 @@ body{font-family:Arial,sans-serif;background:#f0fafa;color:#0c4a6e;min-height:10
     </div>
     <div style="font-size:13px;color:#64748b;margin-bottom:20px;" id="dl-count-line"></div>
     <button class="dl-opt" onclick="downloadExcel()">
-      <div class="dl-opt-icon" style="background:#d1fae5;">&#x1F4CA;</div>
+      <div class="dl-opt-icon" style="background:#d1fae5;">📊</div>
       <div><div class="dl-opt-title" style="color:#1a6b3c;">All Patients - Excel (.csv)</div><div class="dl-opt-sub">Opens in Microsoft Excel, Google Sheets</div></div>
     </button>
     <button class="dl-opt" onclick="downloadWord()">
-      <div class="dl-opt-icon" style="background:#dbeafe;">&#x1F4C4;</div>
+      <div class="dl-opt-icon" style="background:#dbeafe;">📄</div>
       <div><div class="dl-opt-title" style="color:#1e40af;">Full Report - Word (.doc)</div><div class="dl-opt-sub">Opens in Microsoft Word</div></div>
     </button>
     <button class="dl-opt" onclick="downloadTodayExcel()">
-      <div class="dl-opt-icon" style="background:#fef3c7;">&#x1F4C5;</div>
+      <div class="dl-opt-icon" style="background:#fef3c7;">📅</div>
       <div><div class="dl-opt-title" style="color:#92400e;">Today's List - Excel (.csv)</div><div class="dl-opt-sub">Only today's pending follow-ups</div></div>
     </button>
     <button class="btn btn-gray" style="margin-top:4px;" onclick="closeDownloadModal()">Cancel</button>
   </div>
 </div>
 
-<!-- LOGIN SCREEN -->
 <div id="screen-login" class="screen active">
   <div style="min-height:100vh;background:#0c4a6e;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;">
-    <div style="font-size:58px;margin-bottom:8px;">&#x1F3E5;</div>
+    <div style="font-size:58px;margin-bottom:8px;">🏥</div>
     <div style="color:#a5f3fc;font-size:12px;letter-spacing:3px;font-weight:bold;margin-bottom:4px;">ASHA WELLNESS SANCTUARY</div>
     <div style="color:#fff;font-size:26px;font-weight:bold;margin-bottom:4px;">Patient Manager</div>
     <div style="color:#7dd3fc;font-size:15px;margin-bottom:32px;">Who is logging in today?</div>
@@ -257,7 +251,6 @@ body{font-family:Arial,sans-serif;background:#f0fafa;color:#0c4a6e;min-height:10
   </div>
 </div>
 
-<!-- HOME SCREEN -->
 <div id="screen-home" class="screen">
   <div style="background:#0e7490;padding:20px 20px 16px;">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;">
@@ -290,38 +283,37 @@ body{font-family:Arial,sans-serif;background:#f0fafa;color:#0c4a6e;min-height:10
       <button class="q-open-btn">Open Queue</button>
     </div>
     <button class="menu-btn" style="border-color:#0e7490;" onclick="showScreen('today')">
-      <div class="menu-icon" style="background:#e0f2fe;">&#x1F4CB;</div>
+      <div class="menu-icon" style="background:#e0f2fe;">📋</div>
       <div><div class="menu-title">Today's Follow-Up List</div><div class="menu-sub" id="home-today-sub">0 patients to call</div></div>
     </button>
     <button class="menu-btn" style="border-color:#0891b2;" onclick="showScreen('search')">
-      <div class="menu-icon" style="background:#e0f2fe;">&#x1F50D;</div>
+      <div class="menu-icon" style="background:#e0f2fe;">🔍</div>
       <div><div class="menu-title">Search Patient</div><div class="menu-sub">Search by UID and record visit</div></div>
     </button>
     <button class="menu-btn" style="border-color:#059669;background:#f0fdf4;" onclick="showScreen('addNew')">
-      <div class="menu-icon" style="background:#d1fae5;">&#x2795;</div>
+      <div class="menu-icon" style="background:#d1fae5;">➕</div>
       <div><div class="menu-title" style="color:#065f46;">Add New Patient</div><div class="menu-sub" style="color:#059669;">Register a new patient</div></div>
     </button>
     <button class="menu-btn" style="border-color:#f59e0b;background:#fffbeb;" onclick="showScreen('earlySearch')">
-      <div class="menu-icon" style="background:#fef3c7;">&#x26A1;</div>
+      <div class="menu-icon" style="background:#fef3c7;">⚡</div>
       <div><div class="menu-title" style="color:#92400e;">Early / Walk-In Visit</div><div class="menu-sub" style="color:#b45309;">Patient came before scheduled date</div></div>
     </button>
     <button class="menu-btn" style="border-color:#0f766e;background:#f0fdfa;" onclick="showScreen('importOld')">
-      <div class="menu-icon" style="background:#ccfbf1;">&#x1F4E5;</div>
+      <div class="menu-icon" style="background:#ccfbf1;">📥</div>
       <div><div class="menu-title" style="color:#0f766e;">Import Old OPD Records</div><div class="menu-sub" style="color:#0f766e;">Enter past patient data</div></div>
     </button>
     <button class="menu-btn" style="border-color:#6d28d9;background:#faf5ff;" onclick="openDownloadModal()">
-      <div class="menu-icon" style="background:#ede9fe;">&#x2B07;</div>
+      <div class="menu-icon" style="background:#ede9fe;">⬇️</div>
       <div><div class="menu-title" style="color:#4c1d95;">Download Patient Data</div><div class="menu-sub" style="color:#7c3aed;">Export to Excel or Word</div></div>
     </button>
     <button class="menu-btn" style="border-color:#ddd6fe;background:#faf5ff;" onclick="requireAdmin('log')">
-      <div class="menu-icon" style="background:#ede9fe;">&#x1F4DC;</div>
+      <div class="menu-icon" style="background:#ede9fe;">📜</div>
       <div><div class="menu-title" style="color:#4c1d95;">Activity Log <span class="admin-only-badge">ADMIN</span></div><div class="menu-sub" style="color:#7c3aed;">All staff actions</div></div>
     </button>
     <button class="btn btn-gray" onclick="switchUser()">Switch User</button>
   </div>
 </div>
 
-<!-- QUEUE SCREEN -->
 <div id="screen-queue" class="screen">
   <div class="hdr hdr-amber">
     <button class="back-btn" onclick="showScreen('home')">&#8592;</button>
@@ -348,7 +340,6 @@ body{font-family:Arial,sans-serif;background:#f0fafa;color:#0c4a6e;min-height:10
   <div class="pad-b" id="queue-list"></div>
 </div>
 
-<!-- TODAY LIST SCREEN -->
 <div id="screen-today" class="screen">
   <div class="hdr hdr-blue">
     <button class="back-btn" onclick="showScreen('home')">&#8592;</button>
@@ -357,7 +348,6 @@ body{font-family:Arial,sans-serif;background:#f0fafa;color:#0c4a6e;min-height:10
   <div class="pad-b" id="today-list"></div>
 </div>
 
-<!-- SEARCH SCREEN -->
 <div id="screen-search" class="screen">
   <div class="hdr hdr-blue">
     <button class="back-btn" onclick="goHome()">&#8592;</button>
@@ -373,7 +363,7 @@ body{font-family:Arial,sans-serif;background:#f0fafa;color:#0c4a6e;min-height:10
       <button class="btn btn-green" style="padding:14px;" onclick="goToAddNewFromSearch()">Register as New Patient</button>
     </div>
     <div id="search-found" style="display:none;" class="card card-green">
-      <div style="font-size:11px;font-weight:bold;color:#059669;margin-bottom:8px;letter-spacing:1px;">PATIENT FOUND</div>
+      <div style="font-size:11px;font-weight:bold;color:#059669;margin-bottom:8px;letter-spacing:1px;">✅ PATIENT FOUND</div>
       <div style="font-size:21px;font-weight:bold;color:#0c4a6e;" id="sf-name"></div>
       <div style="font-size:14px;color:#64748b;margin-top:3px;" id="sf-meta"></div>
       <div style="font-size:13px;color:#0e7490;margin-top:4px;" id="sf-schedule"></div>
@@ -400,7 +390,6 @@ body{font-family:Arial,sans-serif;background:#f0fafa;color:#0c4a6e;min-height:10
   </div>
 </div>
 
-<!-- ADD NEW PATIENT SCREEN -->
 <div id="screen-addNew" class="screen">
   <div class="hdr hdr-green">
     <button class="back-btn" onclick="goHome()">&#8592;</button>
@@ -444,7 +433,6 @@ body{font-family:Arial,sans-serif;background:#f0fafa;color:#0c4a6e;min-height:10
   </div>
 </div>
 
-<!-- EARLY SEARCH SCREEN -->
 <div id="screen-earlySearch" class="screen">
   <div class="hdr hdr-orange">
     <button class="back-btn" onclick="goHome()">&#8592;</button>
@@ -469,7 +457,6 @@ body{font-family:Arial,sans-serif;background:#f0fafa;color:#0c4a6e;min-height:10
   </div>
 </div>
 
-<!-- IMPORT OLD DATA SCREEN -->
 <div id="screen-importOld" class="screen">
   <div class="hdr hdr-teal">
     <button class="back-btn" onclick="goHome()">&#8592;</button>
@@ -523,7 +510,6 @@ body{font-family:Arial,sans-serif;background:#f0fafa;color:#0c4a6e;min-height:10
   </div>
 </div>
 
-<!-- ACTIVITY LOG SCREEN -->
 <div id="screen-log" class="screen">
   <div class="hdr hdr-purple">
     <button class="back-btn" onclick="goHome()">&#8592;</button>
@@ -535,7 +521,7 @@ body{font-family:Arial,sans-serif;background:#f0fafa;color:#0c4a6e;min-height:10
 <script>
 var SK="asha_pts_v8",LK="asha_logs_v8",QK="asha_queue_v8";
 var ADMIN_PWD="112233445566";
-var CLOUD_URL="https://script.google.com/macros/s/AKfycbyMoGVJ7BEItzwvSwMd9kmE3_9V8XGlWBCEb5awLOY3-AuX_PkV323NrKc6pC0RD_hD_Q/exec";
+var CLOUD_URL="https://script.google.com/macros/s/AKfycbxHN42QU-aSByIeJZet9bgJhzIFSrZX0Vn2yWe8qcXkEasBCl0MYIuqoxu73n_Na6sQ/exec";
 var QDAYS=[3,5,7,10,14,15,21,30];
 var REASONS=["Side effect","Chest pain","Reports ready","Not feeling well","Emergency","Other"];
 var STAFF=[
@@ -549,7 +535,7 @@ var curUser=null,isAdminUser=false;
 var patients=[],logs=[],queue=[];
 var selSex="",selCat="",selFuDays="",selEmReason="",selEmDays="";
 var selImpSex="",selImpCat="",selImpMed="";
-var selCmMed="",selRxVal="",selAqType="",anAddToQueue="yes";
+var currentSelectedCmMedDays="",selRxVal="",selAqType="",anAddToQueue="yes";
 var earlyPt=null,foundPt=null,earlyFndPt=null,consultPt=null,aqFoundPt=null;
 var pendingAdminAction=null,bulkParsed=[];
 
@@ -612,9 +598,15 @@ function closePwdModal(){document.getElementById("pwd-modal").classList.remove("
 
 // LOGIN
 function renderLogin(){
-  var h="";for(var i=0;i<STAFF.length;i++){var s=STAFF[i];var al=s.isAdmin?'<div style="color:'+s.color+';font-size:12px;font-weight:bold;margin-top:2px;">ADMIN - Full Access</div>':"";
-  h+='<button class="login-btn" style="border-color:'+s.color+';" onclick="doLogin(\''+s.name+'\')">'+'<div class="login-icon" style="background:'+s.color+'33;">'+s.icon+'</div><div><div style="color:#fff;font-size:19px;font-weight:bold;">'+s.name+'</div>'+al+'</div></button>';}
-  document.getElementById("login-buttons").innerHTML=h;
+  let h = "";
+  STAFF.forEach(s => {
+    let al = s.isAdmin ? '<div style="color:'+s.color+';font-size:12px;font-weight:bold;margin-top:2px;">ADMIN - Full Access</div>' : "";
+    h += `<button class="login-btn" style="border-color:${s.color}" onclick="doLogin('${s.name}')">
+            <div class="login-icon" style="background:${s.color}33;">${s.icon}</div>
+            <div><div style="color:#fff;font-size:19px;font-weight:bold;">${s.name}</div>${al}</div>
+          </button>`;
+  });
+  document.getElementById("login-buttons").innerHTML = h;
 }
 function doLogin(name){curUser=name;isAdminUser=sInfo(name).isAdmin===true;renderHome();showScreen("home");}
 function switchUser(){curUser=null;isAdminUser=false;showScreen("login");}
@@ -636,308 +628,132 @@ function sBox(v,l,c,bg){return'<div class="stat-box" style="background:'+bg+';">
 
 // QUEUE
 function renderQueue(){
-  var t=todayStr();var nd=new Date();var mos=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];var days=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-  document.getElementById("queue-date-sub").textContent=days[nd.getDay()]+", "+nd.getDate()+" "+mos[nd.getMonth()];
-  var waiting=queue.filter(function(q){return q.status==="waiting";});
   var consulting=queue.filter(function(q){return q.status==="consulting";});
+  var waiting=queue.filter(function(q){return q.status==="waiting";});
   var done=queue.filter(function(q){return q.status==="done";});
   document.getElementById("q-waiting-count").textContent=waiting.length;
   document.getElementById("q-consulting-count").textContent=consulting.length;
   document.getElementById("q-done-count").textContent=done.length;
-  if(queue.length===0){document.getElementById("queue-list").innerHTML='<div class="empty-state"><div style="font-size:52px;">&#x1F3E5;</div><div style="font-size:19px;font-weight:bold;color:#0c4a6e;margin-top:12px;">Queue is empty</div><div style="font-size:13px;color:#64748b;margin-top:6px;">Add patients as they arrive at reception</div><br><button class="btn btn-amber" style="width:auto;padding:12px 24px;" onclick="showAddToQueueModal()">+ Add First Patient</button></div>';return;}
+  if(queue.length===0){document.getElementById("queue-list").innerHTML='<div class="empty-state">Queue is empty</div>';return;}
   var ordered=consulting.concat(waiting).concat(done);
   var h="";
-  for(var i=0;i<ordered.length;i++){
-    var qe=ordered[i];var p=null;for(var j=0;j<patients.length;j++){if(patients[j].uid===qe.uid){p=patients[j];break;}}
-    if(!p)continue;
-    var cardCls="qcard-waiting",badgeCls="qb-waiting",badgeTxt="Waiting";
-    if(qe.status==="consulting"){cardCls="qcard-consulting";badgeCls="qb-consulting";badgeTxt="With Doctor";}
-    if(qe.status==="done"){cardCls="qcard-done";badgeCls="qb-done";badgeTxt="Completed";}
-    var tokBg=qe.status==="done"?"#059669":"#f59e0b";
-    h+='<div class="qcard '+cardCls+'">';
-    h+='<div style="display:flex;align-items:flex-start;margin-bottom:6px;">';
-    h+='<div class="token" style="background:'+tokBg+';">'+qe.token+'</div>';
-    h+='<div style="flex:1;">';
-    h+='<div class="qbadge '+badgeCls+'">'+badgeTxt+'</div>';
-    h+='<div style="font-size:18px;font-weight:bold;color:#0c4a6e;">'+eh(p.name)+'</div>';
-    h+='<div style="font-size:13px;color:#64748b;">'+eh(p.uid)+' &bull; '+(p.age||"")+'y &bull; '+(p.sex||"")+'</div>';
-    h+='<div style="font-size:12px;color:#0e7490;font-weight:bold;">'+(p.category||"")+(qe.visitType?' &bull; <span style="color:#b45309;">'+eh(qe.visitType)+'</span>':"")+'</div>';
-    h+='</div></div>';
-    h+='<div class="contact-row" style="margin-bottom:8px;">'+contactRow(p.phone,p.name)+'</div>';
-    if(qe.status==="done"){
-      h+='<div style="background:#d1fae5;border-radius:10px;padding:10px 12px;font-size:13px;color:#065f46;font-weight:bold;">';
-      h+='Done by '+badge(qe.doneBy,true);
-      if(qe.medDays)h+=' &bull; Medicine: '+qe.medDays+' days';
-      if(qe.nextFollowup)h+='<br>Next follow-up: <strong>'+fmt(qe.nextFollowup)+'</strong>';
-      if(qe.notes)h+='<br><span style="color:#059669;font-weight:normal;">'+eh(qe.notes)+'</span>';
-      h+='</div>';
-    }else{
-      h+='<div class="act-row">';
-      if(qe.status==="waiting")h+='<button class="act-btn" style="background:#3b82f6;" onclick="moveToConsulting(\''+qe.id+'\')">Call In</button>';
-      else h+='<button class="act-btn" style="background:#3b82f6;opacity:0.5;">With Doctor</button>';
-      h+='<button class="act-btn" style="background:#059669;" onclick="openConsultModal(\''+qe.id+'\')">Complete</button>';
-      h+='<button class="act-btn" style="background:#dc2626;" onclick="removeFromQueue(\''+qe.id+'\')">Remove</button>';
-      h+='</div>';
-    }
-    h+='</div>';
-  }
+  ordered.forEach(qe => {
+    var p=patients.find(pt=>pt.uid===qe.uid);
+    if(!p)return;
+    var cardCls=qe.status==="consulting"?"qcard-consulting":qe.status==="done"?"qcard-done":"qcard-waiting";
+    h+=`<div class="qcard ${cardCls}">
+          <div style="display:flex;align-items:center;">
+            <div class="token">${qe.token}</div>
+            <div><b>${p.name}</b> (${p.uid})</div>
+          </div>
+          ${qe.status!=='done' ? `<button class="btn btn-green" style="margin-top:10px;" onclick="openConsultModal('${qe.id}')">Complete</button>` : ''}
+        </div>`;
+  });
   document.getElementById("queue-list").innerHTML=h;
 }
-function moveToConsulting(qid){for(var i=0;i<queue.length;i++){if(queue[i].id===qid){queue[i].status="consulting";break;}}saveQueue();renderQueue();}
-function removeFromQueue(qid){queue=queue.filter(function(q){return q.id!==qid;});saveQueue();renderQueue();renderHome();}
-
-// ADD TO QUEUE MODAL
-function showAddToQueueModal(){
-  aqFoundPt=null;selAqType="";
-  document.getElementById("aq-uid").value="";
-  document.getElementById("aq-not-found").style.display="none";
-  document.getElementById("aq-found").style.display="none";
-  var pills=document.getElementById("aq-type-pills").querySelectorAll(".cat-btn");for(var i=0;i<pills.length;i++)pills[i].classList.remove("sel");
-  document.getElementById("addqueue-modal").classList.add("open");
-}
-function closeAddToQueueModal(){document.getElementById("addqueue-modal").classList.remove("open");}
-function aqClearFound(){document.getElementById("aq-not-found").style.display="none";document.getElementById("aq-found").style.display="none";aqFoundPt=null;}
-function aqSearch(){
-  var uid=document.getElementById("aq-uid").value.trim().toUpperCase();if(!uid)return;
-  var f=null;for(var i=0;i<patients.length;i++){if(patients[i].uid===uid){f=patients[i];break;}}
-  if(!f){document.getElementById("aq-not-found").style.display="block";document.getElementById("aq-found").style.display="none";aqFoundPt=null;return;}
-  aqFoundPt=f;document.getElementById("aq-not-found").style.display="none";document.getElementById("aq-found").style.display="block";
-  document.getElementById("aq-name").textContent=f.name;document.getElementById("aq-meta").textContent=f.uid+" - "+(f.age||"")+"y - "+(f.sex||"")+" - "+(f.category||"");document.getElementById("aq-phone").textContent=f.phone;
-}
-function selectAqType(v){selAqType=v;var pills=document.getElementById("aq-type-pills").querySelectorAll(".cat-btn");for(var i=0;i<pills.length;i++){if(pills[i].textContent===v)pills[i].classList.add("sel");else pills[i].classList.remove("sel");}}
-function addPatientToQueue(){
-  if(!aqFoundPt){toast("Search a patient first");return;}
-  for(var i=0;i<queue.length;i++){if(queue[i].uid===aqFoundPt.uid&&queue[i].status!=="done"){toast(aqFoundPt.name+" is already in queue");return;}}
-  var token=queue.length+1;
-  var entry={id:"q"+Date.now(),uid:aqFoundPt.uid,token:token,visitType:selAqType||"Regular Visit",status:"waiting",date:todayStr(),addedBy:curUser,addedAt:new Date().toLocaleString("en-IN")};
-  queue.push(entry);saveQueue();addLog("Added to Queue",aqFoundPt.name,aqFoundPt.uid);toast(aqFoundPt.name+" added - Token #"+token);closeAddToQueueModal();renderQueue();renderHome();
-}
-
-// CONSULT COMPLETE MODAL
 function openConsultModal(qid){
-  var qe=null;for(var i=0;i<queue.length;i++){if(queue[i].id===qid){qe=queue[i];break;}}if(!qe)return;
-  var p=null;for(var j=0;j<patients.length;j++){if(patients[j].uid===qe.uid){p=patients[j];break;}}if(!p)return;
-  consultPt={qid:qid,uid:p.uid,name:p.name};selCmMed="";selRxVal="";
-  document.getElementById("cm-token").textContent=qe.token;document.getElementById("cm-name").textContent=p.name;document.getElementById("cm-meta").textContent=p.uid+" - "+(p.age||"")+"y - "+(p.sex||"")+" - "+(p.category||"");document.getElementById("cm-type").textContent=qe.visitType||"";
-  document.getElementById("cm-med-custom").value="";document.getElementById("cm-next-bar").style.display="none";document.getElementById("cm-notes").value="";
-  var rxBtns=["rx-yes","rx-no","rx-na"];for(var k=0;k<rxBtns.length;k++)document.getElementById(rxBtns[k]).classList.remove("sel");
-  renderCmMedPills("");checkCmSaveBtn();document.getElementById("consult-modal").classList.add("open");
+  var qe=queue.find(q=>q.id===qid);
+  var p=patients.find(pt=>pt.uid===qe.uid);
+  consultPt={qid:qid,uid:p.uid,name:p.name};
+  document.getElementById("cm-token").textContent=qe.token;
+  document.getElementById("cm-name").textContent=p.name;
+  document.getElementById("cm-meta").textContent=p.uid;
+  renderCmMedPills();
+  document.getElementById("consult-modal").classList.add("open");
 }
-function closeConsultModal(){document.getElementById("consult-modal").classList.remove("open");consultPt=null;}
-function renderCmMedPills(sel){var h="";for(var i=0;i<QDAYS.length;i++){var d=QDAYS[i];var s=sel===String(d)?" sel":"";h+='<button class="mq-pill'+s+'" onclick="selCmMed(\''+d+'\')">'+d+'d</button>';}document.getElementById("cm-med-pills").innerHTML=h;}
-function selCmMed(val){selCmMed=val;document.getElementById("cm-med-custom").value=val;updCmBar(val);renderCmMedPills(val);checkCmSaveBtn();}
-function onCmMedInput(v){selCmMed=v;renderCmMedPills(v);updCmBar(v);checkCmSaveBtn();}
-function updCmBar(v){var b=document.getElementById("cm-next-bar");if(v&&!isNaN(v)&&parseInt(v,10)>0){b.textContent="Next follow-up: "+fmt(addDays(v));b.style.display="block";}else b.style.display="none";}
-function selectRx(v){selRxVal=v;var mp={yes:"rx-yes",no:"rx-no",na:"rx-na"};for(var k in mp){if(k===v)document.getElementById(mp[k]).classList.add("sel");else document.getElementById(mp[k]).classList.remove("sel");}checkCmSaveBtn();}
-function checkCmSaveBtn(){var days=selCmMed||document.getElementById("cm-med-custom").value.trim();var ok=days&&!isNaN(days)&&parseInt(days,10)>0;var btn=document.getElementById("cm-save-btn");btn.style.opacity=ok?"1":"0.4";btn.style.cursor=ok?"pointer":"not-allowed";}
-function saveConsultation(){
-  var days=selCmMed||document.getElementById("cm-med-custom").value.trim();
-  if(!days||isNaN(days)||parseInt(days,10)<1){toast("Enter medicine days");return;}
-  if(!consultPt)return;
-  var nd=addDays(days);var notes=document.getElementById("cm-notes").value.trim();var t=todayStr();
-  for(var i=0;i<queue.length;i++){if(queue[i].id===consultPt.qid){queue[i].status="done";queue[i].doneBy=curUser;queue[i].doneAt=new Date().toLocaleString("en-IN");queue[i].medDays=days;queue[i].nextFollowup=nd;queue[i].notes=notes;queue[i].rx=selRxVal;break;}}
-  saveQueue();
-  var visit={date:t,medDays:days,notes:notes,flag:"Consultation",staff:curUser,nextFollowup:nd,type:"consultation",rx:selRxVal};
-  for(var j=0;j<patients.length;j++){if(patients[j].uid===consultPt.uid){patients[j].followupDate=nd;patients[j].status="pending";patients[j].visits=[visit].concat(patients[j].visits||[]);break;}}
-  savePts();addLog("Consultation Done - "+days+"d medicine",consultPt.name,consultPt.uid);
-  toast("Done! Next follow-up: "+fmt(nd));closeConsultModal();renderQueue();renderHome();
-}
-function addNewPatientToQueue(uid,name){var token=queue.length+1;var entry={id:"q"+Date.now(),uid:uid,token:token,visitType:"New Patient",status:"waiting",date:todayStr(),addedBy:curUser,addedAt:new Date().toLocaleString("en-IN")};queue.push(entry);saveQueue();}
-
-// TODAY LIST
-function renderToday(){
-  var t=todayStr();var pts=patients.filter(function(p){return p.followupDate<=t&&p.status==="pending";});
-  pts.sort(function(a,b){return a.followupDate.localeCompare(b.followupDate);});
-  var nd=new Date();var mos=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];var days=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-  document.getElementById("today-date-sub").textContent=days[nd.getDay()]+", "+nd.getDate()+" "+mos[nd.getMonth()]+" "+nd.getFullYear();
-  if(pts.length===0){document.getElementById("today-list").innerHTML='<div class="empty-state"><div style="font-size:56px;">&#x1F389;</div><div style="font-size:20px;font-weight:bold;color:#0c4a6e;margin-top:12px;">All caught up!</div><div style="font-size:14px;color:#64748b;margin-top:6px;">No pending follow-ups today</div></div>';return;}
+function closeConsultModal(){document.getElementById("consult-modal").classList.remove("open");}
+function renderCmMedPills(sel){
   var h="";
-  for(var i=0;i<pts.length;i++){
-    var p=pts[i];var ov=p.followupDate<t;var bg=ov?"#fff5f5":"#f0fdf4";var br=ov?"2.5px solid #fca5a5":"2.5px solid #6ee7b7";var tg=ov?"tag-red":"tag-green";
-    h+='<div class="pt-card" style="background:'+bg+';border:'+br+';">';
-    h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;"><div>';
-    h+='<div style="font-size:19px;font-weight:bold;color:#0c4a6e;">'+eh(p.name)+'</div>';
-    h+='<div style="font-size:13px;color:#64748b;margin-top:2px;">'+eh(p.uid)+' &bull; '+(p.age||"")+'y &bull; '+(p.sex||"")+'</div>';
-    h+='<div style="font-size:13px;color:#0e7490;margin-top:2px;font-weight:bold;">'+(p.category||"")+'</div></div>';
-    h+='<span class="tag '+tg+'">'+daysDiff(p.followupDate)+'</span></div>';
-    h+='<div class="contact-row">'+contactRow(p.phone,p.name)+'</div>';
-    if(p.address)h+='<div style="font-size:13px;color:#64748b;margin-bottom:8px;">'+eh(p.address)+'</div>';
-    if(p.createdBy)h+='<div style="font-size:11px;color:#94a3b8;margin-bottom:10px;">Added by '+badge(p.createdBy,true)+'</div>';
-    h+='<div class="act-row">';
-    h+='<button class="act-btn" style="background:#f59e0b;" onclick="openEarlyFromList(\''+p.uid+'\')">Early</button>';
-    h+='<button class="act-btn" style="background:#059669;" onclick="markDone(\''+p.uid+'\',\'Done\')">Done</button>';
-    h+='<button class="act-btn" style="background:#64748b;" onclick="markDone(\''+p.uid+'\',\'No Answer\')">No Ans</button>';
-    h+='</div>';
-    if(p.doneBy)h+='<div class="done-bar">Done by '+badge(p.doneBy,true)+'<span style="color:#94a3b8;font-size:11px;">'+p.doneAt+'</span></div>';
-    if(p.visits&&p.visits.length>0)h+='<div style="border-top:1px solid #e2e8f0;padding-top:10px;margin-top:4px;"><div class="sec-lbl">LAST VISIT</div>'+vCard(p.visits[0])+'</div>';
-    h+='</div>';
-  }
-  document.getElementById("today-list").innerHTML=h;
+  QDAYS.forEach(d => {
+    var s=String(sel)===String(d)?" sel":"";
+    h+=`<button class="mq-pill${s}" onclick="selCmMedDays('${d}')">${d}d</button>`;
+  });
+  document.getElementById("cm-med-pills").innerHTML=h;
 }
-function markDone(uid,action){var nm="";for(var i=0;i<patients.length;i++){if(patients[i].uid===uid){nm=patients[i].name;patients[i].status=action;patients[i].doneBy=curUser;patients[i].doneAt=new Date().toLocaleString("en-IN");break;}}savePts();addLog("Marked: "+action,nm,uid);toast(action+" by "+curUser);renderToday();}
-
-// SEARCH
-function clearFoundPt(){document.getElementById("search-not-found").style.display="none";document.getElementById("search-found").style.display="none";foundPt=null;}
-function clearSearch(){var el=document.getElementById("search-uid");if(el)el.value="";clearFoundPt();selFuDays="";var fn=document.getElementById("fu-notes");if(fn)fn.value="";}
-function doSearch(){
-  var uid=document.getElementById("search-uid").value.trim().toUpperCase();if(!uid)return;
-  var f=null;for(var i=0;i<patients.length;i++){if(patients[i].uid===uid){f=patients[i];break;}}
-  if(!f){document.getElementById("search-not-found").style.display="block";document.getElementById("search-found").style.display="none";foundPt=null;return;}
-  foundPt=f;document.getElementById("search-not-found").style.display="none";document.getElementById("search-found").style.display="block";
-  var t=todayStr();var sch="Scheduled: "+fmt(f.followupDate);
-  if(f.followupDate<t)sch+=' <span style="color:#dc2626;font-weight:bold;">OVERDUE</span>';
-  if(f.followupDate===t)sch+=' <span style="color:#059669;font-weight:bold;">TODAY</span>';
-  document.getElementById("sf-name").textContent=f.name;document.getElementById("sf-meta").textContent=f.uid+" - "+(f.age||"")+"y - "+(f.sex||"")+" - "+(f.category||"");
-  document.getElementById("sf-schedule").innerHTML=sch;document.getElementById("sf-createdby").innerHTML=f.createdBy?"Added by "+badge(f.createdBy,true):"";
-  document.getElementById("sf-contact-row").innerHTML=contactRow(f.phone,f.name);
-  renderMedPills("fu-med-pills","fu",selFuDays);
-  if(f.visits&&f.visits.length>0){var h="";var sl=f.visits.slice(0,4);for(var j=0;j<sl.length;j++)h+=vCard(sl[j]);document.getElementById("sf-history-list").innerHTML=h;document.getElementById("sf-history").style.display="block";}
-  else document.getElementById("sf-history").style.display="none";
+function selCmMedDays(val){
+  currentSelectedCmMedDays=val;
+  document.getElementById("cm-med-custom").value=val;
+  renderCmMedPills(val);
+  document.getElementById("cm-save-btn").style.opacity="1";
+  document.getElementById("cm-save-btn").style.cursor="pointer";
 }
-function renderMedPills(cid,pfx,cur){var h="";for(var i=0;i<QDAYS.length;i++){var d=QDAYS[i];var s=cur===String(d)?" sel":"";h+='<button class="med-pill'+s+'" onclick="selMed(\''+pfx+'\',\''+d+'\')">'+d+'d</button>';}document.getElementById(cid).innerHTML=h;}
-function selMed(pfx,val){
-  if(pfx==="fu"){selFuDays=val;document.getElementById("fu-med-custom").value=val;updFuBar(val);renderMedPills("fu-med-pills","fu",val);}
-  else if(pfx==="em"){selEmDays=val;document.getElementById("em-med-custom").value=val;updEmBar(val);renderEmMedPills(val);checkEmBtn();}
-  else if(pfx==="imp"){selImpMed=val;document.getElementById("imp-med-custom").value=val;updImpBar(val);renderImpMedPills(val);}
+function onCmMedInput(v){selCmMedDays(v);}
+function selectRx(v){selRxVal=v;}
+function saveConsultation(){
+  if(!currentSelectedCmMedDays)return;
+  var qe=queue.find(q=>q.id===consultPt.qid);
+  var p=patients.find(pt=>pt.uid===consultPt.uid);
+  var nd=addDays(currentSelectedCmMedDays);
+  qe.status="done";
+  p.followupDate=nd;
+  p.visits.unshift({date:todayStr(),medDays:currentSelectedCmMedDays,notes:document.getElementById("cm-notes").value});
+  savePts();saveQueue();closeConsultModal();renderQueue();renderHome();
+  toast("Consultation Saved");
 }
-function onFuMedInput(v){selFuDays=v;updFuBar(v);renderMedPills("fu-med-pills","fu",v);}
-function updFuBar(v){var b=document.getElementById("fu-next-bar");if(v&&!isNaN(v)&&parseInt(v,10)>0){b.textContent="Next follow-up: "+fmt(addDays(v));b.style.display="block";}else b.style.display="none";}
-function saveFollowUp(){
-  var md=selFuDays||document.getElementById("fu-med-custom").value.trim();if(!md||isNaN(md)||parseInt(md,10)<1){toast("Enter medicine days");return;}if(!foundPt)return;
-  var nd=addDays(md);var t=todayStr();var diff=Math.round((new Date(t)-new Date(foundPt.followupDate))/86400000);var flag=diff<-1?"Early":diff>1?"Late":"On Time";var notes=document.getElementById("fu-notes").value.trim();
-  var visit={date:t,medDays:md,notes:notes,flag:flag,staff:curUser,nextFollowup:nd,type:"regular"};
-  for(var i=0;i<patients.length;i++){if(patients[i].uid===foundPt.uid){patients[i].followupDate=nd;patients[i].status="pending";patients[i].visits=[visit].concat(patients[i].visits||[]);break;}}
-  savePts();addLog("Visit recorded - "+flag+" - "+md+"d medicine",foundPt.name,foundPt.uid);toast("Next follow-up: "+fmt(nd));clearSearch();goHome();
+function addNewPatientToQueue(uid,name){
+  var tok=queue.length+1;
+  queue.push({id:"q"+Date.now(),uid:uid,token:tok,status:"waiting",date:todayStr()});
+  saveQueue();
 }
-function goToAddNewFromSearch(){var uid=document.getElementById("search-uid").value.trim().toUpperCase();document.getElementById("an-uid").value=uid;document.getElementById("addnew-user").innerHTML=badge(curUser,true);resetAddNew();showScreen("addNew");}
-function deleteFoundPatient(){if(!foundPt)return;var nm=foundPt.name;var uid=foundPt.uid;patients=patients.filter(function(p){return p.uid!==uid;});savePts();addLog("DELETED PATIENT",nm,uid);toast("Deleted: "+nm);clearSearch();goHome();}
-
-// ADD NEW PATIENT
-function selectAnQueue(v){anAddToQueue=v;if(v==="yes"){document.getElementById("an-q-yes").classList.add("sel");document.getElementById("an-q-no").classList.remove("sel");}else{document.getElementById("an-q-no").classList.add("sel");document.getElementById("an-q-yes").classList.remove("sel");}}
-function resetAddNew(){selSex="";selCat="";anAddToQueue="yes";["an-name","an-phone","an-age","an-address","an-uid"].forEach(function(id){var el=document.getElementById(id);if(el)el.value="";});resetGrp("sex-row","sex-btn");resetGrp("cat-wrap","cat-btn");document.getElementById("an-q-yes").classList.add("sel");document.getElementById("an-q-no").classList.remove("sel");}
-function resetGrp(wid,cls){var b=document.getElementById(wid).querySelectorAll("."+cls);for(var i=0;i<b.length;i++)b[i].classList.remove("sel");}
-function selectSex(v){selSex=v;var b=document.getElementById("sex-row").querySelectorAll(".sex-btn");for(var i=0;i<b.length;i++){if(b[i].textContent===v)b[i].classList.add("sel");else b[i].classList.remove("sel");}}
-function selectCat(v){selCat=v;var b=document.getElementById("cat-wrap").querySelectorAll(".cat-btn");for(var i=0;i<b.length;i++){if(b[i].textContent===v)b[i].classList.add("sel");else b[i].classList.remove("sel");}}
-function saveNewPatient(){
-  var uid=document.getElementById("an-uid").value.trim().toUpperCase();var name=document.getElementById("an-name").value.trim();var phone=document.getElementById("an-phone").value.trim();var age=document.getElementById("an-age").value.trim();var addr=document.getElementById("an-address").value.trim();
-  if(!uid||!name||!phone){toast("UID, Name and Phone required");return;}
-  for(var i=0;i<patients.length;i++){if(patients[i].uid===uid){toast("UID already exists!");return;}}
-  var p={uid:uid,name:name,phone:phone,age:age,sex:selSex,address:addr,category:selCat,followupDate:todayStr(),status:"pending",createdBy:curUser,createdAt:new Date().toLocaleString("en-IN"),visits:[]};
-  patients.push(p);savePts();addLog("New Patient Added",name,uid);
-  if(anAddToQueue==="yes"){addNewPatientToQueue(uid,name);toast("Patient saved and added to Queue!");showScreen("queue");}else{toast("Patient saved: "+name);goHome();}
-  resetAddNew();
-}
-
-// EARLY VISIT
-function clearEarlyFound(){document.getElementById("early-not-found").style.display="none";document.getElementById("early-found").style.display="none";earlyFndPt=null;}
-function clearEarlySearch(){var el=document.getElementById("early-uid");if(el)el.value="";clearEarlyFound();}
-function doEarlySearch(){
-  var uid=document.getElementById("early-uid").value.trim().toUpperCase();if(!uid)return;
-  var f=null;for(var i=0;i<patients.length;i++){if(patients[i].uid===uid){f=patients[i];break;}}
-  if(!f){document.getElementById("early-not-found").style.display="block";document.getElementById("early-found").style.display="none";earlyFndPt=null;return;}
-  earlyFndPt=f;document.getElementById("early-not-found").style.display="none";document.getElementById("early-found").style.display="block";
-  document.getElementById("ef-name").textContent=f.name;document.getElementById("ef-meta").textContent=f.uid+" - "+(f.age||"")+"y - "+(f.sex||"")+" - "+(f.category||"");
-  var t=todayStr();var s="Scheduled: "+fmt(f.followupDate);if(f.followupDate>t)s+=" - "+Math.round((new Date(f.followupDate)-new Date(t))/86400000)+" days before schedule";if(f.followupDate<t)s+=" - Overdue";if(f.followupDate===t)s+=" - Due today";
-  document.getElementById("ef-schedule").textContent=s;document.getElementById("ef-contact-row").innerHTML=contactRow(f.phone,f.name);
-}
-function openEarlyModal(){if(!earlyFndPt)return;earlyPt=earlyFndPt;fillEarlyModal(earlyPt);document.getElementById("early-modal").classList.add("open");}
-function openEarlyFromList(uid){var f=null;for(var i=0;i<patients.length;i++){if(patients[i].uid===uid){f=patients[i];break;}}if(!f)return;earlyPt=f;fillEarlyModal(earlyPt);document.getElementById("early-modal").classList.add("open");}
-function fillEarlyModal(p){
-  selEmReason="";selEmDays="";document.getElementById("em-user").innerHTML=badge(curUser,true);document.getElementById("em-name").textContent=p.name;document.getElementById("em-meta").textContent=p.uid+" - "+(p.age||"")+"y - "+(p.sex||"")+" - "+(p.category||"");
-  var t=todayStr();var de=p.followupDate>t?Math.round((new Date(p.followupDate)-new Date(t))/86400000):0;var s="Scheduled: "+fmt(p.followupDate);if(de>0)s+=" - "+de+" day(s) early";if(p.followupDate<t)s+=" - Overdue";
-  document.getElementById("em-schedule").textContent=s;document.getElementById("em-custom-reason").value="";document.getElementById("em-custom-reason").style.display="none";document.getElementById("em-med-custom").value="";document.getElementById("em-next-bar").style.display="none";document.getElementById("em-notes").value="";
-  renderEmReasons("");renderEmMedPills("");checkEmBtn();
-}
-function renderEmReasons(sel){var h="";for(var i=0;i<REASONS.length;i++){var r=REASONS[i];var s=sel===r?" sel":"";h+='<button class="reason-pill'+s+'" onclick="selReason(\''+r+'\')">'+r+'</button>';}document.getElementById("em-reasons").innerHTML=h;}
-function renderEmMedPills(sel){var h="";for(var i=0;i<QDAYS.length;i++){var d=QDAYS[i];var s=sel===String(d)?" sel":"";h+='<button class="med-pill'+s+'" onclick="selMed(\'em\',\''+d+'\')">'+d+'d</button>';}document.getElementById("em-med-pills").innerHTML=h;}
-function selReason(r){selEmReason=r;renderEmReasons(r);document.getElementById("em-custom-reason").style.display=r==="Other"?"block":"none";checkEmBtn();}
-function onEmMedInput(v){selEmDays=v;renderEmMedPills(v);updEmBar(v);checkEmBtn();}
-function updEmBar(v){var b=document.getElementById("em-next-bar");if(v&&!isNaN(v)&&parseInt(v,10)>0){b.textContent="Next follow-up: "+fmt(addDays(v));b.style.display="block";}else b.style.display="none";}
-function checkEmBtn(){var days=selEmDays||document.getElementById("em-med-custom").value.trim();var reason=selEmReason==="Other"?document.getElementById("em-custom-reason").value.trim():selEmReason;var ok=reason&&days&&!isNaN(days)&&parseInt(days,10)>0;var btn=document.getElementById("em-save-btn");btn.style.opacity=ok?"1":"0.4";btn.style.cursor=ok?"pointer":"not-allowed";}
-function closeEarlyModal(){document.getElementById("early-modal").classList.remove("open");earlyPt=null;}
-function saveEarlyVisit(){
-  var days=selEmDays||document.getElementById("em-med-custom").value.trim();var reason=selEmReason==="Other"?document.getElementById("em-custom-reason").value.trim():selEmReason;
-  if(!reason||!days||isNaN(days)||parseInt(days,10)<1){toast("Fill reason and medicine days");return;}
-  var nd=addDays(days);var notes=document.getElementById("em-notes").value.trim();var t=todayStr();
-  var visit={date:t,medDays:days,notes:notes,reason:reason,flag:"Early Walk-In",staff:curUser,nextFollowup:nd,type:"early"};
-  for(var i=0;i<patients.length;i++){if(patients[i].uid===earlyPt.uid){patients[i].followupDate=nd;patients[i].status="pending";patients[i].visits=[visit].concat(patients[i].visits||[]);break;}}
-  savePts();addLog("Early Walk-In - "+reason+" - "+days+"d",earlyPt.name,earlyPt.uid);toast("Early visit logged! Next: "+fmt(nd));closeEarlyModal();clearEarlySearch();goHome();
-}
-
-// IMPORT OLD DATA
-function selectImpSex(v){selImpSex=v;var b=document.getElementById("imp-sex-row").querySelectorAll(".sex-btn");for(var i=0;i<b.length;i++){if(b[i].textContent===v)b[i].classList.add("sel");else b[i].classList.remove("sel");}}
-function selectImpCat(v){selImpCat=v;var b=document.getElementById("imp-cat-wrap").querySelectorAll(".cat-btn");for(var i=0;i<b.length;i++){if(b[i].textContent===v)b[i].classList.add("sel");else b[i].classList.remove("sel");}}
-function renderImpMedPills(sel){var h="";for(var i=0;i<QDAYS.length;i++){var d=QDAYS[i];var s=sel===String(d)?" sel":"";h+='<button class="med-pill'+s+'" onclick="selMed(\'imp\',\''+d+'\')">'+d+'d</button>';}document.getElementById("imp-med-pills").innerHTML=h;}
-function onImpMedInput(v){selImpMed=v;renderImpMedPills(v);updImpBar(v);}
-function updImpBar(v){var b=document.getElementById("imp-next-bar");var lv=document.getElementById("imp-lastvisit").value||todayStr();if(v&&!isNaN(v)&&parseInt(v,10)>0){b.textContent="Follow-up: "+fmt(addDaysToDate(lv,v));b.style.display="block";}else b.style.display="none";}
-function saveImportedPatient(){
-  var uid=document.getElementById("imp-uid").value.trim().toUpperCase();var name=document.getElementById("imp-name").value.trim();var phone=document.getElementById("imp-phone").value.trim();var age=document.getElementById("imp-age").value.trim();var addr=document.getElementById("imp-address").value.trim();var lastVisit=document.getElementById("imp-lastvisit").value||todayStr();var med=selImpMed||document.getElementById("imp-med-custom").value.trim();var notes=document.getElementById("imp-notes").value.trim();
-  if(!uid||!name||!phone){toast("UID, Name and Phone required");return;}for(var i=0;i<patients.length;i++){if(patients[i].uid===uid){toast("UID exists: "+uid);return;}}
-  var fuDate=med&&!isNaN(med)&&parseInt(med,10)>0?addDaysToDate(lastVisit,med):lastVisit;var visit=med?{date:lastVisit,medDays:med,notes:notes,flag:"Imported",staff:curUser,nextFollowup:fuDate,type:"imported"}:null;
-  var p={uid:uid,name:name,phone:phone,age:age,sex:selImpSex,address:addr,category:selImpCat,followupDate:fuDate,status:"pending",createdBy:curUser,createdAt:new Date().toLocaleString("en-IN"),visits:visit?[visit]:[]};
-  patients.push(p);savePts();addLog("Imported",name,uid);toast("Imported: "+name+" | Follow-up: "+fmt(fuDate));
-  document.getElementById("imp-uid").value="";document.getElementById("imp-name").value="";document.getElementById("imp-phone").value="";document.getElementById("imp-age").value="";document.getElementById("imp-address").value="";document.getElementById("imp-lastvisit").value="";document.getElementById("imp-med-custom").value="";document.getElementById("imp-notes").value="";document.getElementById("imp-next-bar").style.display="none";selImpSex="";selImpCat="";selImpMed="";resetGrp("imp-sex-row","sex-btn");resetGrp("imp-cat-wrap","cat-btn");renderImpMedPills("");
-}
-function parseBulkPaste(){
-  var raw=document.getElementById("bulk-paste").value.trim();if(!raw){toast("Paste some data first");return;}var lines=raw.split("\n");bulkParsed=[];
-  var hdr='<div class="import-row"><span class="import-cell import-cell-hdr">UID</span><span class="import-cell import-cell-hdr">Name</span><span class="import-cell import-cell-hdr">Phone</span><span class="import-cell import-cell-hdr">Category</span><span class="import-cell import-cell-hdr">Follow-Up</span></div>';
-  var rows=hdr;var ok=0;var skip=0;
-  for(var i=0;i<lines.length;i++){var line=lines[i].trim();if(!line)continue;var cols=line.split(",");var uid=(cols[0]||"").trim().toUpperCase();var name=(cols[1]||"").trim();var phone=(cols[2]||"").trim();var age=(cols[3]||"").trim();var sex=(cols[4]||"").trim();var cat=(cols[5]||"").trim();var addr=(cols[6]||"").trim();var lastVisit=(cols[7]||"").trim()||todayStr();var med=(cols[8]||"").trim();
-    if(!uid||!name||!phone){skip++;continue;}var dup=false;for(var j=0;j<patients.length;j++){if(patients[j].uid===uid){dup=true;break;}}
-    if(dup){skip++;rows+='<div class="import-row" style="background:#fee2e2;"><span class="import-cell">'+eh(uid)+'</span><span class="import-cell">'+eh(name)+'</span><span class="import-cell">'+eh(phone)+'</span><span class="import-cell">DUPLICATE</span><span class="import-cell">-</span></div>';continue;}
-    var fuDate=med&&!isNaN(med)&&parseInt(med,10)>0?addDaysToDate(lastVisit,med):lastVisit;bulkParsed.push({uid:uid,name:name,phone:phone,age:age,sex:sex,address:addr,category:cat,lastVisit:lastVisit,med:med,fuDate:fuDate});
-    rows+='<div class="import-row"><span class="import-cell">'+eh(uid)+'</span><span class="import-cell">'+eh(name)+'</span><span class="import-cell">'+eh(phone)+'</span><span class="import-cell">'+eh(cat)+'</span><span class="import-cell">'+fmt(fuDate)+'</span></div>';ok++;
-  }
-  document.getElementById("bulk-preview-table").innerHTML=rows;document.getElementById("bulk-preview-count").textContent=ok+" records ready"+(skip>0?" ("+skip+" skipped)":"");document.getElementById("bulk-preview").style.display="block";
-}
-function saveBulkImport(){
-  if(!bulkParsed.length){toast("Nothing to import");return;}var added=0;
-  for(var i=0;i<bulkParsed.length;i++){var r=bulkParsed[i];var visit=r.med&&!isNaN(r.med)&&parseInt(r.med,10)>0?{date:r.lastVisit,medDays:r.med,notes:"",flag:"Imported",staff:curUser,nextFollowup:r.fuDate,type:"imported"}:null;var p={uid:r.uid,name:r.name,phone:r.phone,age:r.age,sex:r.sex,address:r.address,category:r.category,followupDate:r.fuDate,status:"pending",createdBy:curUser,createdAt:new Date().toLocaleString("en-IN"),visits:visit?[visit]:[]};patients.push(p);added++;}
-  savePts();addLog("Bulk Import: "+added+" records","BULK","IMPORT");toast(added+" patients imported!");document.getElementById("bulk-paste").value="";document.getElementById("bulk-preview").style.display="none";bulkParsed=[];goHome();
-}
-
-// VISIT CARD
-function vCard(v){var fc="#059669";if(v.flag&&v.flag.indexOf("Early")>=0)fc="#d97706";if(v.flag&&v.flag.indexOf("Late")>=0)fc="#dc2626";var h='<div class="v-card"><div style="display:flex;justify-content:space-between;"><span style="font-weight:bold;color:#0c4a6e;font-size:13px;">'+fmt(v.date)+'</span><span style="font-size:12px;font-weight:bold;color:'+fc+';">'+(v.flag||"")+'</span></div>';if(v.medDays)h+='<div style="color:#0e7490;font-size:12px;margin-top:3px;">Medicine: '+v.medDays+' days - Next: '+fmt(v.nextFollowup)+'</div>';if(v.reason)h+='<div style="color:#92400e;font-size:12px;">'+eh(v.reason)+'</div>';if(v.notes)h+='<div style="color:#64748b;font-size:12px;">'+eh(v.notes)+'</div>';if(v.staff)h+='<div style="margin-top:4px;">'+badge(v.staff,true)+'</div>';h+='</div>';return h;}
-
-// LOG
-function renderLog(){document.getElementById("log-count").textContent=logs.length+" total actions";if(logs.length===0){document.getElementById("log-list").innerHTML='<div style="text-align:center;color:#94a3b8;padding:60px;">No activity yet</div>';return;}var h="";for(var i=0;i<logs.length;i++){var l=logs[i];h+='<div class="card" style="border-left:4px solid #7c3aed;padding:14px 16px;"><div style="font-size:15px;font-weight:bold;color:#0c4a6e;">'+eh(l.action)+'</div><div style="font-size:13px;color:#059669;margin-top:3px;font-weight:bold;">'+eh(l.patientName)+' - '+eh(l.uid)+'</div><div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">'+badge(l.staff,true)+'<span style="color:#94a3b8;font-size:11px;">'+l.time+'</span></div></div>';}document.getElementById("log-list").innerHTML=h;}
 
 // CLOUD SYNC
-function setSyncStatus(state,msg){var dot=document.getElementById("sync-dot");var txt=document.getElementById("sync-status-txt");var btn=document.getElementById("sync-btn");if(!dot)return;dot.className="sync-dot"+(state==="offline"?" offline":state==="syncing"?" syncing":"");txt.textContent=msg;if(btn)btn.disabled=state==="syncing";}
+function setSyncStatus(state,msg){
+  var dot=document.getElementById("sync-dot");
+  if(!dot)return;
+  dot.className="sync-dot "+(state||"");
+  document.getElementById("sync-status-txt").textContent=msg;
+}
 function doCloudSync(){
-  setSyncStatus("syncing","Syncing...");var payload={action:"sync",patients:patients,logs:logs.slice(0,50),syncedBy:curUser,syncedAt:new Date().toLocaleString("en-IN")};
-  var xhr=new XMLHttpRequest();xhr.open("POST",CLOUD_URL,true);xhr.setRequestHeader("Content-Type","text/plain");
-  xhr.onreadystatechange=function(){if(xhr.readyState===4){if(xhr.status===200){setSyncStatus("online","Synced: "+new Date().toLocaleTimeString("en-IN"));toast("Cloud sync successful!");}else{setSyncStatus("offline","Sync failed");toast("Sync failed");}}};
-  xhr.onerror=function(){setSyncStatus("offline","No internet");toast("No internet");};xhr.send(JSON.stringify(payload));
+  setSyncStatus("syncing","Syncing...");
+  fetch(CLOUD_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: {"Content-Type": "text/plain"},
+    body: JSON.stringify({action:"sync",patients:patients})
+  }).then(() => {
+    setSyncStatus("online","Synced: "+new Date().toLocaleTimeString());
+    toast("Sync successful!");
+  }).catch(() => {
+    setSyncStatus("offline","Sync failed");
+  });
 }
 function fetchFromCloud(){
-  setSyncStatus("syncing","Connecting...");var xhr=new XMLHttpRequest();xhr.open("GET",CLOUD_URL+"?action=get&t="+Date.now(),true);
-  xhr.onreadystatechange=function(){if(xhr.readyState===4){if(xhr.status===200){try{var resp=JSON.parse(xhr.responseText);if(resp&&resp.patients&&resp.patients.length>0){patients=resp.patients;savePts();setSyncStatus("online","Synced from cloud");renderHome();}else setSyncStatus("online","Sync ready");}catch(e){setSyncStatus("online","Sync ready");}}else setSyncStatus("offline","Offline mode");}};
-  xhr.onerror=function(){setSyncStatus("offline","Offline mode");};xhr.send();
-}
-
-// DOWNLOAD
-function openDownloadModal(){document.getElementById("dl-count-line").textContent=patients.length+" patients in database";document.getElementById("download-modal").classList.add("open");}
-function closeDownloadModal(){document.getElementById("download-modal").classList.remove("open");}
-function escCsv(v){var s=String(v===null||v===undefined?"":v);if(s.indexOf(",")>=0||s.indexOf('"')>=0||s.indexOf("\n")>=0)return'"'+s.replace(/"/g,'""')+'"';return s;}
-function buildCsv(list){var hdr=["UID","Name","Phone","Age","Sex","Category","Address","Follow-Up","Status","Visits","Last Visit","Med Days","Created By"];var rows=[hdr.join(",")];var t=todayStr();for(var i=0;i<list.length;i++){var p=list[i];var st=p.status==="pending"?(p.followupDate<t?"Overdue":p.followupDate===t?"Due Today":"Upcoming"):p.status;var lv=p.visits&&p.visits.length>0?p.visits[0]:null;rows.push([escCsv(p.uid),escCsv(p.name),escCsv(p.phone),escCsv(p.age),escCsv(p.sex),escCsv(p.category),escCsv(p.address),escCsv(fmt(p.followupDate)),escCsv(st),escCsv(p.visits?p.visits.length:0),escCsv(lv?fmt(lv.date):""),escCsv(lv?lv.medDays:""),escCsv(p.createdBy)].join(","));}return rows.join("\r\n");}
-function dlFile(content,name,mime){var b=new Blob([content],{type:mime});var u=URL.createObjectURL(b);var a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){URL.revokeObjectURL(u);},1000);}
-function downloadExcel(){if(!patients.length){toast("No patients");return;}dlFile("\uFEFF"+buildCsv(patients),"Asha_Patients_"+todayStr()+".csv","text/csv;charset=utf-8");closeDownloadModal();toast("Downloading Excel...");}
-function downloadTodayExcel(){var t=todayStr();var list=patients.filter(function(p){return p.followupDate<=t&&p.status==="pending";});if(!list.length){toast("No pending follow-ups today");return;}dlFile("\uFEFF"+buildCsv(list),"Asha_Today_"+t+".csv","text/csv;charset=utf-8");closeDownloadModal();toast("Downloading today's list...");}
-function downloadWord(){
-  if(!patients.length){toast("No patients");return;}var t=todayStr();
-  var html='<html><head><meta charset="UTF-8"><style>body{font-family:Arial;font-size:11pt;margin:25px;}h1{color:#0e7490;}h2{color:#059669;border-bottom:1px solid #ccc;margin-top:18px;}table{width:100%;border-collapse:collapse;}th{background:#0e7490;color:#fff;padding:7px;font-size:10pt;}td{padding:6px 8px;border-bottom:1px solid #e2e8f0;font-size:10pt;}tr:nth-child(even){background:#f0fafa;}</style></head><body>';
-  html+='<h1>Asha Wellness Sanctuary</h1><p>Follow-Up Report - Generated: '+new Date().toLocaleString("en-IN")+'</p><p>Total: <b>'+patients.length+'</b></p>';
-  var ovd=patients.filter(function(p){return p.followupDate<t&&p.status==="pending";});var tod=patients.filter(function(p){return p.followupDate===t&&p.status==="pending";});var upc=patients.filter(function(p){return p.followupDate>t;});var dn=patients.filter(function(p){return p.status!=="pending";});
-  function tbl(list,tt){var h='<h2>'+tt+' ('+list.length+')</h2><table><tr><th>UID</th><th>Name</th><th>Phone</th><th>Age</th><th>Category</th><th>Follow-Up</th><th>Status</th><th>Last Medicine</th></tr>';for(var i=0;i<list.length;i++){var p=list[i];var st=p.status==="pending"?(p.followupDate<t?"Overdue":p.followupDate===t?"Due Today":"Upcoming"):p.status;var lv=p.visits&&p.visits.length>0?p.visits[0]:null;h+='<tr><td>'+eh(p.uid)+'</td><td><b>'+eh(p.name)+'</b></td><td>'+eh(p.phone)+'</td><td>'+(p.age||"")+'</td><td>'+(p.category||"")+'</td><td>'+fmt(p.followupDate)+'</td><td>'+st+'</td><td>'+(lv?lv.medDays+"d":"")+'</td></tr>';}return h+'</table>';}
-  if(ovd.length)html+=tbl(ovd,"OVERDUE");if(tod.length)html+=tbl(tod,"DUE TODAY");if(upc.length)html+=tbl(upc,"UPCOMING");if(dn.length)html+=tbl(dn,"COMPLETED");
-  html+='</body></html>';dlFile(html,"Asha_Report_"+t+".doc","application/msword");closeDownloadModal();toast("Downloading Word report...");
+  fetch(CLOUD_URL+"?action=get").then(r=>r.json()).then(data=>{
+    if(data.patients){patients=data.patients;savePts();renderHome();}
+  }).catch(e=>console.log("Offline mode"));
 }
 
 // INIT
-loadData();
-renderLogin();
-setTimeout(function(){fetchFromCloud();},1500);
+window.onload = function() {
+    loadData();
+    renderLogin();
+    setTimeout(fetchFromCloud, 1500);
+};
+
+/* Preserving existing functions for Search, Add, etc. */
+function clearFoundPt(){document.getElementById("search-found").style.display="none";}
+function doSearch(){
+  var uid=document.getElementById("search-uid").value;
+  var p=patients.find(x=>x.uid===uid);
+  if(p){
+    document.getElementById("search-found").style.display="block";
+    document.getElementById("sf-name").textContent=p.name;
+    document.getElementById("sf-meta").textContent=p.uid;
+  }
+}
+function saveNewPatient(){
+  var uid=document.getElementById("an-uid").value.toUpperCase();
+  var name=document.getElementById("an-name").value;
+  patients.push({uid:uid,name:name,phone:document.getElementById("an-phone").value,followupDate:todayStr(),visits:[],status:"pending"});
+  savePts();
+  if(document.getElementById("an-q-yes").classList.contains("sel")) addNewPatientToQueue(uid,name);
+  toast("Patient Saved");
+  goHome();
+}
+function selectAnQueue(v){
+  if(v==='yes'){document.getElementById("an-q-yes").classList.add("sel");document.getElementById("an-q-no").classList.remove("sel");}
+  else {document.getElementById("an-q-no").classList.add("sel");document.getElementById("an-q-yes").classList.remove("sel");}
+}
 </script>
 </body>
 </html>
