@@ -215,4 +215,41 @@ function saveConsultation(){
 
 function closeConsultModal(){ document.getElementById("consult-modal").classList.remove("open"); }
 
-// --- SYNC
+// --- SYNC ---
+function doCloudSync(){
+  document.getElementById("sync-dot").className = "sync-dot syncing";
+  fetch(CLOUD_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "text/plain" },
+    body: JSON.stringify({ action: "sync", patients: patients })
+  }).then(() => {
+    document.getElementById("sync-dot").className = "sync-dot";
+    toast("Sync Successful");
+  }).catch(() => {
+    document.getElementById("sync-dot").className = "sync-dot offline";
+    toast("Sync Failed");
+  });
+}
+
+function renderHome(){
+  document.getElementById("home-queue-count").textContent = queue.filter(q=>q.status!=='done').length + " waiting";
+}
+
+function doSearch(){
+  let uid = document.getElementById("search-uid").value.toUpperCase();
+  let p = patients.find(x=>x.uid===uid);
+  if(!p) return document.getElementById("search-result").innerHTML = "Patient not found";
+  let h = `<b>${p.name}</b><br>Follow-up: ${p.followupDate}<hr>`;
+  p.visits.forEach(v => { h += `<div class='card'>Date: ${v.date}<br>Medicine: ${v.med} days<br>${v.notes}</div>`; });
+  document.getElementById("search-result").innerHTML = h;
+}
+
+// --- INIT ---
+window.onload = function() {
+    loadData();
+    renderLogin();
+};
+</script>
+</body>
+</html>
