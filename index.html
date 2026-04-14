@@ -128,6 +128,15 @@ body{font-family:Arial,sans-serif;background:#f0fafa;color:#0c4a6e;min-height:10
 /* Timestamp chip */
 .ts-chip{font-size:10px;color:#94a3b8;font-weight:bold;margin-top:3px;}
 .login-ts{font-size:11px;color:#7dd3fc;margin-top:4px;letter-spacing:0.5px;}
+/* Reschedule inline panel */
+.reschedule-panel{background:#eff6ff;border:2px solid #93c5fd;border-radius:12px;padding:12px 14px;margin-top:8px;display:none;}
+.reschedule-panel.open{display:block;}
+.rs-days{display:flex;flex-wrap:wrap;margin-bottom:8px;}
+.rs-pill{padding:9px 13px;border-radius:9px;cursor:pointer;font-size:13px;font-weight:bold;margin:0 6px 6px 0;border:2px solid #93c5fd;background:#dbeafe;color:#1d4ed8;}
+.rs-pill.sel{background:#1d4ed8;color:#fff;border-color:#1d4ed8;}
+/* Dropout */
+.dropout-badge{background:#fce7f3;color:#be185d;border:1.5px solid #fbcfe8;border-radius:8px;padding:3px 9px;font-size:11px;font-weight:bold;margin-left:6px;}
+.act-row2{display:flex;margin-top:6px;margin-bottom:4px;}
 </style>
 </head>
 <body>
@@ -817,12 +826,13 @@ function renderHome(){
   var due=tpts.filter(function(p){return p.followupDate===t;}).length;
   var ovd=tpts.filter(function(p){return p.followupDate<t;}).length;
   var waiting=queue.filter(function(q){return q.status==="waiting"||q.status==="consulting";}).length;
+  var dropoutCount=patients.filter(function(p){return p.status==="dropout";}).length;
   document.getElementById("home-pending").textContent=tpts.length;
   document.getElementById("home-today-sub").textContent=tpts.length+" patients to call";
   document.getElementById("home-user-badge").innerHTML=badge(curUser,false)+(isAdminUser?'<span class="admin-only-badge" style="margin-left:8px;">ADMIN</span>':"");
   var tsEl=document.getElementById("home-login-ts");if(tsEl&&loginTimestamp){var d=loginTimestamp;var pp=function(n){return n<10?"0"+n:n;};tsEl.textContent="Logged in: "+pp(d.getDate())+"/"+pp(d.getMonth()+1)+"/"+d.getFullYear()+" "+pp(d.getHours())+":"+pp(d.getMinutes());}
   document.getElementById("home-queue-count").textContent=waiting+" waiting";
-  document.getElementById("home-stats").innerHTML=sBox(due,"Due Today","#0e7490","#e0f2fe")+sBox(ovd,"Overdue","#dc2626","#fee2e2")+sBox(patients.length,"Total","#059669","#d1fae5")+sBox(waiting,"In Queue","#d97706","#fef3c7");
+  document.getElementById("home-stats").innerHTML=sBox(due,"Due Today","#0e7490","#e0f2fe")+sBox(ovd,"Overdue","#dc2626","#fee2e2")+sBox(patients.length,"Total","#059669","#d1fae5")+sBox(dropoutCount,"Dropouts","#be185d","#fdf2f8");
 }
 function sBox(v,l,c,bg){return'<div class="stat-box" style="background:'+bg+';">'+'<div class="stat-num" style="color:'+c+';">'+v+'</div><div class="stat-lbl" style="color:'+c+';">'+l+'</div></div>';}
 
@@ -1023,15 +1033,17 @@ function addNewPatientToQueue(uid,name){
 
 // TODAY LIST
 function renderToday(){
-  var t=todayStr();var pts=patients.filter(function(p){return p.followupDate<=t&&p.status==="pending";});
+  var t=todayStr();
+  var pts=patients.filter(function(p){return p.followupDate<=t&&p.status==="pending";});
   pts.sort(function(a,b){return a.followupDate.localeCompare(b.followupDate);});
+  var dropouts=patients.filter(function(p){return p.status==="dropout";});
   var nd=new Date();var mos=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];var days=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
   document.getElementById("today-date-sub").textContent=days[nd.getDay()]+", "+nd.getDate()+" "+mos[nd.getMonth()]+" "+nd.getFullYear();
-  if(pts.length===0){document.getElementById("today-list").innerHTML='<div class="empty-state"><div style="font-size:56px;">&#x1F389;</div><div style="font-size:20px;font-weight:bold;color:#0c4a6e;margin-top:12px;">All caught up!</div><div style="font-size:14px;color:#64748b;margin-top:6px;">No pending follow-ups today</div></div>';return;}
+  if(pts.length===0&&dropouts.length===0){document.getElementById("today-list").innerHTML='<div class="empty-state"><div style="font-size:56px;">&#x1F389;</div><div style="font-size:20px;font-weight:bold;color:#0c4a6e;margin-top:12px;">All caught up!</div><div style="font-size:14px;color:#64748b;margin-top:6px;">No pending follow-ups today</div></div>';return;}
   var h="";
   for(var i=0;i<pts.length;i++){
     var p=pts[i];var ov=p.followupDate<t;var bg=ov?"#fff5f5":"#f0fdf4";var br=ov?"2.5px solid #fca5a5":"2.5px solid #6ee7b7";var tg=ov?"tag-red":"tag-green";
-    h+='<div class="pt-card" style="background:'+bg+';border:'+br+';">';
+    h+='<div class="pt-card" id="ptcard-'+p.uid+'" style="background:'+bg+';border:'+br+';">';
     h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;"><div>';
     h+='<div style="font-size:19px;font-weight:bold;color:#0c4a6e;">'+eh(p.name)+'</div>';
     h+='<div style="font-size:13px;color:#64748b;margin-top:2px;">'+eh(p.uid)+' &bull; '+(p.age||"")+'y &bull; '+(p.sex||"")+'</div>';
@@ -1040,14 +1052,51 @@ function renderToday(){
     h+='<div class="contact-row">'+contactRow(p.phone,p.name,p.followupDate)+'</div>';
     if(p.address)h+='<div style="font-size:13px;color:#64748b;margin-bottom:8px;">'+eh(p.address)+'</div>';
     if(p.createdBy)h+='<div style="font-size:11px;color:#94a3b8;margin-bottom:10px;">Added by '+badge(p.createdBy,true)+'</div>';
+    // Row 1 actions
     h+='<div class="act-row">';
-    h+='<button class="act-btn" style="background:#f59e0b;" onclick="openEarlyFromList(\''+p.uid+'\')">Early</button>';
-    h+='<button class="act-btn" style="background:#b45309;" onclick="addToQueueFromToday(\''+p.uid+'\')">To Queue</button>';
-    h+='<button class="act-btn" style="background:#059669;" onclick="markDone(\''+p.uid+'\',\'Done\')">Done</button>';
+    h+='<button class="act-btn" style="background:#f59e0b;" onclick="openEarlyFromList(\''+p.uid+'\')">&#x26A1; Early</button>';
+    h+='<button class="act-btn" style="background:#b45309;" onclick="addToQueueFromToday(\''+p.uid+'\')">&#x1F4CB; Queue</button>';
+    h+='<button class="act-btn" style="background:#059669;" onclick="markDone(\''+p.uid+'\',\'Done\')">&#x2713; Done</button>';
     h+='<button class="act-btn" style="background:#64748b;" onclick="markDone(\''+p.uid+'\',\'No Answer\')">No Ans</button>';
     h+='</div>';
+    // Row 2 actions - Reschedule & Dropout
+    h+='<div class="act-row2">';
+    h+='<button class="act-btn" style="background:#6366f1;flex:1;margin-right:6px;" onclick="toggleReschedule(\''+p.uid+'\')">&#x1F4C5; Reschedule</button>';
+    h+='<button class="act-btn" style="background:#be185d;flex:1;" onclick="confirmDropout(\''+p.uid+'\')">&#x1F6AB; Drop Out</button>';
+    h+='</div>';
+    // Reschedule inline panel
+    h+='<div id="rs-panel-'+p.uid+'" class="reschedule-panel">';
+    h+='<div style="font-size:13px;font-weight:bold;color:#1d4ed8;margin-bottom:8px;">Reschedule after how many days?</div>';
+    h+='<div class="rs-days" id="rs-days-'+p.uid+'">';
+    var rsDays=[3,5,7,10,14,21,30];
+    for(var rd=0;rd<rsDays.length;rd++){h+='<button class="rs-pill" onclick="selRsDay(\''+p.uid+'\','+rsDays[rd]+')">'+rsDays[rd]+'d</button>';}
+    h+='</div>';
+    h+='<input id="rs-custom-'+p.uid+'" class="inp" type="number" placeholder="Or type custom days" style="margin-bottom:8px;" oninput="selRsDay(\''+p.uid+'\',this.value)">';
+    h+='<div id="rs-preview-'+p.uid+'" style="font-size:13px;color:#059669;font-weight:bold;margin-bottom:10px;display:none;"></div>';
+    h+='<div style="display:flex;gap:8px;">';
+    h+='<button class="btn btn-blue" style="flex:2;padding:12px;" onclick="saveReschedule(\''+p.uid+'\')">Confirm Reschedule</button>';
+    h+='<button class="btn btn-gray" style="flex:1;padding:12px;" onclick="toggleReschedule(\''+p.uid+'\')">Cancel</button>';
+    h+='</div></div>';
     if(p.doneBy)h+='<div class="done-bar">Done by '+badge(p.doneBy,true)+'<span style="color:#94a3b8;font-size:11px;">'+p.doneAt+'</span></div>';
-    if(p.visits&&p.visits.length>0)h+='<div style="border-top:1px solid #e2e8f0;padding-top:10px;margin-top:4px;"><div class="sec-lbl">LAST VISIT</div>'+vCard(p.visits[0])+'</div>';
+    if(p.visits&&p.visits.length>0)h+='<div style="border-top:1px solid #e2e8f0;padding-top:10px;margin-top:8px;"><div class="sec-lbl">LAST VISIT</div>'+vCard(p.visits[0])+'</div>';
+    h+='</div>';
+  }
+  // Dropout section
+  if(dropouts.length>0){
+    h+='<div style="margin-top:16px;border-top:2px dashed #fbcfe8;padding-top:14px;">';
+    h+='<div style="font-size:11px;font-weight:bold;color:#be185d;letter-spacing:1px;margin-bottom:10px;">&#x1F6AB; DROPPED OUT ('+dropouts.length+')</div>';
+    for(var di=0;di<dropouts.length;di++){
+      var dp=dropouts[di];
+      h+='<div style="background:#fdf2f8;border:1.5px solid #fbcfe8;border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">';
+      h+='<div>';
+      h+='<div style="font-size:15px;font-weight:bold;color:#0c4a6e;">'+eh(dp.name)+'</div>';
+      h+='<div style="font-size:12px;color:#64748b;">'+eh(dp.uid)+' &bull; '+(dp.category||"")+'</div>';
+      if(dp.dropoutReason)h+='<div style="font-size:12px;color:#be185d;font-weight:bold;margin-top:3px;">Reason: '+eh(dp.dropoutReason)+'</div>';
+      if(dp.dropoutBy)h+='<div style="font-size:11px;color:#94a3b8;margin-top:2px;">Logged by '+badge(dp.dropoutBy,true)+' &bull; '+eh(dp.dropoutAt||"")+'</div>';
+      h+='</div>';
+      h+='<button onclick="reactivatePatient(\''+dp.uid+'\')" style="background:#059669;border:none;color:#fff;border-radius:10px;padding:9px 14px;font-size:12px;font-weight:bold;cursor:pointer;flex-shrink:0;margin-left:10px;">Reactivate</button>';
+      h+='</div>';
+    }
     h+='</div>';
   }
   document.getElementById("today-list").innerHTML=h;
@@ -1069,6 +1118,107 @@ function markDone(uid,action){
     renderToday();return;
   }
   savePts();addLog("Marked: "+action,nm,uid);toast(action+" by "+curUser);renderToday();
+}
+
+// RESCHEDULE
+var rsDaysSel={};
+function toggleReschedule(uid){
+  var panel=document.getElementById("rs-panel-"+uid);
+  if(!panel)return;
+  var isOpen=panel.classList.contains("open");
+  // Close all panels first
+  var all=document.querySelectorAll(".reschedule-panel");for(var i=0;i<all.length;i++)all[i].classList.remove("open");
+  if(!isOpen){panel.classList.add("open");rsDaysSel[uid]="";}
+}
+function selRsDay(uid,val){
+  rsDaysSel[uid]=val;
+  // Highlight selected pill
+  var pills=document.querySelectorAll("#rs-days-"+uid+" .rs-pill");
+  for(var i=0;i<pills.length;i++){if(parseInt(pills[i].textContent)===parseInt(val))pills[i].classList.add("sel");else pills[i].classList.remove("sel");}
+  var prev=document.getElementById("rs-preview-"+uid);
+  if(prev&&val&&!isNaN(val)&&parseInt(val,10)>0){prev.textContent="New follow-up date: "+fmt(addDays(val));prev.style.display="block";}
+  else if(prev){prev.style.display="none";}
+}
+function saveReschedule(uid){
+  var days=rsDaysSel[uid]||document.getElementById("rs-custom-"+uid).value.trim();
+  if(!days||isNaN(days)||parseInt(days,10)<1){toast("Select number of days first");return;}
+  var nd=addDays(days);var nm="";
+  for(var i=0;i<patients.length;i++){
+    if(patients[i].uid===uid){
+      nm=patients[i].name;
+      patients[i].followupDate=nd;
+      patients[i].status="pending";
+      var visit={date:todayStr(),medDays:"",notes:"Rescheduled by "+curUser+" (+"+days+"d)",flag:"Rescheduled",staff:curUser,nextFollowup:nd,type:"reschedule"};
+      patients[i].visits=[visit].concat(patients[i].visits||[]);
+      break;
+    }
+  }
+  savePts();addLog("Rescheduled +"+days+"d → "+fmt(nd),nm,uid);
+  toast(nm+" rescheduled to "+fmt(nd));
+  renderToday();renderHome();
+}
+
+// DROPOUT
+var DROPOUT_REASONS=["Shifted / Moved away","Treatment complete - no further follow-up","Refused further treatment","Financial constraints","Side effects - self-stopped","Death","Other"];
+function confirmDropout(uid){
+  var p=null;for(var i=0;i<patients.length;i++){if(patients[i].uid===uid){p=patients[i];break;}}
+  if(!p)return;
+  // Build a small confirm UI via a simple modal approach using existing modal-bg
+  var reasonOpts=DROPOUT_REASONS.map(function(r,idx){return '<option value="'+eh(r)+'">'+eh(r)+'</option>';}).join("");
+  var box=document.createElement("div");
+  box.style.cssText="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:850;display:flex;align-items:center;justify-content:center;padding:20px;";
+  box.innerHTML='<div style="background:#fff;border-radius:20px;padding:24px;width:100%;max-width:380px;box-shadow:0 8px 32px rgba(0,0,0,0.25);">'
+    +'<div style="font-size:20px;font-weight:bold;color:#be185d;margin-bottom:4px;">&#x1F6AB; Mark as Drop Out</div>'
+    +'<div style="font-size:13px;color:#64748b;margin-bottom:16px;">'+eh(p.name)+' &bull; '+eh(p.uid)+'</div>'
+    +'<div style="font-size:13px;font-weight:bold;color:#0c4a6e;margin-bottom:8px;">Reason for dropping out *</div>'
+    +'<select id="dropout-reason-sel" style="width:100%;padding:13px;border-radius:12px;border:2px solid #fbcfe8;font-size:14px;font-weight:bold;color:#0c4a6e;background:#fdf2f8;margin-bottom:12px;">'
+    +'<option value="">-- Select reason --</option>'+reasonOpts+'</select>'
+    +'<textarea id="dropout-notes-inp" placeholder="Additional notes (optional)" style="width:100%;padding:13px;border-radius:12px;border:2px solid #fbcfe8;background:#fdf2f8;font-size:13px;color:#0c4a6e;resize:none;height:70px;margin-bottom:14px;font-family:Arial;"></textarea>'
+    +'<button onclick="saveDropout(\''+uid+'\',this.parentElement.parentElement)" style="width:100%;padding:16px;background:#be185d;border:none;color:#fff;font-size:16px;font-weight:bold;border-radius:14px;cursor:pointer;margin-bottom:8px;">Confirm Drop Out</button>'
+    +'<button onclick="this.parentElement.parentElement.remove()" style="width:100%;padding:13px;background:transparent;border:2px solid #bae6fd;color:#0e7490;font-size:14px;font-weight:bold;border-radius:14px;cursor:pointer;">Cancel</button>'
+    +'</div>';
+  document.body.appendChild(box);
+}
+function saveDropout(uid,overlay){
+  var reason=document.getElementById("dropout-reason-sel").value;
+  var notes=document.getElementById("dropout-notes-inp").value.trim();
+  if(!reason){toast("Please select a reason");return;}
+  var nm="";
+  for(var i=0;i<patients.length;i++){
+    if(patients[i].uid===uid){
+      nm=patients[i].name;
+      patients[i].status="dropout";
+      patients[i].dropoutReason=reason;
+      patients[i].dropoutNotes=notes;
+      patients[i].dropoutBy=curUser;
+      patients[i].dropoutAt=new Date().toLocaleString("en-IN");
+      var visit={date:todayStr(),medDays:"",notes:"DROP OUT: "+reason+(notes?" — "+notes:""),flag:"Dropout",staff:curUser,nextFollowup:"",type:"dropout"};
+      patients[i].visits=[visit].concat(patients[i].visits||[]);
+      break;
+    }
+  }
+  // Also cancel any reminders for this patient
+  reminders=reminders.filter(function(r){return r.uid!==uid;});saveReminders();
+  savePts();addLog("Dropout: "+reason,nm,uid);
+  if(overlay)overlay.remove();
+  toast(nm+" marked as dropped out");
+  renderToday();renderHome();
+}
+function reactivatePatient(uid){
+  var nm="";
+  for(var i=0;i<patients.length;i++){
+    if(patients[i].uid===uid){
+      nm=patients[i].name;
+      patients[i].status="pending";
+      patients[i].followupDate=todayStr();
+      delete patients[i].dropoutReason;delete patients[i].dropoutBy;delete patients[i].dropoutAt;delete patients[i].dropoutNotes;
+      var visit={date:todayStr(),medDays:"",notes:"Reactivated by "+curUser,flag:"Reactivated",staff:curUser,nextFollowup:"",type:"reactivate"};
+      patients[i].visits=[visit].concat(patients[i].visits||[]);
+      break;
+    }
+  }
+  savePts();addLog("Reactivated",nm,uid);toast(nm+" reactivated — set a new follow-up date");
+  renderToday();renderHome();
 }
 
 // LIVE SEARCH DROPDOWN
@@ -1306,7 +1456,7 @@ function fetchFromCloud(){
 function openDownloadModal(){document.getElementById("dl-count-line").textContent=patients.length+" patients in database";document.getElementById("download-modal").classList.add("open");}
 function closeDownloadModal(){document.getElementById("download-modal").classList.remove("open");}
 function escCsv(v){var s=String(v===null||v===undefined?"":v);if(s.indexOf(",")>=0||s.indexOf('"')>=0||s.indexOf("\n")>=0)return'"'+s.replace(/"/g,'""')+'"';return s;}
-function buildCsv(list){var hdr=["UID","Name","Phone","Age","Sex","Category","Address","Follow-Up","Status","Visits","Last Visit","Med Days","Created By"];var rows=[hdr.join(",")];var t=todayStr();for(var i=0;i<list.length;i++){var p=list[i];var st=p.status==="pending"?(p.followupDate<t?"Overdue":p.followupDate===t?"Due Today":"Upcoming"):p.status;var lv=p.visits&&p.visits.length>0?p.visits[0]:null;rows.push([escCsv(p.uid),escCsv(p.name),escCsv(p.phone),escCsv(p.age),escCsv(p.sex),escCsv(p.category),escCsv(p.address),escCsv(fmt(p.followupDate)),escCsv(st),escCsv(p.visits?p.visits.length:0),escCsv(lv?fmt(lv.date):""),escCsv(lv?lv.medDays:""),escCsv(p.createdBy)].join(","));}return rows.join("\r\n");}
+function buildCsv(list){var hdr=["UID","Name","Phone","Age","Sex","Category","Address","Follow-Up","Status","Dropout Reason","Visits","Last Visit","Med Days","Created By"];var rows=[hdr.join(",")];var t=todayStr();for(var i=0;i<list.length;i++){var p=list[i];var st=p.status==="dropout"?"Dropout":p.status==="pending"?(p.followupDate<t?"Overdue":p.followupDate===t?"Due Today":"Upcoming"):p.status;var lv=p.visits&&p.visits.length>0?p.visits[0]:null;rows.push([escCsv(p.uid),escCsv(p.name),escCsv(p.phone),escCsv(p.age),escCsv(p.sex),escCsv(p.category),escCsv(p.address),escCsv(fmt(p.followupDate)),escCsv(st),escCsv(p.dropoutReason||""),escCsv(p.visits?p.visits.length:0),escCsv(lv?fmt(lv.date):""),escCsv(lv?lv.medDays:""),escCsv(p.createdBy)].join(","));}return rows.join("\r\n");}
 function dlFile(content,name,mime){var b=new Blob([content],{type:mime});var u=URL.createObjectURL(b);var a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){URL.revokeObjectURL(u);},1000);}
 function downloadExcel(){if(!patients.length){toast("No patients");return;}dlFile("\uFEFF"+buildCsv(patients),"Asha_Patients_"+todayStr()+".csv","text/csv;charset=utf-8");closeDownloadModal();toast("Downloading Excel...");}
 function downloadTodayExcel(){var t=todayStr();var list=patients.filter(function(p){return p.followupDate<=t&&p.status==="pending";});if(!list.length){toast("No pending follow-ups today");return;}dlFile("\uFEFF"+buildCsv(list),"Asha_Today_"+t+".csv","text/csv;charset=utf-8");closeDownloadModal();toast("Downloading today's list...");}
