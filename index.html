@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#0e7490">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>Asha Wellness - Patient Manager</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -15,76 +17,94 @@ body{font-family:Arial,sans-serif;background:#f0fafa;color:#0c4a6e;min-height:10
 .hdr-purple{background:#4c1d95;}.hdr-teal{background:#0f766e;}.hdr-amber{background:#b45309;}
 .back-btn{background:rgba(255,255,255,0.25);border:none;color:#fff;font-size:22px;border-radius:10px;width:40px;height:40px;cursor:pointer;flex-shrink:0;margin-right:12px;}
 .hdr-title{color:#fff;font-size:20px;font-weight:bold;}
+.hdr-sub{font-size:12px;margin-top:2px;}.hdr-sub-light{color:#a5f3fc;}.hdr-sub-warm{color:#fef3c7;}
 .card{background:#fff;border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,0.08);border:1.5px solid #e0f2fe;}
-.btn{width:100%;padding:17px;border-radius:14px;border:none;color:#fff;font-size:16px;font-weight:bold;cursor:pointer;margin-bottom:10px;display:block;text-align:center;}
-.btn-blue{background:#0e7490;}.btn-green{background:#059669;}.btn-orange{background:#d97706;}.btn-red{background:#b91c1c;}
-.inp{width:100%;padding:14px 16px;border-radius:12px;border:2px solid #bae6fd;background:#f0fafa;color:#0c4a6e;font-size:15px;font-weight:bold;outline:none;margin-bottom:10px;}
-.txta{width:100%;padding:14px;border-radius:12px;border:2px solid #bae6fd;background:#f0fafa;color:#0c4a6e;font-size:14px;outline:none;resize:vertical;margin-bottom:10px;}
+.card-green{background:#f0fdf4;border:2.5px solid #6ee7b7;}
+.card-orange{background:#fffbeb;border:2.5px solid #f59e0b;}
+.card-dashed{border:2px dashed #bae6fd;text-align:center;}
+.card-dashed-orange{background:#fff7ed;border:2px dashed #fed7aa;text-align:center;}
+.btn{width:100%;padding:17px;border-radius:14px;border:none;color:#fff;font-size:16px;font-weight:bold;cursor:pointer;margin-bottom:10px;display:block;text-align:center;font-family:Arial,sans-serif;}
+.btn-blue{background:#0e7490;}.btn-green{background:#059669;}.btn-orange{background:#d97706;}
+.btn-red{background:#b91c1c;}.btn-purple{background:#6d28d9;}.btn-amber{background:#b45309;}
+.btn-gray{background:transparent;border:2px solid #bae6fd;color:#0e7490;}
+.inp{width:100%;padding:14px 16px;border-radius:12px;border:2px solid #bae6fd;background:#f0fafa;color:#0c4a6e;font-size:15px;font-weight:bold;outline:none;margin-bottom:10px;font-family:Arial,sans-serif;}
+.inp-lg{font-size:18px;}
+.txta{width:100%;padding:14px;border-radius:12px;border:2px solid #bae6fd;background:#f0fafa;color:#0c4a6e;font-size:14px;outline:none;resize:vertical;font-family:Arial,sans-serif;margin-bottom:10px;}
 .lbl{color:#0e7490;font-size:13px;font-weight:bold;margin-bottom:6px;display:block;margin-top:4px;}
-.menu-btn{background:#fff;border-radius:16px;padding:18px 20px;margin-bottom:12px;border:2.5px solid #bae6fd;cursor:pointer;display:flex;align-items:center;width:100%;}
-.q-banner{background:linear-gradient(135deg,#b45309,#d97706);border-radius:18px;padding:18px 20px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;color:#fff;}
-.qcard{border-radius:16px;padding:16px;margin-bottom:12px;background:#fffbeb;border:2.5px solid #f59e0b;}
+.stats-row{display:flex;padding:14px 16px 0;}
+.stat-box{flex:1;border-radius:14px;padding:12px 4px;text-align:center;margin-right:8px;}
+.stat-box:last-child{margin-right:0;}
+.stat-num{font-size:22px;font-weight:bold;line-height:1;}.stat-lbl{font-size:10px;font-weight:bold;margin-top:2px;}
+.menu-btn{background:#fff;border-radius:16px;padding:18px 20px;margin-bottom:12px;border:2.5px solid #bae6fd;cursor:pointer;display:flex;align-items:center;width:100%;box-shadow:0 2px 10px rgba(0,0,0,0.07);}
+.menu-icon{font-size:30px;border-radius:12px;width:50px;height:50px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-right:14px;}
+.menu-title{font-size:16px;font-weight:bold;color:#0c4a6e;text-align:left;}
+.menu-sub{font-size:12px;color:#0e7490;margin-top:2px;text-align:left;}
+.q-banner{background:linear-gradient(135deg,#b45309,#d97706);border-radius:18px;padding:18px 20px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 16px rgba(180,83,9,0.3);cursor:pointer;}
+.q-banner-left{color:#fff;}
+.q-banner-tag{font-size:10px;font-weight:bold;letter-spacing:2px;color:#fef3c7;margin-bottom:4px;}
+.q-banner-count{font-size:28px;font-weight:bold;line-height:1;}
+.q-banner-sub{font-size:12px;color:#fef3c7;margin-top:3px;}
+.q-open-btn{background:#fff;color:#b45309;border:none;border-radius:12px;padding:12px 18px;font-size:14px;font-weight:bold;cursor:pointer;flex-shrink:0;}
+.qcard{border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 10px rgba(0,0,0,0.08);}
+.qcard-waiting{background:#fffbeb;border:2.5px solid #f59e0b;}
+.qcard-consulting{background:#eff6ff;border:2.5px solid #3b82f6;}
+.qcard-done{background:#f0fdf4;border:2px solid #86efac;opacity:0.85;}
+.qbadge{display:inline-block;padding:3px 12px;border-radius:20px;font-size:11px;font-weight:bold;margin-bottom:10px;}
+.qb-waiting{background:#fef3c7;color:#92400e;}
+.qb-consulting{background:#dbeafe;color:#1d4ed8;}
+.qb-done{background:#d1fae5;color:#065f46;}
+.token{background:#f59e0b;color:#fff;border-radius:50%;width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;font-weight:bold;font-size:15px;flex-shrink:0;margin-right:10px;}
+.mq-pills{display:flex;flex-wrap:wrap;margin-bottom:10px;}
 .mq-pill{padding:11px 15px;border-radius:10px;cursor:pointer;font-size:15px;font-weight:bold;margin:0 8px 8px 0;border:2px solid #6ee7b7;background:#d1fae5;color:#065f46;}
 .mq-pill.sel{background:#059669;color:#fff;border-color:#059669;}
-.modal-bg{display:none;position:fixed;top:0;right:0;bottom:0;left:0;background:rgba(0,0,0,0.6);z-index:800;align-items:flex-end;justify-content:center;}
-.modal-bg.open{display:flex;}
+.modal-bg{display:none;position:fixed;top:0;right:0;bottom:0;left:0;background:rgba(0,0,0,0.6);z-index:800;}
+.modal-bg.open{display:flex;align-items:flex-end;justify-content:center;}
 .modal-box{background:#fff;border-radius:24px 24px 0 0;padding:24px;width:100%;max-height:92vh;overflow-y:auto;}
-.sync-dot{width:10px;height:10px;border-radius:50%;background:#059669;margin-right:8px;}
+.modal-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+.close-btn{background:#f0fafa;border:2px solid #bae6fd;border-radius:10px;width:36px;height:36px;cursor:pointer;font-size:16px;color:#0e7490;font-weight:bold;}
+.tag{display:inline-block;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:bold;}
+.tag-green{background:#d1fae5;color:#059669;}.tag-red{background:#fee2e2;color:#dc2626;}
+.tag-orange{background:#fef3c7;color:#d97706;}
+#toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#0e7490;color:#fff;padding:14px 28px;border-radius:14px;z-index:9999;font-weight:bold;font-size:15px;box-shadow:0 8px 30px rgba(0,0,0,0.25);display:none;max-width:90%;text-align:center;}
+.contact-row{display:flex;margin-bottom:10px;}
+.contact-btn{flex:1;padding:14px 6px;border-radius:14px;border:none;color:#fff;font-size:14px;font-weight:bold;cursor:pointer;text-align:center;text-decoration:none;display:block;margin-right:8px;}
+.contact-btn:last-child{margin-right:0;}
+.act-row{display:flex;margin-bottom:10px;}
+.act-btn{flex:1;padding:11px 4px;border-radius:12px;border:none;color:#fff;font-size:12px;font-weight:bold;cursor:pointer;text-align:center;text-decoration:none;display:block;margin-right:6px;}
+.act-btn:last-child{margin-right:0;}
+.med-pills{display:flex;flex-wrap:wrap;margin-bottom:10px;}
+.med-pill{padding:10px 13px;border-radius:10px;cursor:pointer;font-size:14px;font-weight:bold;margin:0 6px 6px 0;border:2px solid #bae6fd;background:#e0f2fe;color:#0e7490;}
+.med-pill.sel{background:#0e7490;color:#fff;border-color:#0e7490;}
+.reason-pill{padding:9px 13px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:bold;margin:0 6px 6px 0;border:2px solid #fde68a;background:#fef3c7;color:#92400e;}
+.reason-pill.sel{background:#d97706;color:#fff;border-color:#d97706;}
+.v-card{background:#f8fafc;border-radius:10px;padding:10px 12px;margin-bottom:8px;}
+.sec-lbl{font-size:11px;font-weight:bold;color:#94a3b8;margin-bottom:8px;letter-spacing:1px;}
+.sex-row{display:flex;margin-bottom:14px;}
+.sex-btn{flex:1;padding:13px;border-radius:12px;cursor:pointer;font-size:15px;font-weight:bold;background:#f0fafa;border:2px solid #bae6fd;color:#0e7490;margin-right:8px;}
+.sex-btn:last-child{margin-right:0;}
+.sex-btn.sel{background:#0e7490;border-color:#0e7490;color:#fff;}
+.cat-wrap{display:flex;flex-wrap:wrap;margin-bottom:16px;}
+.cat-btn{padding:10px 14px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:bold;background:#e0f2fe;border:2px solid #bae6fd;color:#0e7490;margin:0 8px 8px 0;}
+.cat-btn.sel{background:#0e7490;border-color:#0e7490;color:#fff;}
+.login-btn{width:100%;padding:20px 24px;border-radius:18px;color:#fff;font-size:18px;font-weight:bold;cursor:pointer;display:flex;align-items:center;margin-bottom:12px;background:rgba(255,255,255,0.1);border:2.5px solid #ccc;}
+.login-icon{font-size:28px;width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-right:14px;}
+.pad{padding:20px;}.pad-b{padding:16px 16px 80px;}
+.nxt-bar{background:#ecfdf5;border:2px solid #6ee7b7;border-radius:10px;padding:10px 14px;color:#065f46;font-size:14px;font-weight:bold;text-align:center;margin-top:8px;display:none;}
+.done-bar{padding:8px 12px;background:#f0fdf4;border-radius:8px;font-size:12px;color:#059669;font-weight:bold;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.section-divider{border-top:2px solid #bbf7d0;padding-top:16px;margin-top:16px;}
+.pt-card{border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,0.08);}
+.empty-state{text-align:center;padding:70px 20px;}
+.dl-opt{display:flex;align-items:center;background:#f8fafc;border:2px solid #e2e8f0;border-radius:14px;padding:16px;margin-bottom:12px;cursor:pointer;width:100%;}
+.dl-opt-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;margin-right:14px;}
+.dl-opt-title{font-size:15px;font-weight:bold;color:#0c4a6e;}.dl-opt-sub{font-size:12px;color:#64748b;margin-top:2px;}
+.pwd-box{background:#fff;border-radius:20px;padding:28px;width:90%;max-width:340px;box-shadow:0 8px 32px rgba(0,0,0,0.25);}
+.pwd-modal{display:none;position:fixed;top:0;right:0;bottom:0;left:0;background:rgba(0,0,0,0.65);z-index:900;align-items:center;justify-content:center;}
+.pwd-modal.open{display:flex;}
+.sync-bar{display:flex;align-items:center;justify-content:space-between;background:#e0f2fe;border-radius:12px;padding:10px 14px;margin-bottom:14px;}
+.sync-dot{width:10px;height:10px;border-radius:50%;background:#059669;flex-shrink:0;margin-right:8px;}
 .sync-dot.offline{background:#dc2626;}.sync-dot.syncing{background:#f59e0b;}
-#toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#0e7490;color:#fff;padding:14px 28px;border-radius:14px;z-index:9999;font-weight:bold;display:none;}
-.token{background:#f59e0b;color:#fff;border-radius:50%;width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;font-weight:bold;margin-right:10px;}
-.login-btn{width:100%;padding:20px;border-radius:18px;color:#fff;font-size:18px;font-weight:bold;cursor:pointer;display:flex;align-items:center;margin-bottom:12px;background:rgba(255,255,255,0.1);border:2.5px solid #ccc;}
-</style>
-</head>
-<body>
-<div id="toast"></div>
-
-<div id="consult-modal" class="modal-bg">
-  <div class="modal-box">
-    <h2 style="color:#059669;margin-bottom:10px;">🩺 Consultation</h2>
-    <div id="cm-info" style="background:#f0fdf4; padding:15px; border-radius:12px; margin-bottom:15px;"></div>
-    <div class="lbl">Medicine Days? *</div>
-    <div id="cm-med-pills" style="display:flex; flex-wrap:wrap; margin-bottom:10px;"></div>
-    <input id="cm-med-custom" class="inp" type="number" placeholder="Custom days" oninput="applyConsultMed(this.value)">
-    <textarea id="cm-notes" class="txta" placeholder="Doctor notes..."></textarea>
-    <button id="cm-save-btn" class="btn btn-green" onclick="saveConsultation()" style="opacity:0.4;">Finish & Set Follow-up</button>
-    <button class="btn btn-red" style="background:#64748b" onclick="closeConsultModal()">Cancel</button>
-  </div>
-</div>
-
-<div id="screen-login" class="screen active">
-  <div style="min-height:100vh;background:#0c4a6e;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;">
-    <div style="font-size:60px;">🏥</div>
-    <div style="color:#fff;font-size:26px;font-weight:bold;margin:10px 0;">Asha Wellness Sanctuary</div>
-    <div id="login-buttons" style="width:100%;max-width:400px;margin-top:20px;"></div>
-  </div>
-</div>
-
-<div id="screen-home" class="screen">
-  <div class="hdr hdr-blue"><div style="color:#fff; font-weight:bold;">Asha Wellness Sanctuary</div></div>
-  <div class="pad" style="padding:20px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;background:#e0f2fe;padding:10px;border-radius:12px;margin-bottom:15px;">
-      <div style="display:flex;align-items:center;"><div class="sync-dot" id="sync-dot"></div><span id="sync-status-txt">Cloud Ready</span></div>
-      <button class="btn-blue" style="padding:6px 12px; border-radius:8px; font-size:12px; background:#0e7490; color:#fff; border:none;" onclick="doCloudSync()">Sync Now</button>
-    </div>
-    <div class="q-banner" onclick="showScreen('queue')">
-      <div><div style="font-size:12px;">CONSULTATION QUEUE</div><div id="home-queue-count" style="font-size:24px; font-weight:bold;">0 waiting</div></div>
-      <div style="background:#fff; color:#b45309; padding:8px 15px; border-radius:10px; font-weight:bold;">OPEN</div>
-    </div>
-    <button class="menu-btn" onclick="showScreen('addNew')">➕ Add New Patient</button>
-    <button class="menu-btn" onclick="showScreen('search')">🔍 Search History</button>
-    <button class="btn btn-red" style="background:#64748b; margin-top:20px;" onclick="location.reload()">Switch User</button>
-  </div>
-</div>
-
-<div id="screen-queue" class="screen">
-  <div class="hdr hdr-amber"><button class="back-btn" onclick="showScreen('home')">←</button><div class="hdr-title">Queue</div></div>
-  <div class="pad" id="queue-list" style="padding:20px;"></div>
-</div>
-
-<div id="screen-addNew" class="screen">
-  <div class="hdr hdr-green"><button class="back-btn" onclick="showScreen('home')">←</button><div class="hdr-title">Register</div></div>
-  <div class="pad" style="padding:20px;">
-    <input id="an-uid" class="inp" placeholder="UID (e.g. AWH101)" oninput="this.value=this.value.toUpperCase()">
-    <input id="an-name" class="inp" placeholder="Patient Name">
-    <input id="an-phone"
+.import-preview{background:#f8fafc;border-radius:12px;padding:12px;margin-bottom:12px;max-height:200px;overflow-y:auto;font-size:12px;}
+.import-row{display:flex;border-bottom:1px solid #e2e8f0;padding:4px 0;}
+.import-cell{flex:1;padding:2px 4px;color:#0c4a6e;}.import-cell-hdr{font-weight:bold;color:#0e7490;}
+.admin-only-badge{background:#fef3c7;color:#92400e;border:1px solid #fde68a;border-radius:6px;font-size:10px;font-weight:bold;padding:2px 7px;margin-left:6px;}
+.consult-pt-box{background:#fff7ed;border:2px solid #fed7aa
