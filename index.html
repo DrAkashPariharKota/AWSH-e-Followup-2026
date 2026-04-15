@@ -317,7 +317,10 @@ body{font-family:Arial,sans-serif;background:#f0fafa;color:#0c4a6e;min-height:10
         <div class="sync-dot" id="sync-dot"></div>
         <span style="font-size:13px;font-weight:bold;color:#0e7490;" id="sync-status-txt">Cloud Sync Ready</span>
       </div>
-      <button id="sync-btn" onclick="doCloudSync()" style="background:#0e7490;border:none;color:#fff;font-size:12px;font-weight:bold;padding:7px 14px;border-radius:8px;cursor:pointer;">Sync Now</button>
+      <div style="display:flex;gap:6px;">
+        <button id="sync-btn" onclick="doCloudSync()" style="background:#0e7490;border:none;color:#fff;font-size:12px;font-weight:bold;padding:7px 12px;border-radius:8px;cursor:pointer;">&#x2601; Sync</button>
+        <button onclick="pushDashboard()" style="background:#4c1d95;border:none;color:#fff;font-size:12px;font-weight:bold;padding:7px 12px;border-radius:8px;cursor:pointer;">&#x1F4CA; Dashboard</button>
+      </div>
     </div>
     <div class="q-banner" onclick="showScreen('queue')">
       <div class="q-banner-left">
@@ -974,14 +977,16 @@ function openConsultModal(qid){
 }
 function closeConsultModal(){document.getElementById("consult-modal").classList.remove("open");consultPt=null;}
 function renderCmMedPills(sel){
-  var h="";for(var i=0;i<QDAYS.length;i++){var d=QDAYS[i];var s=sel===String(d)?" sel":"";h+='<button class="mq-pill'+s+'" onclick="selCmMed(\''+d+'\')">'+d+'d</button>';}
+  var h="";for(var i=0;i<QDAYS.length;i++){var d=QDAYS[i];var s=String(sel)===String(d)?" sel":"";h+='<button class="mq-pill'+s+'" data-val="'+d+'" onclick="selCmMed('+d+')">'+d+'d</button>';}
   document.getElementById("cm-med-pills").innerHTML=h;
 }
-// FIX #1: Function selCmMed now correctly updates cmMedVal variable (no naming conflict)
+// FIX medicine days: toggle class directly — do NOT re-render pills (destroys DOM mid-click on mobile)
 function selCmMed(val){
-  cmMedVal=val;
+  cmMedVal=String(val);
   document.getElementById("cm-med-custom").value=val;
-  updCmBar(val);renderCmMedPills(val);checkCmSaveBtn();
+  var pills=document.querySelectorAll("#cm-med-pills .mq-pill");
+  for(var i=0;i<pills.length;i++){if(pills[i].getAttribute("data-val")===String(val))pills[i].classList.add("sel");else pills[i].classList.remove("sel");}
+  updCmBar(val);checkCmSaveBtn();
 }
 function onCmMedInput(v){
   cmMedVal=v;  // FIX: was selCmMed=v
@@ -997,10 +1002,13 @@ function checkCmSaveBtn(){
   var btn=document.getElementById("cm-save-btn");btn.style.opacity=ok?"1":"0.4";btn.style.cursor=ok?"pointer":"not-allowed";
 }
 function saveConsultation(){
+  var btn=document.getElementById("cm-save-btn");
+  if(btn&&btn.disabled)return;
   var days=cmMedVal||document.getElementById("cm-med-custom").value.trim();
   var isTele=consultPt&&consultPt.isTele;
   if(!isTele&&(!days||isNaN(days)||parseInt(days,10)<1)){toast("Enter medicine days");return;}
   if(!consultPt)return;
+  if(btn){btn.disabled=true;btn.textContent="Saving...";btn.style.opacity="0.6";}
   var daysValid=days&&!isNaN(days)&&parseInt(days,10)>0;
   var nd=daysValid?addDays(days):null;
   var notes=document.getElementById("cm-notes").value.trim();var t=todayStr();
@@ -1221,32 +1229,34 @@ function reactivatePatient(uid){
   renderToday();renderHome();
 }
 
-// LIVE SEARCH DROPDOWN
-var _lsTimer=null;
+// LIVE SEARCH DROPDOWN — debounced 350ms to prevent browser freeze on fast typing
+var _lsTimer=null,_lsLastVal="";
 function liveSearch(val){
+  val=(val||"").toUpperCase();
   clearTimeout(_lsTimer);
   var dd=document.getElementById("live-dropdown");
-  if(!val||val.length<2){dd.classList.remove("open");return;}
+  if(!val||val.length<2){if(dd)dd.classList.remove("open");_lsLastVal="";return;}
+  if(val===_lsLastVal)return; // identical value — skip entirely
   _lsTimer=setTimeout(function(){
-    var v=val.toUpperCase();
+    _lsLastVal=val;
     var matches=[];
-    for(var i=0;i<patients.length&&matches.length<3;i++){
+    for(var i=0;i<patients.length&&matches.length<4;i++){
       var p=patients[i];
-      if(p.uid.indexOf(v)>=0||p.name.toUpperCase().indexOf(v)>=0){matches.push(p);}
+      if(p.uid.indexOf(val)>=0||p.name.toUpperCase().indexOf(val)>=0){matches.push(p);}
     }
     if(!matches.length){dd.classList.remove("open");return;}
     var h="";
     for(var j=0;j<matches.length;j++){
       var m=matches[j];var t=todayStr();
-      var st=m.followupDate<t?"OVERDUE":m.followupDate===t?"TODAY":"";
-      var stc=m.followupDate<t?"#dc2626":"#059669";
+      var st=m.status==="dropout"?"DROPOUT":m.followupDate<t?"OVERDUE":m.followupDate===t?"TODAY":"";
+      var stc=m.status==="dropout"?"#be185d":m.followupDate<t?"#dc2626":"#059669";
       h+='<div class="live-item" onmousedown="pickLiveResult(\''+m.uid+'\')">';
       h+='<div><div class="live-name">'+eh(m.name)+'</div><div class="live-uid">'+eh(m.uid)+' &bull; '+(m.age||"")+'y &bull; '+(m.category||"")+'</div></div>';
       if(st)h+='<span class="live-badge" style="background:'+stc+'22;color:'+stc+';">'+st+'</span>';
       h+='</div>';
     }
     dd.innerHTML=h;dd.classList.add("open");
-  },200);
+  },350);
 }
 function pickLiveResult(uid){
   document.getElementById("search-uid").value=uid;
@@ -1272,16 +1282,34 @@ function doSearch(){
   if(f.visits&&f.visits.length>0){var h="";var sl=f.visits.slice(0,4);for(var j=0;j<sl.length;j++)h+=vCard(sl[j]);document.getElementById("sf-history-list").innerHTML=h;document.getElementById("sf-history").style.display="block";}
   else document.getElementById("sf-history").style.display="none";
 }
-function renderMedPills(cid,pfx,cur){var h="";for(var i=0;i<QDAYS.length;i++){var d=QDAYS[i];var s=cur===String(d)?" sel":"";h+='<button class="med-pill'+s+'" onclick="selMed(\''+pfx+'\',\''+d+'\')">'+d+'d</button>';}document.getElementById(cid).innerHTML=h;}
+function renderMedPills(cid,pfx,cur){
+  var h="";for(var i=0;i<QDAYS.length;i++){var d=QDAYS[i];var s=String(cur)===String(d)?" sel":"";h+='<button class="med-pill'+s+'" data-val="'+d+'" onclick="selMed(\''+pfx+'\','+d+')">'+d+'d</button>';}
+  document.getElementById(cid).innerHTML=h;
+}
+// FIX medicine days: toggle class only — do NOT re-render (mobile DOM-mid-click bug)
 function selMed(pfx,val){
-  if(pfx==="fu"){selFuDays=val;document.getElementById("fu-med-custom").value=val;updFuBar(val);renderMedPills("fu-med-pills","fu",val);}
-  else if(pfx==="em"){selEmDays=val;document.getElementById("em-med-custom").value=val;updEmBar(val);renderEmMedPills(val);checkEmBtn();}
-  else if(pfx==="imp"){selImpMed=val;document.getElementById("imp-med-custom").value=val;updImpBar(val);renderImpMedPills(val);}
+  val=String(val);
+  if(pfx==="fu"){
+    selFuDays=val;document.getElementById("fu-med-custom").value=val;
+    var pills=document.querySelectorAll("#fu-med-pills .med-pill");for(var i=0;i<pills.length;i++){if(pills[i].getAttribute("data-val")===val)pills[i].classList.add("sel");else pills[i].classList.remove("sel");}
+    updFuBar(val);
+  } else if(pfx==="em"){
+    selEmDays=val;document.getElementById("em-med-custom").value=val;
+    var epills=document.querySelectorAll("#em-med-pills .med-pill");for(var i=0;i<epills.length;i++){if(epills[i].getAttribute("data-val")===val)epills[i].classList.add("sel");else epills[i].classList.remove("sel");}
+    updEmBar(val);checkEmBtn();
+  } else if(pfx==="imp"){
+    selImpMed=val;document.getElementById("imp-med-custom").value=val;
+    var ipills=document.querySelectorAll("#imp-med-pills .med-pill");for(var i=0;i<ipills.length;i++){if(ipills[i].getAttribute("data-val")===val)ipills[i].classList.add("sel");else ipills[i].classList.remove("sel");}
+    updImpBar(val);
+  }
 }
 function onFuMedInput(v){selFuDays=v;updFuBar(v);renderMedPills("fu-med-pills","fu",v);}
 function updFuBar(v){var b=document.getElementById("fu-next-bar");if(v&&!isNaN(v)&&parseInt(v,10)>0){b.textContent="Next follow-up: "+fmt(addDays(v));b.style.display="block";}else b.style.display="none";}
 function saveFollowUp(){
+  var btn=document.querySelector("#screen-search .btn-green");
+  if(btn&&btn.disabled)return;
   var md=selFuDays||document.getElementById("fu-med-custom").value.trim();if(!md||isNaN(md)||parseInt(md,10)<1){toast("Enter medicine days");return;}if(!foundPt)return;
+  if(btn){btn.disabled=true;btn.textContent="Saving...";btn.style.opacity="0.6";}
   var nd=addDays(md);var t=todayStr();var diff=Math.round((new Date(t)-new Date(foundPt.followupDate))/86400000);var flag=diff<-1?"Early":diff>1?"Late":"On Time";var notes=document.getElementById("fu-notes").value.trim();
   var visit={date:t,medDays:md,notes:notes,flag:flag,staff:curUser,nextFollowup:nd,type:"regular"};
   for(var i=0;i<patients.length;i++){if(patients[i].uid===foundPt.uid){patients[i].followupDate=nd;patients[i].status="pending";patients[i].visits=[visit].concat(patients[i].visits||[]);break;}}
@@ -1297,13 +1325,17 @@ function resetGrp(wid,cls){var b=document.getElementById(wid).querySelectorAll("
 function selectSex(v){selSex=v;var b=document.getElementById("sex-row").querySelectorAll(".sex-btn");for(var i=0;i<b.length;i++){if(b[i].textContent===v)b[i].classList.add("sel");else b[i].classList.remove("sel");}}
 function selectCat(v){selCat=v;var b=document.getElementById("cat-wrap").querySelectorAll(".cat-btn");for(var i=0;i<b.length;i++){if(b[i].textContent===v)b[i].classList.add("sel");else b[i].classList.remove("sel");}}
 function saveNewPatient(){
+  var btn=document.querySelector("#screen-addNew .btn-green");
+  if(btn&&btn.disabled)return;
+  if(btn){btn.disabled=true;btn.textContent="Saving...";btn.style.opacity="0.6";}
   var uid=document.getElementById("an-uid").value.trim().toUpperCase();var name=document.getElementById("an-name").value.trim();var phone=document.getElementById("an-phone").value.trim();var age=document.getElementById("an-age").value.trim();var addr=document.getElementById("an-address").value.trim();
-  if(!uid||!name||!phone){toast("UID, Name and Phone required");return;}
-  for(var i=0;i<patients.length;i++){if(patients[i].uid===uid){toast("UID already exists!");return;}}
+  function reenable(){if(btn){btn.disabled=false;btn.textContent="Save New Patient";btn.style.opacity="1";}}
+  if(!uid||!name||!phone){toast("UID, Name and Phone required");reenable();return;}
+  for(var i=0;i<patients.length;i++){if(patients[i].uid===uid){toast("UID already exists!");reenable();return;}}
   var p={uid:uid,name:name,phone:phone,age:age,sex:selSex,address:addr,category:selCat,followupDate:todayStr(),status:"pending",createdBy:curUser,createdAt:new Date().toLocaleString("en-IN"),visits:[]};
   patients.push(p);savePts();addLog("New Patient Added",name,uid);
   if(anAddToQueue==="yes"){addNewPatientToQueue(uid,name);toast("Patient saved and added to Queue!");showScreen("queue");}else{toast("Patient saved: "+name);goHome();}
-  resetAddNew();
+  resetAddNew();reenable();
 }
 
 // EARLY VISIT
@@ -1347,7 +1379,7 @@ function fillEarlyModal(p){
   renderEmReasons("");renderEmMedPills("");checkEmBtn();
 }
 function renderEmReasons(sel){var h="";for(var i=0;i<REASONS.length;i++){var r=REASONS[i];var s=sel===r?" sel":"";h+='<button class="reason-pill'+s+'" onclick="selReason(\''+r+'\')">'+r+'</button>';}document.getElementById("em-reasons").innerHTML=h;}
-function renderEmMedPills(sel){var h="";for(var i=0;i<QDAYS.length;i++){var d=QDAYS[i];var s=sel===String(d)?" sel":"";h+='<button class="med-pill'+s+'" onclick="selMed(\'em\',\''+d+'\')">'+d+'d</button>';}document.getElementById("em-med-pills").innerHTML=h;}
+function renderEmMedPills(sel){var h="";for(var i=0;i<QDAYS.length;i++){var d=QDAYS[i];var s=String(sel)===String(d)?" sel":"";h+='<button class="med-pill'+s+'" data-val="'+d+'" onclick="selMed(\'em\','+d+')">'+d+'d</button>';}document.getElementById("em-med-pills").innerHTML=h;}
 function selReason(r){selEmReason=r;renderEmReasons(r);document.getElementById("em-custom-reason").style.display=r==="Other"?"block":"none";checkEmBtn();}
 function onEmMedInput(v){selEmDays=v;renderEmMedPills(v);updEmBar(v);checkEmBtn();}
 function updEmBar(v){var b=document.getElementById("em-next-bar");if(v&&!isNaN(v)&&parseInt(v,10)>0){b.textContent="Next follow-up: "+fmt(addDays(v));b.style.display="block";}else b.style.display="none";}
@@ -1380,7 +1412,7 @@ function saveEarlyVisit(){
 // IMPORT OLD DATA
 function selectImpSex(v){selImpSex=v;var b=document.getElementById("imp-sex-row").querySelectorAll(".sex-btn");for(var i=0;i<b.length;i++){if(b[i].textContent===v)b[i].classList.add("sel");else b[i].classList.remove("sel");}}
 function selectImpCat(v){selImpCat=v;var b=document.getElementById("imp-cat-wrap").querySelectorAll(".cat-btn");for(var i=0;i<b.length;i++){if(b[i].textContent===v)b[i].classList.add("sel");else b[i].classList.remove("sel");}}
-function renderImpMedPills(sel){var h="";for(var i=0;i<QDAYS.length;i++){var d=QDAYS[i];var s=sel===String(d)?" sel":"";h+='<button class="med-pill'+s+'" onclick="selMed(\'imp\',\''+d+'\')">'+d+'d</button>';}document.getElementById("imp-med-pills").innerHTML=h;}
+function renderImpMedPills(sel){var h="";for(var i=0;i<QDAYS.length;i++){var d=QDAYS[i];var s=String(sel)===String(d)?" sel":"";h+='<button class="med-pill'+s+'" data-val="'+d+'" onclick="selMed(\'imp\','+d+')">'+d+'d</button>';}document.getElementById("imp-med-pills").innerHTML=h;}
 function onImpMedInput(v){selImpMed=v;renderImpMedPills(v);updImpBar(v);}
 function updImpBar(v){var b=document.getElementById("imp-next-bar");var lv=document.getElementById("imp-lastvisit").value||todayStr();if(v&&!isNaN(v)&&parseInt(v,10)>0){b.textContent="Follow-up: "+fmt(addDaysToDate(lv,v));b.style.display="block";}else b.style.display="none";}
 function saveImportedPatient(){
@@ -1436,19 +1468,80 @@ function renderLog(){
 
 // CLOUD SYNC
 function setSyncStatus(state,msg){var dot=document.getElementById("sync-dot");var txt=document.getElementById("sync-status-txt");var btn=document.getElementById("sync-btn");if(!dot)return;dot.className="sync-dot"+(state==="offline"?" offline":state==="syncing"?" syncing":"");txt.textContent=msg;if(btn)btn.disabled=state==="syncing";}
+
+// FIX 3: syncedAt uses ISO format for reliable multi-phone conflict resolution in Google Script
+function isoNow(){return new Date().toISOString();}
+
+function buildDailySummary(){
+  var t=todayStr();
+  var total=patients.length;
+  var pending=patients.filter(function(p){return p.followupDate<=t&&p.status==="pending";}).length;
+  var overdue=patients.filter(function(p){return p.followupDate<t&&p.status==="pending";}).length;
+  var dropouts=patients.filter(function(p){return p.status==="dropout";}).length;
+  var qDone=queue.filter(function(q){return q.status==="done";}).length;
+  var qWaiting=queue.filter(function(q){return q.status==="waiting"||q.status==="consulting";}).length;
+  // Count new registrations today from logs
+  var newToday=logs.filter(function(l){return l.action==="New Patient Added"&&l.time.indexOf(todayStr().split("-").reverse().join("/"))>=0;}).length;
+  return{date:t,totalPatients:total,pendingFollowups:pending,overdueFollowups:overdue,dropouts:dropouts,seenInQueue:qDone,currentlyWaiting:qWaiting,newRegistrationsToday:newToday,generatedAt:isoNow(),generatedBy:curUser};
+}
+
 function doCloudSync(){
+  var syncBtn=document.getElementById("sync-btn");
+  if(syncBtn&&syncBtn.disabled)return;
   setSyncStatus("syncing","Syncing...");
-  var now=new Date().toLocaleString("en-IN");
-  var payload={action:"sync",patients:patients,logs:logs.slice(0,100),syncedBy:curUser,syncedAt:now,appVersion:"v2"};
+  // FIX 3: ISO timestamp for multi-phone conflict resolution
+  var payload={action:"sync",patients:patients,logs:logs.slice(0,100),syncedBy:curUser,syncedAt:isoNow(),deviceId:navigator.userAgent.slice(-20),appVersion:"v4",dailySummary:buildDailySummary()};
   var xhr=new XMLHttpRequest();xhr.open("POST",CLOUD_URL,true);xhr.setRequestHeader("Content-Type","text/plain");
-  xhr.onreadystatechange=function(){if(xhr.readyState===4){if(xhr.status===200){setSyncStatus("online","Synced: "+new Date().toLocaleTimeString("en-IN"));addLog("Cloud Sync",curUser,"--");toast("Cloud sync successful!");}else{setSyncStatus("offline","Sync failed ("+xhr.status+")");toast("Sync failed - check connection");}}};
-  xhr.onerror=function(){setSyncStatus("offline","No internet");toast("No internet connection");};
+  xhr.onreadystatechange=function(){
+    if(xhr.readyState===4){
+      if(xhr.status===200){
+        setSyncStatus("online","Synced: "+new Date().toLocaleTimeString("en-IN"));
+        addLog("Cloud Sync OK",curUser,"--");
+        toast("Cloud sync successful! Dashboard updated.");
+      } else {
+        setSyncStatus("offline","Sync failed ("+xhr.status+")");
+        toast("Sync failed — will retry on next tap");
+      }
+    }
+  };
+  xhr.onerror=function(){setSyncStatus("offline","No internet");toast("No internet — data saved locally");};
   xhr.send(JSON.stringify(payload));
 }
+
+function pushDashboard(){
+  // Push ONLY the daily summary — lightweight, no patient data
+  setSyncStatus("syncing","Pushing dashboard...");
+  var payload={action:"dashboard",summary:buildDailySummary()};
+  var xhr=new XMLHttpRequest();xhr.open("POST",CLOUD_URL,true);xhr.setRequestHeader("Content-Type","text/plain");
+  xhr.onreadystatechange=function(){
+    if(xhr.readyState===4){
+      if(xhr.status===200){setSyncStatus("online","Dashboard pushed \u2714");toast("Dashboard sent to Google Sheets!");}
+      else{setSyncStatus("offline","Dashboard push failed");toast("Could not reach Google Sheets");}
+    }
+  };
+  xhr.onerror=function(){setSyncStatus("offline","Offline");toast("No internet");};
+  xhr.send(JSON.stringify(payload));
+}
+
 function fetchFromCloud(){
   setSyncStatus("syncing","Connecting to cloud...");
   var xhr=new XMLHttpRequest();xhr.open("GET",CLOUD_URL+"?action=get&t="+Date.now(),true);
-  xhr.onreadystatechange=function(){if(xhr.readyState===4){if(xhr.status===200){try{var resp=JSON.parse(xhr.responseText);if(resp&&resp.patients&&resp.patients.length>0){patients=resp.patients;savePts();setSyncStatus("online","Synced from cloud \u2714");renderHome();}else setSyncStatus("online","Cloud connected \u2714");}catch(e){setSyncStatus("online","Cloud ready");}}else setSyncStatus("offline","Offline mode");}};
+  xhr.onreadystatechange=function(){
+    if(xhr.readyState===4){
+      if(xhr.status===200){
+        try{
+          var resp=JSON.parse(xhr.responseText);
+          if(resp&&resp.patients&&resp.patients.length>0){
+            // FIX 3: Only update if cloud data is newer (multi-phone conflict resolution)
+            if(!resp.syncedAt||!patients.length||new Date(resp.syncedAt)>new Date()){
+              patients=resp.patients;savePts();
+            }
+            setSyncStatus("online","Synced from cloud \u2714");renderHome();
+          } else setSyncStatus("online","Cloud connected \u2714");
+        } catch(e){setSyncStatus("online","Cloud ready");}
+      } else setSyncStatus("offline","Offline mode");
+    }
+  };
   xhr.onerror=function(){setSyncStatus("offline","Offline mode");};xhr.send();
 }
 
