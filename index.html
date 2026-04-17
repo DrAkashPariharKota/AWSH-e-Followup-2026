@@ -331,6 +331,15 @@ body{font-family:Arial,sans-serif;background:#f0fafa;color:#0c4a6e;min-height:10
       </div>
       <button class="q-open-btn">Open Queue</button>
     </div>
+    <!-- ENQUIRIES BANNER -->
+    <div onclick="showScreen('enquiries')" style="background:linear-gradient(135deg,#0f766e,#0d9488);border-radius:18px;padding:16px 20px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 16px rgba(15,118,110,0.3);cursor:pointer;">
+      <div style="color:#fff;">
+        <div style="font-size:10px;font-weight:bold;letter-spacing:2px;color:#99f6e4;margin-bottom:4px;">FB ADS / WHATSAPP ENQUIRIES</div>
+        <div style="font-size:26px;font-weight:bold;line-height:1;" id="home-enq-count">0 new</div>
+        <div style="font-size:12px;color:#99f6e4;margin-top:3px;">Tap to manage leads &amp; follow-up calls</div>
+      </div>
+      <button style="background:#fff;color:#0f766e;border:none;border-radius:12px;padding:12px 16px;font-size:14px;font-weight:bold;cursor:pointer;flex-shrink:0;">Open</button>
+    </div>
     <button class="menu-btn" style="border-color:#0e7490;" onclick="showScreen('today')">
       <div class="menu-icon" style="background:#e0f2fe;">&#x1F4CB;</div>
       <div><div class="menu-title">Today's Follow-Up List</div><div class="menu-sub" id="home-today-sub">0 patients to call</div></div>
@@ -729,7 +738,7 @@ function hindiWaMsg(name,followupDate){
 
 var SK="asha_pts_v8",LK="asha_logs_v8",QK="asha_queue_v8";
 var ADMIN_PWD="112233445566";
-var CLOUD_URL="https://script.google.com/macros/s/AKfycbz7x2DNJWSnMd13m4N92y6Qur5AzwDUhsiLRi8H-Yqbgv4acyxq1X-_WhBUNftQtpro/exec";
+var CLOUD_URL="https://script.google.com/macros/s/AKfycbzzJiGu32AbR4zhfy6YTQoSzxnpaMDFH4bylWv2qW3Xyk3ImHm-ZxP1Nx-37XdlB0vI/exec";
 var QDAYS=[3,5,7,10,14,15,21,30];
 var REASONS=["Side effect","Chest pain","Reports ready","Not feeling well","Emergency","Other"];
 var STAFF=[
@@ -837,6 +846,9 @@ function renderHome(){
   var tsEl=document.getElementById("home-login-ts");if(tsEl&&loginTimestamp){var d=loginTimestamp;var pp=function(n){return n<10?"0"+n:n;};tsEl.textContent="Logged in: "+pp(d.getDate())+"/"+pp(d.getMonth()+1)+"/"+d.getFullYear()+" "+pp(d.getHours())+":"+pp(d.getMinutes());}
   document.getElementById("home-queue-count").textContent=waiting+" waiting";
   document.getElementById("home-stats").innerHTML=sBox(due,"Due Today","#0e7490","#e0f2fe")+sBox(ovd,"Overdue","#dc2626","#fee2e2")+sBox(patients.length,"Total","#059669","#d1fae5")+sBox(dropoutCount,"Dropouts","#be185d","#fdf2f8");
+  // Update enquiry banner
+  var enqNew=enquiries.filter(function(e){return e.status==="new"||e.status==="noanswer";}).length;
+  var homeEnqEl=document.getElementById("home-enq-count");if(homeEnqEl)homeEnqEl.textContent=enqNew+" need follow-up";
 }
 function sBox(v,l,c,bg){return'<div class="stat-box" style="background:'+bg+';">'+'<div class="stat-num" style="color:'+c+';">'+v+'</div><div class="stat-lbl" style="color:'+c+';">'+l+'</div></div>';}
 
@@ -1570,6 +1582,410 @@ loadReminders();
 renderLogin();
 startReminderChecker();
 setTimeout(function(){fetchFromCloud();},1500);
+</script>
+<!-- ══════════════════════════════════════════════════════
+     ENQUIRIES SCREEN
+     ══════════════════════════════════════════════════════ -->
+<div id="screen-enquiries" class="screen">
+  <div class="hdr" style="background:linear-gradient(135deg,#0f766e,#0d9488);">
+    <button class="back-btn" onclick="showScreen('home')">&#8592;</button>
+    <div style="flex:1;">
+      <div class="hdr-title">WhatsApp / FB Enquiries</div>
+      <div class="hdr-sub" style="color:#99f6e4;" id="enq-hdr-sub">Lead tracker</div>
+    </div>
+    <button onclick="showAddEnqModal()" style="background:#fff;color:#0f766e;border:none;border-radius:10px;padding:8px 14px;font-size:13px;font-weight:bold;cursor:pointer;">+ Add</button>
+  </div>
+
+  <!-- Filter tabs -->
+  <div style="display:flex;background:#fff;border-bottom:2px solid #e2e8f0;overflow-x:auto;">
+    <button id="enq-tab-all"    onclick="setEnqFilter('all')"     style="flex:1;padding:12px 4px;border:none;background:transparent;font-size:12px;font-weight:bold;color:#0f766e;border-bottom:3px solid #0f766e;cursor:pointer;white-space:nowrap;">All</button>
+    <button id="enq-tab-new"    onclick="setEnqFilter('new')"     style="flex:1;padding:12px 4px;border:none;background:transparent;font-size:12px;font-weight:bold;color:#94a3b8;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;">🔵 New</button>
+    <button id="enq-tab-called" onclick="setEnqFilter('called')"  style="flex:1;padding:12px 4px;border:none;background:transparent;font-size:12px;font-weight:bold;color:#94a3b8;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;">✅ Called</button>
+    <button id="enq-tab-noanswer" onclick="setEnqFilter('noanswer')" style="flex:1;padding:12px 4px;border:none;background:transparent;font-size:12px;font-weight:bold;color:#94a3b8;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;">📵 No Ans</button>
+    <button id="enq-tab-visiting" onclick="setEnqFilter('visiting')" style="flex:1;padding:12px 4px;border:none;background:transparent;font-size:12px;font-weight:bold;color:#94a3b8;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;">🏥 Visiting</button>
+    <button id="enq-tab-converted" onclick="setEnqFilter('converted')" style="flex:1;padding:12px 4px;border:none;background:transparent;font-size:12px;font-weight:bold;color:#94a3b8;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;">⭐ Patient</button>
+  </div>
+
+  <!-- Stats strip -->
+  <div style="display:flex;background:#f0fdfa;border-bottom:1px solid #ccfbf1;padding:10px 16px;gap:14px;">
+    <div style="text-align:center;"><div style="font-size:20px;font-weight:bold;color:#0f766e;" id="enq-stat-total">0</div><div style="font-size:9px;font-weight:bold;color:#0f766e;">TOTAL</div></div>
+    <div style="text-align:center;"><div style="font-size:20px;font-weight:bold;color:#3b82f6;" id="enq-stat-new">0</div><div style="font-size:9px;font-weight:bold;color:#3b82f6;">NEW</div></div>
+    <div style="text-align:center;"><div style="font-size:20px;font-weight:bold;color:#dc2626;" id="enq-stat-noanswer">0</div><div style="font-size:9px;font-weight:bold;color:#dc2626;">NO ANS</div></div>
+    <div style="text-align:center;"><div style="font-size:20px;font-weight:bold;color:#d97706;" id="enq-stat-visiting">0</div><div style="font-size:9px;font-weight:bold;color:#d97706;">VISITING</div></div>
+    <div style="text-align:center;"><div style="font-size:20px;font-weight:bold;color:#059669;" id="enq-stat-converted">0</div><div style="font-size:9px;font-weight:bold;color:#059669;">CONVERTED</div></div>
+    <div style="margin-left:auto;display:flex;align-items:center;">
+      <button onclick="downloadEnqCsv()" style="background:#0f766e;border:none;color:#fff;font-size:11px;font-weight:bold;padding:6px 12px;border-radius:8px;cursor:pointer;">&#x1F4CA; Export</button>
+    </div>
+  </div>
+
+  <div class="pad-b" id="enq-list" style="padding-top:12px;"></div>
+</div>
+
+<!-- ADD ENQUIRY MODAL -->
+<div id="add-enq-modal" class="modal-bg">
+  <div class="modal-box">
+    <div class="modal-top">
+      <div>
+        <div style="font-size:20px;font-weight:bold;color:#0f766e;">New Enquiry</div>
+        <div style="font-size:12px;color:#64748b;margin-top:2px;">FB Ad / WhatsApp lead</div>
+      </div>
+      <button class="close-btn" onclick="closeAddEnqModal()">X</button>
+    </div>
+    <div class="lbl">Phone Number *</div>
+    <input id="enq-phone" class="inp inp-lg" type="tel" placeholder="e.g. 9876543210" maxlength="10">
+    <div class="lbl">Name (optional)</div>
+    <input id="enq-name" class="inp" type="text" placeholder="e.g. Ramesh or 'Unknown'">
+    <div class="lbl">Source</div>
+    <div style="display:flex;flex-wrap:wrap;margin-bottom:14px;" id="enq-source-pills">
+      <button class="cat-btn sel" data-src="Facebook Ad" onclick="selectEnqSource(this)">📘 Facebook Ad</button>
+      <button class="cat-btn" data-src="WhatsApp" onclick="selectEnqSource(this)">💬 WhatsApp</button>
+      <button class="cat-btn" data-src="Instagram" onclick="selectEnqSource(this)">📸 Instagram</button>
+      <button class="cat-btn" data-src="Google" onclick="selectEnqSource(this)">🔍 Google</button>
+      <button class="cat-btn" data-src="Word of Mouth" onclick="selectEnqSource(this)">🗣 Word of Mouth</button>
+      <button class="cat-btn" data-src="Other" onclick="selectEnqSource(this)">Other</button>
+    </div>
+    <div class="lbl">Enquiry About (optional)</div>
+    <div style="display:flex;flex-wrap:wrap;margin-bottom:14px;" id="enq-topic-pills">
+      <button class="cat-btn" data-topic="Psychiatry" onclick="selectEnqTopic(this)">Psychiatry</button>
+      <button class="cat-btn" data-topic="De-addiction" onclick="selectEnqTopic(this)">De-addiction</button>
+      <button class="cat-btn" data-topic="Counselling" onclick="selectEnqTopic(this)">Counselling</button>
+      <button class="cat-btn" data-topic="Child Psychiatry" onclick="selectEnqTopic(this)">Child</button>
+      <button class="cat-btn" data-topic="General" onclick="selectEnqTopic(this)">General</button>
+    </div>
+    <div class="lbl">Notes (optional)</div>
+    <textarea id="enq-notes" class="txta" rows="2" placeholder="e.g. Father asking about son's addiction, wants appointment..."></textarea>
+    <button id="enq-save-btn" class="btn" style="background:#0f766e;" onclick="saveEnquiry()">Save Enquiry</button>
+    <div style="height:10px;"></div>
+  </div>
+</div>
+
+<!-- VISIT DATE MODAL for enquiries -->
+<div id="enq-visit-modal" class="modal-bg">
+  <div class="modal-box">
+    <div class="modal-top">
+      <div style="font-size:19px;font-weight:bold;color:#d97706;">Planning to Visit</div>
+      <button class="close-btn" onclick="closeEnqVisitModal()">X</button>
+    </div>
+    <div style="background:#fffbeb;border:2px solid #fde68a;border-radius:12px;padding:12px 14px;margin-bottom:14px;">
+      <div style="font-size:16px;font-weight:bold;color:#92400e;" id="evm-name"></div>
+      <div style="font-size:13px;color:#78716c;" id="evm-phone"></div>
+    </div>
+    <div class="lbl">Coming in after how many days?</div>
+    <div style="display:flex;flex-wrap:wrap;margin-bottom:10px;" id="evm-day-pills">
+      <button class="cat-btn" onclick="setEvmDays(1)">Tomorrow</button>
+      <button class="cat-btn" onclick="setEvmDays(2)">2 days</button>
+      <button class="cat-btn" onclick="setEvmDays(3)">3 days</button>
+      <button class="cat-btn" onclick="setEvmDays(5)">5 days</button>
+      <button class="cat-btn" onclick="setEvmDays(7)">1 week</button>
+      <button class="cat-btn" onclick="setEvmDays(14)">2 weeks</button>
+    </div>
+    <input id="evm-custom-days" class="inp" type="number" placeholder="Or type custom days" oninput="setEvmDays(this.value)">
+    <div id="evm-preview" style="background:#f0fdf4;border:2px solid #6ee7b7;border-radius:10px;padding:10px 14px;font-size:14px;font-weight:bold;color:#065f46;margin-bottom:14px;display:none;"></div>
+    <button id="evm-save-btn" class="btn" style="background:#d97706;opacity:0.4;cursor:not-allowed;" onclick="saveEnqVisit()">Confirm Visit Date</button>
+    <div style="height:10px;"></div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// ENQUIRIES MODULE
+// ══════════════════════════════════════════════════════
+var EK="asha_enq_v1";
+var enquiries=[];
+var enqFilter="all";
+var enqSaveSource="Facebook Ad";
+var enqSaveTopic="";
+var evmCurrentId=null;
+var evmDays=null;
+
+function loadEnquiries(){
+  try{var e=localStorage.getItem(EK);if(e)enquiries=JSON.parse(e);}catch(ex){enquiries=[];}
+}
+function saveEnquiries(){try{localStorage.setItem(EK,JSON.stringify(enquiries));}catch(ex){}}
+
+function enqId(){return"enq"+Date.now()+Math.floor(Math.random()*1000);}
+
+// ── Render ──────────────────────────────────────────
+function renderEnquiries(){
+  var t=todayStr();
+  // Update stats
+  var all=enquiries;
+  var nw=all.filter(function(e){return e.status==="new";});
+  var na=all.filter(function(e){return e.status==="noanswer";});
+  var vis=all.filter(function(e){return e.status==="visiting";});
+  var conv=all.filter(function(e){return e.status==="converted";});
+  document.getElementById("enq-stat-total").textContent=all.length;
+  document.getElementById("enq-stat-new").textContent=nw.length;
+  document.getElementById("enq-stat-noanswer").textContent=na.length;
+  document.getElementById("enq-stat-visiting").textContent=vis.length;
+  document.getElementById("enq-stat-converted").textContent=conv.length;
+  document.getElementById("enq-hdr-sub").textContent=all.length+" leads · "+nw.length+" new · "+conv.length+" converted";
+
+  // Home screen count (new + no-answer = needs attention)
+  var homeCount=nw.length+na.length;
+  var homeEl=document.getElementById("home-enq-count");
+  if(homeEl)homeEl.textContent=homeCount+" need follow-up";
+
+  // Filter
+  var list=all;
+  if(enqFilter==="new")list=nw;
+  else if(enqFilter==="called")list=all.filter(function(e){return e.status==="called";});
+  else if(enqFilter==="noanswer")list=na;
+  else if(enqFilter==="visiting")list=vis;
+  else if(enqFilter==="converted")list=conv;
+
+  // Sort: newest first
+  list=list.slice().sort(function(a,b){return(b.createdAt||0)-(a.createdAt||0);});
+
+  if(!list.length){
+    document.getElementById("enq-list").innerHTML='<div class="empty-state"><div style="font-size:48px;">📭</div><div style="font-size:18px;font-weight:bold;color:#0c4a6e;margin-top:12px;">No enquiries here</div><div style="font-size:13px;color:#64748b;margin-top:6px;">Tap + Add to enter a new lead</div></div>';
+    return;
+  }
+
+  var statusCfg={
+    new:   {bg:"#eff6ff",br:"2px solid #93c5fd",label:"🔵 New",lc:"#1d4ed8"},
+    called:{bg:"#f0fdf4",br:"2px solid #6ee7b7",label:"✅ Called",lc:"#059669"},
+    noanswer:{bg:"#fff5f5",br:"2px solid #fca5a5",label:"📵 No Answer",lc:"#dc2626"},
+    visiting:{bg:"#fffbeb",br:"2px solid #fde68a",label:"🏥 Visiting",lc:"#d97706"},
+    converted:{bg:"#f0fdf4",br:"2.5px solid #059669",label:"⭐ Converted to Patient",lc:"#059669"},
+    cold:  {bg:"#f8fafc",br:"1.5px solid #e2e8f0",label:"❄️ Cold",lc:"#94a3b8"}
+  };
+
+  var h="";
+  for(var i=0;i<list.length;i++){
+    var e=list[i];
+    var cfg=statusCfg[e.status]||statusCfg.new;
+    var daysAgo=Math.floor((Date.now()-(e.createdAt||Date.now()))/86400000);
+    var daysAgoTxt=daysAgo===0?"Today":daysAgo===1?"Yesterday":daysAgo+"d ago";
+
+    h+='<div style="background:'+cfg.bg+';border:'+cfg.br+';border-radius:16px;padding:16px;margin-bottom:12px;">';
+    // Header row
+    h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">';
+    h+='<div>';
+    h+='<div style="font-size:17px;font-weight:bold;color:#0c4a6e;">'+eh(e.name||"Unknown")+'</div>';
+    h+='<div style="font-size:14px;color:#0e7490;font-weight:bold;margin-top:2px;">'+eh(e.phone)+'</div>';
+    h+='</div>';
+    h+='<div style="text-align:right;">';
+    h+='<span style="background:'+cfg.lc+'22;color:'+cfg.lc+';border-radius:8px;padding:3px 9px;font-size:11px;font-weight:bold;">'+cfg.label+'</span>';
+    h+='<div style="font-size:10px;color:#94a3b8;margin-top:4px;">'+daysAgoTxt+'</div>';
+    h+='</div></div>';
+
+    // Meta row
+    h+='<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">';
+    if(e.source)h+='<span style="background:#e0f2fe;color:#0e7490;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:bold;">'+eh(e.source)+'</span>';
+    if(e.topic)h+='<span style="background:#ede9fe;color:#6d28d9;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:bold;">'+eh(e.topic)+'</span>';
+    if(e.visitDate)h+='<span style="background:#fef3c7;color:#92400e;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:bold;">📅 Visit: '+fmt(e.visitDate)+'</span>';
+    if(e.addedBy)h+='<span style="font-size:10px;color:#94a3b8;">by '+eh(e.addedBy)+'</span>';
+    h+='</div>';
+
+    if(e.notes)h+='<div style="font-size:13px;color:#64748b;background:#f8fafc;border-radius:8px;padding:8px 10px;margin-bottom:10px;">'+eh(e.notes)+'</div>';
+
+    // Call button always visible
+    h+='<div style="display:flex;gap:6px;margin-bottom:8px;">';
+    h+='<a href="tel:'+eh(e.phone)+'" class="contact-btn" style="background:#0e7490;flex:1;border-radius:12px;padding:12px;text-align:center;text-decoration:none;color:#fff;font-size:14px;font-weight:bold;" onclick="markEnqCalled(\''+e.id+'\')">📞 Call</a>';
+    h+='<a href="https://wa.me/91'+eh(e.phone.replace(/\D/g,""))+'" target="_blank" class="contact-btn" style="background:#25D366;flex:1;border-radius:12px;padding:12px;text-align:center;text-decoration:none;color:#fff;font-size:14px;font-weight:bold;">💬 WhatsApp</a>';
+    h+='</div>';
+
+    // Action buttons
+    h+='<div style="display:flex;flex-wrap:wrap;gap:6px;">';
+    if(e.status!=="called")
+      h+='<button onclick="setEnqStatus(\''+e.id+'\',\'called\')" style="flex:1;min-width:80px;padding:9px 6px;background:#059669;border:none;color:#fff;border-radius:10px;font-size:12px;font-weight:bold;cursor:pointer;">✅ Called</button>';
+    if(e.status!=="noanswer")
+      h+='<button onclick="setEnqStatus(\''+e.id+'\',\'noanswer\')" style="flex:1;min-width:80px;padding:9px 6px;background:#dc2626;border:none;color:#fff;border-radius:10px;font-size:12px;font-weight:bold;cursor:pointer;">📵 No Answer</button>';
+    if(e.status!=="visiting")
+      h+='<button onclick="openEnqVisitModal(\''+e.id+'\')" style="flex:1;min-width:80px;padding:9px 6px;background:#d97706;border:none;color:#fff;border-radius:10px;font-size:12px;font-weight:bold;cursor:pointer;">🏥 Will Visit</button>';
+    if(e.status!=="converted")
+      h+='<button onclick="convertEnquiry(\''+e.id+'\')" style="flex:1;min-width:80px;padding:9px 6px;background:#0f766e;border:none;color:#fff;border-radius:10px;font-size:12px;font-weight:bold;cursor:pointer;">⭐ Converted</button>';
+    if(e.status!=="cold")
+      h+='<button onclick="setEnqStatus(\''+e.id+'\',\'cold\')" style="flex:1;min-width:60px;padding:9px 6px;background:#94a3b8;border:none;color:#fff;border-radius:10px;font-size:12px;font-weight:bold;cursor:pointer;">❄️ Cold</button>';
+    // Call count badge
+    if(e.callCount>0)h+='<span style="background:#f0fafa;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:bold;color:#0e7490;">📞 ×'+e.callCount+'</span>';
+    h+='</div>';
+
+    // Last action
+    if(e.lastActionAt)h+='<div style="font-size:10px;color:#94a3b8;margin-top:8px;">Last action: '+e.lastActionAt+' by '+eh(e.lastActionBy||"")+'</div>';
+
+    h+='</div>';
+  }
+  document.getElementById("enq-list").innerHTML=h;
+}
+
+// ── Filter tabs ──────────────────────────────────────
+function setEnqFilter(f){
+  enqFilter=f;
+  var tabs=["all","new","called","noanswer","visiting","converted"];
+  for(var i=0;i<tabs.length;i++){
+    var el=document.getElementById("enq-tab-"+tabs[i]);if(!el)continue;
+    el.style.color=tabs[i]===f?"#0f766e":"#94a3b8";
+    el.style.borderBottomColor=tabs[i]===f?"#0f766e":"transparent";
+  }
+  renderEnquiries();
+}
+
+// ── Add enquiry modal ────────────────────────────────
+function showAddEnqModal(){
+  document.getElementById("enq-phone").value="";
+  document.getElementById("enq-name").value="";
+  document.getElementById("enq-notes").value="";
+  enqSaveSource="Facebook Ad";enqSaveTopic="";
+  // Reset source pills
+  var sp=document.getElementById("enq-source-pills").querySelectorAll(".cat-btn");
+  for(var i=0;i<sp.length;i++){sp[i].classList.toggle("sel",sp[i].getAttribute("data-src")==="Facebook Ad");}
+  var tp=document.getElementById("enq-topic-pills").querySelectorAll(".cat-btn");
+  for(var i=0;i<tp.length;i++)tp[i].classList.remove("sel");
+  var btn=document.getElementById("enq-save-btn");btn.disabled=false;btn.textContent="Save Enquiry";btn.style.opacity="1";
+  document.getElementById("add-enq-modal").classList.add("open");
+  setTimeout(function(){document.getElementById("enq-phone").focus();},300);
+}
+function closeAddEnqModal(){document.getElementById("add-enq-modal").classList.remove("open");}
+function selectEnqSource(btn){
+  enqSaveSource=btn.getAttribute("data-src");
+  var pills=document.getElementById("enq-source-pills").querySelectorAll(".cat-btn");
+  for(var i=0;i<pills.length;i++)pills[i].classList.toggle("sel",pills[i]===btn);
+}
+function selectEnqTopic(btn){
+  enqSaveTopic=btn.getAttribute("data-topic");
+  var pills=document.getElementById("enq-topic-pills").querySelectorAll(".cat-btn");
+  for(var i=0;i<pills.length;i++)pills[i].classList.toggle("sel",pills[i]===btn);
+}
+function saveEnquiry(){
+  var btn=document.getElementById("enq-save-btn");
+  if(btn&&btn.disabled)return;
+  var phone=document.getElementById("enq-phone").value.trim().replace(/\D/g,"");
+  var name=document.getElementById("enq-name").value.trim()||"Unknown";
+  var notes=document.getElementById("enq-notes").value.trim();
+  if(!phone||phone.length<6){toast("Enter a valid phone number");return;}
+  // Duplicate check
+  for(var i=0;i<enquiries.length;i++){if(enquiries[i].phone===phone&&enquiries[i].status!=="converted"&&enquiries[i].status!=="cold"){toast("This number already exists as a lead!");return;}}
+  if(btn){btn.disabled=true;btn.textContent="Saving...";btn.style.opacity="0.6";}
+  var now=new Date();
+  var entry={id:enqId(),phone:phone,name:name,source:enqSaveSource,topic:enqSaveTopic,notes:notes,status:"new",createdAt:now.getTime(),createdDate:todayStr(),addedBy:curUser,callCount:0,lastActionAt:"",lastActionBy:""};
+  enquiries.unshift(entry);
+  saveEnquiries();
+  addLog("New Enquiry: "+name,phone,"ENQ");
+  closeAddEnqModal();
+  renderEnquiries();
+  toast("Enquiry saved — "+phone);
+}
+
+// ── Status actions ───────────────────────────────────
+function tsNow(){
+  var d=new Date();var p=function(n){return n<10?"0"+n:n;};
+  return p(d.getDate())+"/"+p(d.getMonth()+1)+" "+p(d.getHours())+":"+p(d.getMinutes());
+}
+function setEnqStatus(id,status){
+  for(var i=0;i<enquiries.length;i++){
+    if(enquiries[i].id===id){
+      enquiries[i].status=status;
+      enquiries[i].lastActionAt=tsNow();
+      enquiries[i].lastActionBy=curUser;
+      if(status==="noanswer")enquiries[i].noAnswerCount=(enquiries[i].noAnswerCount||0)+1;
+      break;
+    }
+  }
+  saveEnquiries();addLog("Enquiry → "+status,getEnqName(id),"ENQ");renderEnquiries();
+}
+function markEnqCalled(id){
+  for(var i=0;i<enquiries.length;i++){
+    if(enquiries[i].id===id){
+      enquiries[i].callCount=(enquiries[i].callCount||0)+1;
+      enquiries[i].status="called";
+      enquiries[i].lastActionAt=tsNow();
+      enquiries[i].lastActionBy=curUser;
+      break;
+    }
+  }
+  saveEnquiries();renderEnquiries();
+}
+function getEnqName(id){for(var i=0;i<enquiries.length;i++){if(enquiries[i].id===id)return enquiries[i].name||enquiries[i].phone;}return "Unknown";}
+
+// ── Visit date modal ─────────────────────────────────
+function openEnqVisitModal(id){
+  evmCurrentId=id;evmDays=null;
+  var e=null;for(var i=0;i<enquiries.length;i++){if(enquiries[i].id===id){e=enquiries[i];break;}}
+  if(!e)return;
+  document.getElementById("evm-name").textContent=e.name||"Unknown";
+  document.getElementById("evm-phone").textContent=e.phone;
+  document.getElementById("evm-custom-days").value="";
+  document.getElementById("evm-preview").style.display="none";
+  var evmBtn=document.getElementById("evm-save-btn");evmBtn.style.opacity="0.4";evmBtn.style.cursor="not-allowed";
+  // Reset day pills
+  var pills=document.getElementById("evm-day-pills").querySelectorAll(".cat-btn");
+  for(var i=0;i<pills.length;i++)pills[i].classList.remove("sel");
+  document.getElementById("enq-visit-modal").classList.add("open");
+}
+function closeEnqVisitModal(){document.getElementById("enq-visit-modal").classList.remove("open");evmCurrentId=null;evmDays=null;}
+function setEvmDays(v){
+  v=parseInt(v,10);if(isNaN(v)||v<1){return;}
+  evmDays=v;
+  var vd=addDays(v);
+  var prev=document.getElementById("evm-preview");prev.textContent="Expected visit: "+fmt(vd);prev.style.display="block";
+  var evmBtn=document.getElementById("evm-save-btn");evmBtn.style.opacity="1";evmBtn.style.cursor="pointer";
+  // Highlight pill if matches
+  var pills=document.getElementById("evm-day-pills").querySelectorAll(".cat-btn");
+  for(var i=0;i<pills.length;i++)pills[i].classList.remove("sel");
+}
+function saveEnqVisit(){
+  if(!evmDays||!evmCurrentId)return;
+  var vd=addDays(evmDays);
+  for(var i=0;i<enquiries.length;i++){
+    if(enquiries[i].id===evmCurrentId){
+      enquiries[i].status="visiting";
+      enquiries[i].visitDate=vd;
+      enquiries[i].visitDays=evmDays;
+      enquiries[i].lastActionAt=tsNow();
+      enquiries[i].lastActionBy=curUser;
+      break;
+    }
+  }
+  saveEnquiries();addLog("Enquiry visiting in "+evmDays+"d → "+fmt(vd),getEnqName(evmCurrentId),"ENQ");
+  closeEnqVisitModal();renderEnquiries();
+  toast("Visit expected: "+fmt(vd));
+}
+
+// ── Convert to patient ───────────────────────────────
+function convertEnquiry(id){
+  var e=null;for(var i=0;i<enquiries.length;i++){if(enquiries[i].id===id){e=enquiries[i];break;}}
+  if(!e)return;
+  // Mark as converted
+  for(var i=0;i<enquiries.length;i++){
+    if(enquiries[i].id===id){enquiries[i].status="converted";enquiries[i].convertedAt=tsNow();enquiries[i].convertedBy=curUser;break;}
+  }
+  saveEnquiries();addLog("Enquiry converted → Patient",e.name,e.phone);
+  // Pre-fill Add New Patient screen
+  document.getElementById("an-phone").value=e.phone;
+  document.getElementById("an-name").value=(e.name&&e.name!=="Unknown")?e.name:"";
+  document.getElementById("addnew-user").innerHTML=badge(curUser,true);
+  resetAddNew();
+  document.getElementById("an-phone").value=e.phone;
+  if(e.name&&e.name!=="Unknown")document.getElementById("an-name").value=e.name;
+  toast("Phone prefilled — complete patient registration");
+  showScreen("addNew");
+}
+
+// ── Export ───────────────────────────────────────────
+function downloadEnqCsv(){
+  if(!enquiries.length){toast("No enquiries to export");return;}
+  var hdr=["ID","Phone","Name","Source","Topic","Status","Notes","Visit Date","Call Count","Added By","Added Date","Last Action","Last Action By"];
+  var rows=[hdr.join(",")];
+  for(var i=0;i<enquiries.length;i++){
+    var e=enquiries[i];
+    var d=e.createdAt?new Date(e.createdAt).toLocaleDateString("en-IN"):"";
+    rows.push([escCsv(e.id),escCsv(e.phone),escCsv(e.name),escCsv(e.source),escCsv(e.topic),escCsv(e.status),escCsv(e.notes),escCsv(e.visitDate?fmt(e.visitDate):""),escCsv(e.callCount||0),escCsv(e.addedBy),escCsv(d),escCsv(e.lastActionAt),escCsv(e.lastActionBy)].join(","));
+  }
+  dlFile("\uFEFF"+rows.join("\r\n"),"Asha_Enquiries_"+todayStr()+".csv","text/csv;charset=utf-8");
+  toast("Enquiries exported!");
+}
+
+// ── Screen hook ──────────────────────────────────────
+var _origShowScreen=showScreen;
+showScreen=function(name){
+  _origShowScreen(name);
+  if(name==="enquiries"){renderEnquiries();setEnqFilter(enqFilter);}
+};
+
+// Load on init
+loadEnquiries();
 </script>
 </body>
 </html>
