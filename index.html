@@ -112,7 +112,6 @@ body{font-family:Arial,sans-serif;background:#f0fafa;color:#0c4a6e;min-height:10
 .remind-chip{background:#f59e0b;color:#fff;border-radius:8px;padding:3px 9px;font-size:11px;font-weight:bold;}
 .reminder-section{background:#fff8e1;border:2.5px solid #f59e0b;border-radius:16px;padding:16px;margin-bottom:4px;}
 .reminder-section-title{font-size:14px;font-weight:bold;color:#92400e;margin-bottom:10px;}
-/* Live search dropdown */
 .search-wrap{position:relative;margin-bottom:10px;}
 .search-wrap .inp{margin-bottom:0;}
 .live-dropdown{position:absolute;left:0;right:0;top:100%;background:#fff;border:2px solid #0e7490;border-radius:0 0 14px 14px;z-index:500;box-shadow:0 8px 24px rgba(0,0,0,0.15);display:none;max-height:220px;overflow-y:auto;}
@@ -123,25 +122,24 @@ body{font-family:Arial,sans-serif;background:#f0fafa;color:#0c4a6e;min-height:10
 .live-name{font-size:15px;font-weight:bold;color:#0c4a6e;}
 .live-uid{font-size:12px;color:#0e7490;font-weight:bold;margin-top:2px;}
 .live-badge{font-size:11px;padding:3px 8px;border-radius:6px;font-weight:bold;}
-/* Tele optional note */
 .tele-note{background:#dbeafe;border:1.5px solid #93c5fd;border-radius:10px;padding:9px 13px;font-size:12px;color:#1d4ed8;font-weight:bold;margin-bottom:10px;display:none;}
-/* Timestamp chip */
 .ts-chip{font-size:10px;color:#94a3b8;font-weight:bold;margin-top:3px;}
 .login-ts{font-size:11px;color:#7dd3fc;margin-top:4px;letter-spacing:0.5px;}
-/* Reschedule inline panel */
 .reschedule-panel{background:#eff6ff;border:2px solid #93c5fd;border-radius:12px;padding:12px 14px;margin-top:8px;display:none;}
 .reschedule-panel.open{display:block;}
 .rs-days{display:flex;flex-wrap:wrap;margin-bottom:8px;}
 .rs-pill{padding:9px 13px;border-radius:9px;cursor:pointer;font-size:13px;font-weight:bold;margin:0 6px 6px 0;border:2px solid #93c5fd;background:#dbeafe;color:#1d4ed8;}
 .rs-pill.sel{background:#1d4ed8;color:#fff;border-color:#1d4ed8;}
-/* Dropout */
 .dropout-badge{background:#fce7f3;color:#be185d;border:1.5px solid #fbcfe8;border-radius:8px;padding:3px 9px;font-size:11px;font-weight:bold;margin-left:6px;}
 .act-row2{display:flex;margin-top:6px;margin-bottom:4px;}
+/* Sync progress bar */
+.sync-progress{height:4px;background:#bae6fd;border-radius:2px;margin-top:6px;display:none;}
+.sync-progress-bar{height:4px;background:#0e7490;border-radius:2px;width:0%;transition:width 0.4s;}
 </style>
 </head>
 <body>
 <div id="toast"></div>
-<div style="position:fixed;bottom:10px;right:12px;background:rgba(14,116,144,0.15);border:1.5px solid #bae6fd;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:bold;color:#0e7490;z-index:100;pointer-events:none;letter-spacing:0.5px;">v8.4</div>
+<div style="position:fixed;bottom:10px;right:12px;background:rgba(14,116,144,0.15);border:1.5px solid #bae6fd;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:bold;color:#0e7490;z-index:100;pointer-events:none;letter-spacing:0.5px;">v8.5</div>
 
 <!-- ADMIN PASSWORD MODAL -->
 <div id="pwd-modal" class="pwd-modal">
@@ -314,9 +312,12 @@ body{font-family:Arial,sans-serif;background:#f0fafa;color:#0c4a6e;min-height:10
   <div class="stats-row" id="home-stats"></div>
   <div class="pad" style="padding-bottom:80px;padding-top:14px;">
     <div class="sync-bar">
-      <div style="display:flex;align-items:center;">
+      <div style="display:flex;align-items:center;flex:1;">
         <div class="sync-dot" id="sync-dot"></div>
-        <span style="font-size:13px;font-weight:bold;color:#0e7490;" id="sync-status-txt">Cloud Sync Ready</span>
+        <div>
+          <span style="font-size:13px;font-weight:bold;color:#0e7490;" id="sync-status-txt">Cloud Sync Ready</span>
+          <div class="sync-progress" id="sync-progress"><div class="sync-progress-bar" id="sync-progress-bar"></div></div>
+        </div>
       </div>
       <div style="display:flex;gap:6px;">
         <button id="sync-btn" onclick="doCloudSync()" style="background:#0e7490;border:none;color:#fff;font-size:12px;font-weight:bold;padding:7px 12px;border-radius:8px;cursor:pointer;">&#x2601; Sync</button>
@@ -331,7 +332,6 @@ body{font-family:Arial,sans-serif;background:#f0fafa;color:#0c4a6e;min-height:10
       </div>
       <button class="q-open-btn">Open Queue</button>
     </div>
-    <!-- ENQUIRIES BANNER -->
     <div onclick="showScreen('enquiries')" style="background:linear-gradient(135deg,#0f766e,#0d9488);border-radius:18px;padding:16px 20px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 16px rgba(15,118,110,0.3);cursor:pointer;">
       <div style="color:#fff;">
         <div style="font-size:10px;font-weight:bold;letter-spacing:2px;color:#99f6e4;margin-bottom:4px;">FB ADS / WHATSAPP ENQUIRIES</div>
@@ -592,153 +592,16 @@ body{font-family:Arial,sans-serif;background:#f0fafa;color:#0c4a6e;min-height:10
 </div>
 
 <script>
-
-// ══════════════════════════════════════════════════════
-// REMIND LATER SYSTEM
-// ══════════════════════════════════════════════════════
-var RK = "asha_reminders_v1";
-var reminders = [];
-
-function loadReminders(){
-  try{var r=localStorage.getItem(RK);if(r)reminders=JSON.parse(r);}catch(e){reminders=[];}
-  var t=todayStr();reminders=reminders.filter(function(r){return r.date===t;});
-  saveReminders();
-}
-function saveReminders(){try{localStorage.setItem(RK,JSON.stringify(reminders));}catch(e){}}
-
-function remindLater(uid){
-  var p=null;for(var i=0;i<patients.length;i++){if(patients[i].uid===uid){p=patients[i];break;}}
-  if(!p)return;
-  var remindAt=new Date();remindAt.setHours(remindAt.getHours()+3);
-  var pad=function(n){return n<10?"0"+n:String(n);};
-  var timeStr=pad(remindAt.getHours())+":"+pad(remindAt.getMinutes());
-  for(var i=0;i<reminders.length;i++){if(reminders[i].uid===uid){reminders[i].remindAt=timeStr;reminders[i].remindAtMs=remindAt.getTime();saveReminders();toast("Reminder updated: "+p.name+" at "+timeStr);renderTodayReminders();return;}}
-  reminders.push({uid:uid,name:p.name,phone:p.phone,date:todayStr(),remindAt:timeStr,remindAtMs:remindAt.getTime(),addedBy:curUser});
-  saveReminders();
-  addLog("Remind Later set (3h)",p.name,uid);
-  toast("Reminder set for "+p.name+" at "+timeStr);
-  renderTodayReminders();
-  renderToday();
-}
-
-function cancelReminder(uid){
-  reminders=reminders.filter(function(r){return r.uid!==uid;});
-  saveReminders();toast("Reminder cancelled");renderTodayReminders();renderToday();
-}
-
-function isDueReminder(r){return new Date().getTime()>=r.remindAtMs;}
-
-// FIX #3: Proper quote escaping in reminder onclick handlers
-function renderTodayReminders(){
-  var el=document.getElementById("reminders-section");if(!el)return;
-  var dueNow=reminders.filter(function(r){return isDueReminder(r);});
-  var upcoming=reminders.filter(function(r){return !isDueReminder(r);});
-  if(reminders.length===0){el.innerHTML="";return;}
-  var h='<div class="reminder-section">';
-  h+='<div class="reminder-section-title"><span>&#x23F0; Pending Reminders ('+reminders.length+')</span></div>';
-  if(dueNow.length>0){
-    h+='<div style="font-size:11px;font-weight:bold;color:#dc2626;margin-bottom:6px;letter-spacing:1px;">CALL NOW - REMINDER DUE</div>';
-    for(var i=0;i<dueNow.length;i++){
-      var r=dueNow[i];
-      h+='<div class="remind-bar" style="background:#fee2e2;border-color:#dc2626;">';
-      h+='<div><div style="font-size:15px;font-weight:bold;color:#0c4a6e;">'+eh(r.name)+'</div>';
-      h+='<div style="font-size:12px;color:#64748b;">Due at '+r.remindAt+'</div></div>';
-      h+='<div style="display:flex;gap:6px;">';
-      h+='<a href="tel:'+eh(r.phone)+'" style="background:#0e7490;color:#fff;border:none;border-radius:8px;padding:7px 12px;font-size:12px;font-weight:bold;text-decoration:none;" onclick="cancelReminder(\''+r.uid+'\')">Call</a>';
-      h+='<button style="background:#64748b;color:#fff;border:none;border-radius:8px;padding:7px 10px;font-size:11px;font-weight:bold;cursor:pointer;" onclick="remindLater(\''+r.uid+'\')">+3h</button>';
-      h+='<button style="background:#fff;color:#dc2626;border:2px solid #dc2626;border-radius:8px;padding:7px 10px;font-size:11px;font-weight:bold;cursor:pointer;" onclick="cancelReminder(\''+r.uid+'\')">X</button>';
-      h+='</div></div>';
-    }
-  }
-  if(upcoming.length>0){
-    if(dueNow.length>0)h+='<div style="margin-top:8px;font-size:11px;font-weight:bold;color:#92400e;margin-bottom:6px;letter-spacing:1px;">UPCOMING REMINDERS</div>';
-    for(var j=0;j<upcoming.length;j++){
-      var ru=upcoming[j];
-      h+='<div class="remind-bar">';
-      h+='<div><div style="font-size:14px;font-weight:bold;color:#0c4a6e;">'+eh(ru.name)+'</div>';
-      h+='<div style="font-size:12px;color:#64748b;">Call at '+ru.remindAt+' &bull; added by '+eh(ru.addedBy)+'</div></div>';
-      h+='<div style="display:flex;gap:6px;">';
-      h+='<span class="remind-chip">'+ru.remindAt+'</span>';
-      h+='<button style="background:#fff;color:#dc2626;border:2px solid #dc2626;border-radius:8px;padding:5px 8px;font-size:11px;font-weight:bold;cursor:pointer;" onclick="cancelReminder(\''+ru.uid+'\')">X</button>';
-      h+='</div></div>';
-    }
-  }
-  h+='</div>';
-  el.innerHTML=h;
-}
-
-function startReminderChecker(){
-  setInterval(function(){
-    var due=reminders.filter(function(r){return isDueReminder(r);});
-    if(due.length>0){renderTodayReminders();}
-  },60000);
-}
-
-// ══════════════════════════════════════════════════════
-// ADD FOUND PATIENT TO QUEUE (from Search screen)
-// ══════════════════════════════════════════════════════
-function addFoundPtToQueue(){
-  if(!foundPt){toast("Search a patient first");return;}
-  for(var i=0;i<queue.length;i++){if(queue[i].uid===foundPt.uid&&queue[i].status!=="done"){toast(foundPt.name+" already in queue");return;}}
-  var token=queue.length+1;
-  var entry={id:"q"+Date.now(),uid:foundPt.uid,token:token,visitType:"Follow-Up",status:"waiting",date:todayStr(),addedBy:curUser,addedAt:new Date().toLocaleString("en-IN")};
-  queue.push(entry);saveQueue();addLog("Added to Queue from Search",foundPt.name,foundPt.uid);
-  toast(foundPt.name+" added to Queue - Token #"+token);
-  showScreen("queue");
-}
-
-// ══════════════════════════════════════════════════════
-// ADD FROM TODAY LIST TO QUEUE
-// ══════════════════════════════════════════════════════
-function addToQueueFromToday(uid){
-  var p=null;for(var i=0;i<patients.length;i++){if(patients[i].uid===uid){p=patients[i];break;}}
-  if(!p)return;
-  for(var i=0;i<queue.length;i++){if(queue[i].uid===uid&&queue[i].status!=="done"){toast(p.name+" already in queue");return;}}
-  var token=queue.length+1;
-  var entry={id:"q"+Date.now(),uid:uid,token:token,visitType:"Follow-Up",status:"waiting",date:todayStr(),addedBy:curUser,addedAt:new Date().toLocaleString("en-IN")};
-  queue.push(entry);saveQueue();addLog("Added to Queue from Follow-Up List",p.name,uid);
-  toast(p.name+" added to Queue - Token #"+token);
-  showScreen("queue");
-}
-
-// ══════════════════════════════════════════════════════
-// TELECONSULT TYPE (in early visit modal)
-// ══════════════════════════════════════════════════════
-var selConsultType="clinic";
-function selectConsultType(v){
-  selConsultType=v;
-  var c=document.getElementById("consult-type-clinic");var t=document.getElementById("consult-type-tele");
-  if(v==="clinic"){c.classList.add("sel");t.classList.remove("sel");}
-  else{t.classList.add("sel");c.classList.remove("sel");}
-  // Show tele note in early modal if open
-  var emNote=document.getElementById("em-tele-note");if(emNote)emNote.style.display=v==="tele"?"block":"none";
-  checkEmBtn();
-}
-
-// ══════════════════════════════════════════════════════
-// DOWNLOAD PASSWORD PROTECTION
-// ══════════════════════════════════════════════════════
-function requireAdminDownload(){
-  if(isAdminUser){openDownloadModal();return;}
-  pendingAdminAction="download";document.getElementById("pwd-input").value="";document.getElementById("pwd-error").style.display="none";document.getElementById("pwd-modal").classList.add("open");
-}
-
-// ══════════════════════════════════════════════════════
-// HINDI WHATSAPP MESSAGE
-// ══════════════════════════════════════════════════════
-function hindiWaMsg(name,followupDate){
-  var dateStr=followupDate?fmt(followupDate):"";
-  var msg="\u0906\u0926\u0930\u0923\u0940\u092F "+name+",\n";
-  msg+="\u0906\u0936\u093E \u0939\u0948 \u0906\u092A \u092C\u0947\u0939\u0924\u0930 \u092E\u0939\u0938\u0942\u0938 \u0915\u0930 \u0930\u0939\u0947 \u0939\u094B\u0902\u0917\u0947\u0964 \u0906\u0936\u093E \u0935\u0947\u0932\u0928\u0947\u0938 \u0938\u0948\u0902\u0915\u094D\u091A\u0941\u0905\u0930\u0940 \u0905\u0938\u094D\u092A\u0924\u093E\u0932 \u0915\u0940 \u0913\u0930 \u0938\u0947 \u0906\u092A\u0915\u0947 \u0936\u0940\u0918\u094D\u0930 \u0938\u094D\u0935\u0938\u094D\u0925 \u0939\u094B\u0928\u0947 \u0915\u0940 \u0915\u093E\u092E\u0928\u093E \u0915\u0930\u0924\u0947 \u0939\u0948\u0902\u0964 \u0915\u0943\u092A\u092F\u093E \u0905\u092A\u0928\u0940 \u0926\u0935\u093E\u0907\u092F\u093E\u0902 \u0938\u092E\u092F \u092A\u0930 \u0932\u0947\u0902 \u0914\u0930 \u092A\u094C\u0937\u094D\u091F\u093F\u0915 \u0906\u0939\u093E\u0930 \u0932\u0947\u0902\u0964\n";
-  msg+="\u092F\u0939 \u0938\u0902\u0926\u0947\u0936 \u092F\u093E\u0926 \u0926\u093F\u0932\u093E\u0928\u0947 \u0915\u0947 \u0932\u093F\u090F \u0939\u0948 \u0915\u093F \u0906\u092A\u0915\u093E \u0921\u0949\u0915\u094D\u091F\u0930 \u0906\u0915\u093E\u0936 \u092A\u0930\u093F\u0939\u093E\u0930 \u0915\u0947 \u0938\u093E\u0925 \u092B\u093C\u0949\u0932\u094B-\u0905\u092A ";
-  if(dateStr)msg+=dateStr+" \u0915\u094B ";
-  msg+="\u0928\u093F\u0930\u094D\u0927\u093E\u0930\u093F\u0924 \u0939\u0948\u0964 \u0915\u0943\u092A\u092F\u093E \u0938\u092E\u092F \u092A\u0930 \u092A\u0939\u0941\u0902\u091A\u0947\u0902 \u0914\u0930 \u092A\u093F\u091B\u0932\u0940 \u0930\u093F\u092A\u094B\u0930\u094D\u091F \u0938\u093E\u0925 \u0932\u093E\u090F\u0902\u0964";
-  return msg;
-}
+// ═══════════════════════════════════════════════════════
+// ▼▼▼ ONLY CHANGE THIS LINE — PASTE YOUR NEW URL HERE ▼▼▼
+// ═══════════════════════════════════════════════════════
+var CLOUD_URL = "PASTE_YOUR_NEW_APPS_SCRIPT_URL_HERE";
+// ═══════════════════════════════════════════════════════
+// ▲▲▲ ONLY CHANGE THIS LINE ▲▲▲
+// ═══════════════════════════════════════════════════════
 
 var SK="asha_pts_v8",LK="asha_logs_v8",QK="asha_queue_v8";
 var ADMIN_PWD="112233445566";
-var CLOUD_URL="https://script.google.com/macros/s/AKfycbzzJiGu32AbR4zhfy6YTQoSzxnpaMDFH4bylWv2qW3Xyk3ImHm-ZxP1Nx-37XdlB0vI/exec";
 var QDAYS=[3,5,7,10,14,15,21,30];
 var REASONS=["Side effect","Chest pain","Reports ready","Not feeling well","Emergency","Other"];
 var STAFF=[
@@ -752,18 +615,33 @@ var curUser=null,isAdminUser=false,loginTimestamp=null;
 var patients=[],logs=[],queue=[];
 var selSex="",selCat="",selFuDays="",selEmReason="",selEmDays="";
 var selImpSex="",selImpCat="",selImpMed="";
-// FIX #1: Renamed selCmMed variable to cmMedVal to avoid conflict with function selCmMed()
 var cmMedVal="",selRxVal="",selAqType="",anAddToQueue="yes";
 var earlyPt=null,foundPt=null,earlyFndPt=null,consultPt=null,aqFoundPt=null;
 var pendingAdminAction=null,bulkParsed=[];
+var selConsultType="clinic";
 
+// ── Remind Later System ─────────────────────────────────
+var RK="asha_reminders_v1";
+var reminders=[];
+function loadReminders(){try{var r=localStorage.getItem(RK);if(r)reminders=JSON.parse(r);}catch(e){reminders=[];}var t=todayStr();reminders=reminders.filter(function(r){return r.date===t;});saveReminders();}
+function saveReminders(){try{localStorage.setItem(RK,JSON.stringify(reminders));}catch(e){}}
+function remindLater(uid){var p=null;for(var i=0;i<patients.length;i++){if(patients[i].uid===uid){p=patients[i];break;}}if(!p)return;var remindAt=new Date();remindAt.setHours(remindAt.getHours()+3);var pad=function(n){return n<10?"0"+n:String(n);};var timeStr=pad(remindAt.getHours())+":"+pad(remindAt.getMinutes());for(var i=0;i<reminders.length;i++){if(reminders[i].uid===uid){reminders[i].remindAt=timeStr;reminders[i].remindAtMs=remindAt.getTime();saveReminders();toast("Reminder updated: "+p.name+" at "+timeStr);renderTodayReminders();return;}}reminders.push({uid:uid,name:p.name,phone:p.phone,date:todayStr(),remindAt:timeStr,remindAtMs:remindAt.getTime(),addedBy:curUser});saveReminders();addLog("Remind Later set (3h)",p.name,uid);toast("Reminder set for "+p.name+" at "+timeStr);renderTodayReminders();renderToday();}
+function cancelReminder(uid){reminders=reminders.filter(function(r){return r.uid!==uid;});saveReminders();toast("Reminder cancelled");renderTodayReminders();renderToday();}
+function isDueReminder(r){return new Date().getTime()>=r.remindAtMs;}
+function renderTodayReminders(){var el=document.getElementById("reminders-section");if(!el)return;var dueNow=reminders.filter(function(r){return isDueReminder(r);});var upcoming=reminders.filter(function(r){return !isDueReminder(r);});if(reminders.length===0){el.innerHTML="";return;}var h='<div class="reminder-section"><div class="reminder-section-title"><span>&#x23F0; Pending Reminders ('+reminders.length+')</span></div>';if(dueNow.length>0){h+='<div style="font-size:11px;font-weight:bold;color:#dc2626;margin-bottom:6px;letter-spacing:1px;">CALL NOW - REMINDER DUE</div>';for(var i=0;i<dueNow.length;i++){var r=dueNow[i];h+='<div class="remind-bar" style="background:#fee2e2;border-color:#dc2626;"><div><div style="font-size:15px;font-weight:bold;color:#0c4a6e;">'+eh(r.name)+'</div><div style="font-size:12px;color:#64748b;">Due at '+r.remindAt+'</div></div><div style="display:flex;gap:6px;"><a href="tel:'+eh(r.phone)+'" style="background:#0e7490;color:#fff;border:none;border-radius:8px;padding:7px 12px;font-size:12px;font-weight:bold;text-decoration:none;" onclick="cancelReminder(\''+r.uid+'\')">Call</a><button style="background:#64748b;color:#fff;border:none;border-radius:8px;padding:7px 10px;font-size:11px;font-weight:bold;cursor:pointer;" onclick="remindLater(\''+r.uid+'\')">+3h</button><button style="background:#fff;color:#dc2626;border:2px solid #dc2626;border-radius:8px;padding:7px 10px;font-size:11px;font-weight:bold;cursor:pointer;" onclick="cancelReminder(\''+r.uid+'\')">X</button></div></div>';}}if(upcoming.length>0){if(dueNow.length>0)h+='<div style="margin-top:8px;font-size:11px;font-weight:bold;color:#92400e;margin-bottom:6px;letter-spacing:1px;">UPCOMING REMINDERS</div>';for(var j=0;j<upcoming.length;j++){var ru=upcoming[j];h+='<div class="remind-bar"><div><div style="font-size:14px;font-weight:bold;color:#0c4a6e;">'+eh(ru.name)+'</div><div style="font-size:12px;color:#64748b;">Call at '+ru.remindAt+' &bull; added by '+eh(ru.addedBy)+'</div></div><div style="display:flex;gap:6px;"><span class="remind-chip">'+ru.remindAt+'</span><button style="background:#fff;color:#dc2626;border:2px solid #dc2626;border-radius:8px;padding:5px 8px;font-size:11px;font-weight:bold;cursor:pointer;" onclick="cancelReminder(\''+ru.uid+'\')">X</button></div></div>';}}h+='</div>';el.innerHTML=h;}
+function startReminderChecker(){setInterval(function(){var due=reminders.filter(function(r){return isDueReminder(r);});if(due.length>0){renderTodayReminders();}},60000);}
+
+// ── Core utils ──────────────────────────────────────────
 function pad2(n){return n<10?"0"+n:String(n);}
 function todayStr(){var d=new Date();return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate());}
-function fmt(d){if(!d)return"-";var p=d.split("-");return p[2]+"/"+p[1]+"/"+p[0];}
+function fmt(d){if(!d)return"-";var p=d.split("-");if(p.length===3)return p[2]+"/"+p[1]+"/"+p[0];return d;}
 function addDaysToDate(base,n){var d=new Date(base);d.setDate(d.getDate()+parseInt(n,10));return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate());}
 function addDays(n){return addDaysToDate(todayStr(),n);}
 function daysDiff(d){var diff=Math.round((new Date(d)-new Date(todayStr()))/86400000);if(diff===0)return"TODAY";if(diff<0)return Math.abs(diff)+"d OVERDUE";return"In "+diff+"d";}
 function eh(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function isoNow(){return new Date().toISOString();}
+
+// ── Data load/save ──────────────────────────────────────
 function loadData(){
   try{var p=localStorage.getItem(SK);if(p)patients=JSON.parse(p);}catch(e){}
   try{var l=localStorage.getItem(LK);if(l)logs=JSON.parse(l);}catch(e){}
@@ -772,20 +650,22 @@ function loadData(){
 function savePts(){try{localStorage.setItem(SK,JSON.stringify(patients));}catch(e){}}
 function saveQueue(){try{localStorage.setItem(QK,JSON.stringify(queue));}catch(e){}}
 function addLog(action,name,uid){
-  var now=new Date();
-  var pp=function(n){return n<10?"0"+n:n;};
+  var now=new Date();var pp=function(n){return n<10?"0"+n:n;};
   var ts=pp(now.getDate())+"/"+pp(now.getMonth()+1)+"/"+now.getFullYear()+" "+pp(now.getHours())+":"+pp(now.getMinutes())+":"+pp(now.getSeconds());
   var e={action:action,patientName:name||"",uid:uid||"",staff:curUser,time:ts,epochMs:now.getTime()};
   logs.unshift(e);if(logs.length>500)logs=logs.slice(0,500);
   try{localStorage.setItem(LK,JSON.stringify(logs));}catch(e){}
 }
+
+// ── Staff badges ────────────────────────────────────────
 function sInfo(name){for(var i=0;i<STAFF.length;i++){if(STAFF[i].name===name)return STAFF[i];}return{color:"#64748b",icon:"?"};}
-function badge(name,small){
-  var s=sInfo(name);var pad=small?"2px 8px":"5px 11px";var fs=small?"11px":"13px";
-  return'<span style="background:'+s.color+'22;color:'+s.color+';border:1.5px solid '+s.color+'55;border-radius:8px;padding:'+pad+';font-size:'+fs+';font-weight:bold;">'+s.icon+' '+eh(name)+'</span>';
-}
+function badge(name,small){var s=sInfo(name);var pad=small?"2px 8px":"5px 11px";var fs=small?"11px":"13px";return'<span style="background:'+s.color+'22;color:'+s.color+';border:1.5px solid '+s.color+'55;border-radius:8px;padding:'+pad+';font-size:'+fs+';font-weight:bold;">'+s.icon+' '+eh(name)+'</span>';}
+
+// ── Toast ───────────────────────────────────────────────
 var _tt;
 function toast(msg){var el=document.getElementById("toast");el.textContent=msg;el.style.display="block";clearTimeout(_tt);_tt=setTimeout(function(){el.style.display="none";},3200);}
+
+// ── Screen navigation ───────────────────────────────────
 function showScreen(name){
   var all=document.querySelectorAll(".screen");for(var i=0;i<all.length;i++)all[i].classList.remove("active");
   document.getElementById("screen-"+name).classList.add("active");window.scrollTo(0,0);
@@ -795,44 +675,26 @@ function showScreen(name){
   if(name==="queue")renderQueue();
   if(name==="addNew"){document.getElementById("addnew-user").innerHTML=badge(curUser,true);resetAddNew();}
   if(name==="importOld")renderImpMedPills("");
+  if(name==="enquiries"){renderEnquiries();setEnqFilter(enqFilter);}
 }
 function goHome(){clearSearch();clearEarlySearch();showScreen("home");}
-function contactRow(phone,name,followupDate){
-  var msg=hindiWaMsg(name,followupDate||"");
-  var wa=encodeURIComponent(msg);
-  return'<a href="tel:'+eh(phone)+'" class="contact-btn" style="background:#0e7490;">&#x1F4DE; Call Now</a>'
-    +'<a href="https://wa.me/91'+eh(phone.replace(/\D/g,""))+'?text='+wa+'" target="_blank" class="contact-btn" style="background:#25D366;">&#x1F4AC; WhatsApp</a>';
-}
 
-// ADMIN
-function requireAdmin(action){
-  if(isAdminUser){if(action==="log")showScreen("log");else if(action==="delete")deleteFoundPatient();return;}
-  pendingAdminAction=action;document.getElementById("pwd-input").value="";document.getElementById("pwd-error").style.display="none";document.getElementById("pwd-modal").classList.add("open");
-}
-function checkAdminPwd(){
-  if(document.getElementById("pwd-input").value.trim()===ADMIN_PWD){
-    document.getElementById("pwd-modal").classList.remove("open");
-    if(pendingAdminAction==="log")showScreen("log");else if(pendingAdminAction==="delete")deleteFoundPatient();else if(pendingAdminAction==="download")openDownloadModal();
-    pendingAdminAction=null;
-  }else{document.getElementById("pwd-error").style.display="block";document.getElementById("pwd-input").value="";}
-}
+// ── WhatsApp message ────────────────────────────────────
+function hindiWaMsg(name,followupDate){var dateStr=followupDate?fmt(followupDate):"";var msg="\u0906\u0926\u0930\u0923\u0940\u092F "+name+",\n";msg+="\u0906\u0936\u093E \u0939\u0948 \u0906\u092A \u092C\u0947\u0939\u0924\u0930 \u092E\u0939\u0938\u0942\u0938 \u0915\u0930 \u0930\u0939\u0947 \u0939\u094B\u0902\u0917\u0947\u0964 \u0906\u0936\u093E \u0935\u0947\u0932\u0928\u0947\u0938 \u0938\u0948\u0902\u0915\u094D\u091A\u0941\u0905\u0930\u0940 \u0905\u0938\u094D\u092A\u0924\u093E\u0932 \u0915\u0940 \u0913\u0930 \u0938\u0947 \u0906\u092A\u0915\u0947 \u0936\u0940\u0918\u094D\u0930 \u0938\u094D\u0935\u0938\u094D\u0925 \u0939\u094B\u0928\u0947 \u0915\u0940 \u0915\u093E\u092E\u0928\u093E \u0915\u0930\u0924\u0947 \u0939\u0948\u0902\u0964 \u0915\u0943\u092A\u092F\u093E \u0905\u092A\u0928\u0940 \u0926\u0935\u093E\u0907\u092F\u093E\u0902 \u0938\u092E\u092F \u092A\u0930 \u0932\u0947\u0902 \u0914\u0930 \u092A\u094C\u0937\u094D\u091F\u093F\u0915 \u0906\u0939\u093E\u0930 \u0932\u0947\u0902\u0964\n";msg+="\u092F\u0939 \u0938\u0902\u0926\u0947\u0936 \u092F\u093E\u0926 \u0926\u093F\u0932\u093E\u0928\u0947 \u0915\u0947 \u0932\u093F\u090F \u0939\u0948 \u0915\u093F \u0906\u092A\u0915\u093E \u0921\u0949\u0915\u094D\u091F\u0930 \u0906\u0915\u093E\u0936 \u092A\u0930\u093F\u0939\u093E\u0930 \u0915\u0947 \u0938\u093E\u0925 \u092B\u093C\u0949\u0932\u094B-\u0905\u092A ";if(dateStr)msg+=dateStr+" \u0915\u094B ";msg+="\u0928\u093F\u0930\u094D\u0927\u093E\u0930\u093F\u0924 \u0939\u0948\u0964 \u0915\u0943\u092A\u092F\u093E \u0938\u092E\u092F \u092A\u0930 \u092A\u0939\u0941\u0902\u091A\u0947\u0902 \u0914\u0930 \u092A\u093F\u091B\u0932\u0940 \u0930\u093F\u092A\u094B\u0930\u094D\u091F \u0938\u093E\u0925 \u0932\u093E\u090F\u0902\u0964";return msg;}
+function contactRow(phone,name,followupDate){var msg=hindiWaMsg(name,followupDate||"");var wa=encodeURIComponent(msg);return'<a href="tel:'+eh(phone)+'" class="contact-btn" style="background:#0e7490;">&#x1F4DE; Call Now</a>'+'<a href="https://wa.me/91'+eh(phone.replace(/\D/g,""))+'?text='+wa+'" target="_blank" class="contact-btn" style="background:#25D366;">&#x1F4AC; WhatsApp</a>';}
+
+// ── Admin ───────────────────────────────────────────────
+function requireAdmin(action){if(isAdminUser){if(action==="log")showScreen("log");else if(action==="delete")deleteFoundPatient();return;}pendingAdminAction=action;document.getElementById("pwd-input").value="";document.getElementById("pwd-error").style.display="none";document.getElementById("pwd-modal").classList.add("open");}
+function requireAdminDownload(){if(isAdminUser){openDownloadModal();return;}pendingAdminAction="download";document.getElementById("pwd-input").value="";document.getElementById("pwd-error").style.display="none";document.getElementById("pwd-modal").classList.add("open");}
+function checkAdminPwd(){if(document.getElementById("pwd-input").value.trim()===ADMIN_PWD){document.getElementById("pwd-modal").classList.remove("open");if(pendingAdminAction==="log")showScreen("log");else if(pendingAdminAction==="delete")deleteFoundPatient();else if(pendingAdminAction==="download")openDownloadModal();pendingAdminAction=null;}else{document.getElementById("pwd-error").style.display="block";document.getElementById("pwd-input").value="";}}
 function closePwdModal(){document.getElementById("pwd-modal").classList.remove("open");pendingAdminAction=null;}
 
-// LOGIN
-function renderLogin(){
-  var h="";for(var i=0;i<STAFF.length;i++){var s=STAFF[i];var al=s.isAdmin?'<div style="color:'+s.color+';font-size:12px;font-weight:bold;margin-top:2px;">ADMIN - Full Access</div>':"";
-  h+='<button class="login-btn" style="border-color:'+s.color+';" onclick="doLogin(\''+s.name+'\')"><div class="login-icon" style="background:'+s.color+'33;">'+s.icon+'</div><div><div style="color:#fff;font-size:19px;font-weight:bold;">'+s.name+'</div>'+al+'</div></button>';}
-  document.getElementById("login-buttons").innerHTML=h;
-}
-function doLogin(name){
-  curUser=name;isAdminUser=sInfo(name).isAdmin===true;
-  loginTimestamp=new Date();
-  addLog("Login",name,"--");
-  renderHome();showScreen("home");
-}
+// ── Login ───────────────────────────────────────────────
+function renderLogin(){var h="";for(var i=0;i<STAFF.length;i++){var s=STAFF[i];var al=s.isAdmin?'<div style="color:'+s.color+';font-size:12px;font-weight:bold;margin-top:2px;">ADMIN - Full Access</div>':"";h+='<button class="login-btn" style="border-color:'+s.color+';" onclick="doLogin(\''+s.name+'\')"><div class="login-icon" style="background:'+s.color+'33;">'+s.icon+'</div><div><div style="color:#fff;font-size:19px;font-weight:bold;">'+s.name+'</div>'+al+'</div></button>';}document.getElementById("login-buttons").innerHTML=h;}
+function doLogin(name){curUser=name;isAdminUser=sInfo(name).isAdmin===true;loginTimestamp=new Date();addLog("Login",name,"--");renderHome();showScreen("home");}
 function switchUser(){curUser=null;isAdminUser=false;showScreen("login");}
 
-// HOME
+// ── Home ────────────────────────────────────────────────
 function renderHome(){
   var t=todayStr();
   var tpts=patients.filter(function(p){return p.followupDate<=t&&p.status==="pending";});
@@ -846,13 +708,12 @@ function renderHome(){
   var tsEl=document.getElementById("home-login-ts");if(tsEl&&loginTimestamp){var d=loginTimestamp;var pp=function(n){return n<10?"0"+n:n;};tsEl.textContent="Logged in: "+pp(d.getDate())+"/"+pp(d.getMonth()+1)+"/"+d.getFullYear()+" "+pp(d.getHours())+":"+pp(d.getMinutes());}
   document.getElementById("home-queue-count").textContent=waiting+" waiting";
   document.getElementById("home-stats").innerHTML=sBox(due,"Due Today","#0e7490","#e0f2fe")+sBox(ovd,"Overdue","#dc2626","#fee2e2")+sBox(patients.length,"Total","#059669","#d1fae5")+sBox(dropoutCount,"Dropouts","#be185d","#fdf2f8");
-  // Update enquiry banner
   var enqNew=enquiries.filter(function(e){return e.status==="new"||e.status==="noanswer";}).length;
   var homeEnqEl=document.getElementById("home-enq-count");if(homeEnqEl)homeEnqEl.textContent=enqNew+" need follow-up";
 }
 function sBox(v,l,c,bg){return'<div class="stat-box" style="background:'+bg+';">'+'<div class="stat-num" style="color:'+c+';">'+v+'</div><div class="stat-lbl" style="color:'+c+';">'+l+'</div></div>';}
 
-// FIX #2 & #5: Queue render with correct workflow buttons
+// ── Queue ───────────────────────────────────────────────
 function renderQueue(){
   var t=todayStr();var nd=new Date();var mos=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];var days=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
   document.getElementById("queue-date-sub").textContent=days[nd.getDay()]+", "+nd.getDate()+" "+mos[nd.getMonth()];
@@ -862,101 +723,40 @@ function renderQueue(){
   document.getElementById("q-waiting-count").textContent=waiting.length;
   document.getElementById("q-consulting-count").textContent=consulting.length;
   document.getElementById("q-done-count").textContent=done.length;
-  if(queue.length===0){
-    document.getElementById("queue-list").innerHTML='<div class="empty-state"><div style="font-size:52px;">&#x1F3E5;</div><div style="font-size:19px;font-weight:bold;color:#0c4a6e;margin-top:12px;">Queue is empty</div><div style="font-size:13px;color:#64748b;margin-top:6px;">Add patients as they arrive at reception</div><br><button class="btn btn-amber" style="width:auto;padding:12px 24px;" onclick="showAddToQueueModal()">+ Add First Patient</button></div>';
-    return;
-  }
-  // Order: consulting first, then waiting, then done
+  if(queue.length===0){document.getElementById("queue-list").innerHTML='<div class="empty-state"><div style="font-size:52px;">&#x1F3E5;</div><div style="font-size:19px;font-weight:bold;color:#0c4a6e;margin-top:12px;">Queue is empty</div><div style="font-size:13px;color:#64748b;margin-top:6px;">Add patients as they arrive at reception</div><br><button class="btn btn-amber" style="width:auto;padding:12px 24px;" onclick="showAddToQueueModal()">+ Add First Patient</button></div>';return;}
   var ordered=consulting.concat(waiting).concat(done);
   var h="";
   for(var i=0;i<ordered.length;i++){
-    var qe=ordered[i];
-    var p=null;for(var j=0;j<patients.length;j++){if(patients[j].uid===qe.uid){p=patients[j];break;}}
-    if(!p)continue;
+    var qe=ordered[i];var p=null;for(var j=0;j<patients.length;j++){if(patients[j].uid===qe.uid){p=patients[j];break;}}if(!p)continue;
     var cardCls="qcard-waiting",badgeCls="qb-waiting",badgeTxt="Waiting";
     if(qe.status==="consulting"){cardCls="qcard-consulting";badgeCls="qb-consulting";badgeTxt="With Doctor";}
     if(qe.status==="done"){cardCls="qcard-done";badgeCls="qb-done";badgeTxt="Completed";}
     var tokBg=qe.status==="done"?"#059669":qe.status==="consulting"?"#3b82f6":"#f59e0b";
-    h+='<div class="qcard '+cardCls+'">';
-    h+='<div style="display:flex;align-items:flex-start;margin-bottom:6px;">';
-    h+='<div class="token" style="background:'+tokBg+';">'+qe.token+'</div>';
-    h+='<div style="flex:1;">';
-    h+='<div class="qbadge '+badgeCls+'">'+badgeTxt+'</div>';
-    h+='<div style="font-size:18px;font-weight:bold;color:#0c4a6e;">'+eh(p.name)+'</div>';
-    h+='<div style="font-size:13px;color:#64748b;">'+eh(p.uid)+' &bull; '+(p.age||"")+'y &bull; '+(p.sex||"")+'</div>';
-    h+='<div style="font-size:12px;color:#0e7490;font-weight:bold;">'+(p.category||"")+(qe.visitType?' &bull; <span style="color:#b45309;">'+eh(qe.visitType)+'</span>':"")+'</div>';
+    h+='<div class="qcard '+cardCls+'"><div style="display:flex;align-items:flex-start;margin-bottom:6px;"><div class="token" style="background:'+tokBg+';">'+qe.token+'</div><div style="flex:1;"><div class="qbadge '+badgeCls+'">'+badgeTxt+'</div><div style="font-size:18px;font-weight:bold;color:#0c4a6e;">'+eh(p.name)+'</div><div style="font-size:13px;color:#64748b;">'+eh(p.uid)+' &bull; '+(p.age||"")+'y &bull; '+(p.sex||"")+'</div><div style="font-size:12px;color:#0e7490;font-weight:bold;">'+(p.category||"")+(qe.visitType?' &bull; <span style="color:#b45309;">'+eh(qe.visitType)+'</span>':"")+'</div>';
     if(qe.addedBy)h+='<div style="font-size:11px;color:#94a3b8;margin-top:2px;">Added by '+badge(qe.addedBy,true)+' &bull; '+eh(qe.addedAt||"")+'</div>';
-    h+='</div></div>';
-    h+='<div class="contact-row" style="margin-bottom:8px;">'+contactRow(p.phone,p.name,p.followupDate)+'</div>';
-    if(qe.status==="done"){
-      h+='<div style="background:#d1fae5;border-radius:10px;padding:10px 12px;font-size:13px;color:#065f46;font-weight:bold;">';
-      h+='Done by '+badge(qe.doneBy,true);
-      if(qe.medDays)h+=' &bull; Medicine: '+qe.medDays+' days';
-      if(qe.nextFollowup)h+='<br>Next follow-up: <strong>'+fmt(qe.nextFollowup)+'</strong>';
-      if(qe.notes)h+='<br><span style="color:#059669;font-weight:normal;">'+eh(qe.notes)+'</span>';
-      if(qe.rx)h+='<br>Prescription: '+eh(qe.rx);
-      h+='</div>';
-    } else if(qe.status==="waiting"){
-      // FIX: Waiting patients get "Start Consult" button
-      h+='<div class="act-row">';
-      h+='<button class="act-btn" style="background:#3b82f6;flex:2;" onclick="moveToConsulting(\''+qe.id+'\')">&#9654; Start Consult</button>';
-      h+='<button class="act-btn" style="background:#dc2626;" onclick="removeFromQueue(\''+qe.id+'\')">Remove</button>';
-      h+='</div>';
-    } else if(qe.status==="consulting"){
-      // FIX: Consulting patients get "Complete Consultation" button
-      h+='<div class="act-row">';
-      h+='<button class="act-btn" style="background:#059669;flex:2;" onclick="openConsultModal(\''+qe.id+'\')">&#10003; Complete Consultation</button>';
-      h+='<button class="act-btn" style="background:#dc2626;" onclick="removeFromQueue(\''+qe.id+'\')">Remove</button>';
-      h+='</div>';
-    }
+    h+='</div></div><div class="contact-row" style="margin-bottom:8px;">'+contactRow(p.phone,p.name,p.followupDate)+'</div>';
+    if(qe.status==="done"){h+='<div style="background:#d1fae5;border-radius:10px;padding:10px 12px;font-size:13px;color:#065f46;font-weight:bold;">Done by '+badge(qe.doneBy,true);if(qe.medDays)h+=' &bull; Medicine: '+qe.medDays+' days';if(qe.nextFollowup)h+='<br>Next follow-up: <strong>'+fmt(qe.nextFollowup)+'</strong>';if(qe.notes)h+='<br><span style="color:#059669;font-weight:normal;">'+eh(qe.notes)+'</span>';if(qe.rx)h+='<br>Prescription: '+eh(qe.rx);h+='</div>';}
+    else if(qe.status==="waiting"){h+='<div class="act-row"><button class="act-btn" style="background:#3b82f6;flex:2;" onclick="moveToConsulting(\''+qe.id+'\')">&#9654; Start Consult</button><button class="act-btn" style="background:#dc2626;" onclick="removeFromQueue(\''+qe.id+'\')">Remove</button></div>';}
+    else if(qe.status==="consulting"){h+='<div class="act-row"><button class="act-btn" style="background:#059669;flex:2;" onclick="openConsultModal(\''+qe.id+'\')">&#10003; Complete Consultation</button><button class="act-btn" style="background:#dc2626;" onclick="removeFromQueue(\''+qe.id+'\')">Remove</button></div>';}
     h+='</div>';
   }
   document.getElementById("queue-list").innerHTML=h;
 }
+function moveToConsulting(qid){for(var i=0;i<queue.length;i++){if(queue[i].id===qid){queue[i].status="consulting";break;}}saveQueue();renderQueue();renderHome();toast("Patient moved to consulting");}
+function removeFromQueue(qid){var qe=null;for(var i=0;i<queue.length;i++){if(queue[i].id===qid){qe=queue[i];break;}}queue=queue.filter(function(q){return q.id!==qid;});saveQueue();renderQueue();renderHome();if(qe){var p=null;for(var j=0;j<patients.length;j++){if(patients[j].uid===qe.uid){p=patients[j];break;}}if(p)addLog("Removed from Queue",p.name,qe.uid);}toast("Removed from queue");}
 
-// FIX #5: moveToConsulting now properly called from queue
-function moveToConsulting(qid){
-  for(var i=0;i<queue.length;i++){if(queue[i].id===qid){queue[i].status="consulting";break;}}
-  saveQueue();renderQueue();renderHome();
-  toast("Patient moved to consulting");
-}
-function removeFromQueue(qid){
-  var qe=null;for(var i=0;i<queue.length;i++){if(queue[i].id===qid){qe=queue[i];break;}}
-  queue=queue.filter(function(q){return q.id!==qid;});
-  saveQueue();renderQueue();renderHome();
-  if(qe){var p=null;for(var j=0;j<patients.length;j++){if(patients[j].uid===qe.uid){p=patients[j];break;}}if(p)addLog("Removed from Queue",p.name,qe.uid);}
-  toast("Removed from queue");
-}
-
-// ADD TO QUEUE MODAL
-function showAddToQueueModal(){
-  aqFoundPt=null;selAqType="";
-  document.getElementById("aq-uid").value="";
-  document.getElementById("aq-not-found").style.display="none";
-  document.getElementById("aq-found").style.display="none";
-  var pills=document.getElementById("aq-type-pills").querySelectorAll(".cat-btn");for(var i=0;i<pills.length;i++)pills[i].classList.remove("sel");
-  document.getElementById("addqueue-modal").classList.add("open");
-}
+// ── Add to Queue Modal ───────────────────────────────────
+function showAddToQueueModal(){aqFoundPt=null;selAqType="";document.getElementById("aq-uid").value="";document.getElementById("aq-not-found").style.display="none";document.getElementById("aq-found").style.display="none";var pills=document.getElementById("aq-type-pills").querySelectorAll(".cat-btn");for(var i=0;i<pills.length;i++)pills[i].classList.remove("sel");document.getElementById("addqueue-modal").classList.add("open");}
 function closeAddToQueueModal(){document.getElementById("addqueue-modal").classList.remove("open");}
 function aqClearFound(){document.getElementById("aq-not-found").style.display="none";document.getElementById("aq-found").style.display="none";aqFoundPt=null;}
-function aqSearch(){
-  var uid=document.getElementById("aq-uid").value.trim().toUpperCase();if(!uid)return;
-  var f=null;for(var i=0;i<patients.length;i++){if(patients[i].uid===uid){f=patients[i];break;}}
-  if(!f){document.getElementById("aq-not-found").style.display="block";document.getElementById("aq-found").style.display="none";aqFoundPt=null;return;}
-  aqFoundPt=f;document.getElementById("aq-not-found").style.display="none";document.getElementById("aq-found").style.display="block";
-  document.getElementById("aq-name").textContent=f.name;document.getElementById("aq-meta").textContent=f.uid+" - "+(f.age||"")+"y - "+(f.sex||"")+" - "+(f.category||"");document.getElementById("aq-phone").textContent=f.phone;
-}
-function selectAqType(v){selAqType=v;var pills=document.getElementById("aq-type-pills").querySelectorAll(".cat-btn");for(var i=0;i<pills.length;i++){if(pills[i].textContent===v)pills[i].classList.add("sel");else pills[i].classList.remove("sel");}}
-function addPatientToQueue(){
-  if(!aqFoundPt){toast("Search a patient first");return;}
-  for(var i=0;i<queue.length;i++){if(queue[i].uid===aqFoundPt.uid&&queue[i].status!=="done"){toast(aqFoundPt.name+" is already in queue");return;}}
-  var token=queue.length+1;
-  var entry={id:"q"+Date.now(),uid:aqFoundPt.uid,token:token,visitType:selAqType||"Regular Visit",status:"waiting",date:todayStr(),addedBy:curUser,addedAt:new Date().toLocaleString("en-IN")};
-  queue.push(entry);saveQueue();addLog("Added to Queue",aqFoundPt.name,aqFoundPt.uid);toast(aqFoundPt.name+" added - Token #"+token);closeAddToQueueModal();renderQueue();renderHome();
-}
+function aqSearch(){var uid=document.getElementById("aq-uid").value.trim().toUpperCase();if(!uid)return;var f=null;for(var i=0;i<patients.length;i++){if(patients[i].uid===uid){f=patients[i];break;}}if(!f){document.getElementById("aq-not-found").style.display="block";document.getElementById("aq-found").style.display="none";aqFoundPt=null;return;}aqFoundPt=f;document.getElementById("aq-not-found").style.display="none";document.getElementById("aq-found").style.display="block";document.getElementById("aq-name").textContent=f.name;document.getElementById("aq-meta").textContent=f.uid+" - "+(f.age||"")+"y - "+(f.sex||"")+" - "+(f.category||"");document.getElementById("aq-phone").textContent=f.phone;}
+function selectAqType(v){selAqType=v;var pills=document.getElementById("aq-type-pills").querySelectorAll(".cat-btn");for(var i=0;i<pills.length;i++){if(pills[i].textContent.trim()===v||pills[i].textContent.trim().indexOf(v)>=0)pills[i].classList.add("sel");else pills[i].classList.remove("sel");}}
+function addPatientToQueue(){if(!aqFoundPt){toast("Search a patient first");return;}for(var i=0;i<queue.length;i++){if(queue[i].uid===aqFoundPt.uid&&queue[i].status!=="done"){toast(aqFoundPt.name+" is already in queue");return;}}var token=queue.length+1;var entry={id:"q"+Date.now(),uid:aqFoundPt.uid,token:token,visitType:selAqType||"Regular Visit",status:"waiting",date:todayStr(),addedBy:curUser,addedAt:new Date().toLocaleString("en-IN")};queue.push(entry);saveQueue();addLog("Added to Queue",aqFoundPt.name,aqFoundPt.uid);toast(aqFoundPt.name+" added - Token #"+token);closeAddToQueueModal();renderQueue();renderHome();}
+function addFoundPtToQueue(){if(!foundPt){toast("Search a patient first");return;}for(var i=0;i<queue.length;i++){if(queue[i].uid===foundPt.uid&&queue[i].status!=="done"){toast(foundPt.name+" already in queue");return;}}var token=queue.length+1;var entry={id:"q"+Date.now(),uid:foundPt.uid,token:token,visitType:"Follow-Up",status:"waiting",date:todayStr(),addedBy:curUser,addedAt:new Date().toLocaleString("en-IN")};queue.push(entry);saveQueue();addLog("Added to Queue from Search",foundPt.name,foundPt.uid);toast(foundPt.name+" added to Queue - Token #"+token);showScreen("queue");}
+function addToQueueFromToday(uid){var p=null;for(var i=0;i<patients.length;i++){if(patients[i].uid===uid){p=patients[i];break;}}if(!p)return;for(var i=0;i<queue.length;i++){if(queue[i].uid===uid&&queue[i].status!=="done"){toast(p.name+" already in queue");return;}}var token=queue.length+1;var entry={id:"q"+Date.now(),uid:uid,token:token,visitType:"Follow-Up",status:"waiting",date:todayStr(),addedBy:curUser,addedAt:new Date().toLocaleString("en-IN")};queue.push(entry);saveQueue();addLog("Added to Queue from Follow-Up List",p.name,uid);toast(p.name+" added to Queue - Token #"+token);showScreen("queue");}
+function addNewPatientToQueue(uid,name){var token=queue.length+1;var entry={id:"q"+Date.now(),uid:uid,token:token,visitType:"New Patient",status:"waiting",date:todayStr(),addedBy:curUser,addedAt:new Date().toLocaleString("en-IN")};queue.push(entry);saveQueue();}
 
-// CONSULT COMPLETE MODAL
-// FIX #1 & #5: cmMedVal used throughout (was selCmMed variable - conflicted with function name)
+// ── Consult Complete Modal ──────────────────────────────
 function openConsultModal(qid){
   var qe=null;for(var i=0;i<queue.length;i++){if(queue[i].id===qid){qe=queue[i];break;}}if(!qe)return;
   var p=null;for(var j=0;j<patients.length;j++){if(patients[j].uid===qe.uid){p=patients[j];break;}}if(!p)return;
@@ -969,54 +769,22 @@ function openConsultModal(qid){
   document.getElementById("cm-med-custom").value="";
   document.getElementById("cm-next-bar").style.display="none";
   document.getElementById("cm-notes").value="";
-  // Tele mode: show note, make medicine optional
-  var teleNote=document.getElementById("cm-tele-note");
-  var medLbl=document.getElementById("cm-med-lbl");
-  var modalSub=document.getElementById("cm-modal-sub");
-  if(consultPt.isTele){
-    teleNote.style.display="block";
-    medLbl.textContent="Medicine days (optional for teleconsultation)";
-    medLbl.style.color="#1d4ed8";
-    modalSub.textContent="Teleconsultation — medicine days optional";
-  } else {
-    teleNote.style.display="none";
-    medLbl.textContent="Medicine prescribed for how many days? *";
-    medLbl.style.color="#059669";
-    modalSub.textContent="Enter medicine days to close this visit";
-  }
+  var teleNote=document.getElementById("cm-tele-note");var medLbl=document.getElementById("cm-med-lbl");var modalSub=document.getElementById("cm-modal-sub");
+  if(consultPt.isTele){teleNote.style.display="block";medLbl.textContent="Medicine days (optional for teleconsultation)";medLbl.style.color="#1d4ed8";modalSub.textContent="Teleconsultation — medicine days optional";}
+  else{teleNote.style.display="none";medLbl.textContent="Medicine prescribed for how many days? *";medLbl.style.color="#059669";modalSub.textContent="Enter medicine days to close this visit";}
   var rxBtns=["rx-yes","rx-no","rx-na"];for(var k=0;k<rxBtns.length;k++)document.getElementById(rxBtns[k]).classList.remove("sel");
   renderCmMedPills("");checkCmSaveBtn();
   document.getElementById("consult-modal").classList.add("open");
 }
 function closeConsultModal(){document.getElementById("consult-modal").classList.remove("open");consultPt=null;}
-function renderCmMedPills(sel){
-  var h="";for(var i=0;i<QDAYS.length;i++){var d=QDAYS[i];var s=String(sel)===String(d)?" sel":"";h+='<button class="mq-pill'+s+'" data-val="'+d+'" onclick="selCmMed('+d+')">'+d+'d</button>';}
-  document.getElementById("cm-med-pills").innerHTML=h;
-}
-// FIX medicine days: toggle class directly — do NOT re-render pills (destroys DOM mid-click on mobile)
-function selCmMed(val){
-  cmMedVal=String(val);
-  document.getElementById("cm-med-custom").value=val;
-  var pills=document.querySelectorAll("#cm-med-pills .mq-pill");
-  for(var i=0;i<pills.length;i++){if(pills[i].getAttribute("data-val")===String(val))pills[i].classList.add("sel");else pills[i].classList.remove("sel");}
-  updCmBar(val);checkCmSaveBtn();
-}
-function onCmMedInput(v){
-  cmMedVal=v;  // FIX: was selCmMed=v
-  renderCmMedPills(v);updCmBar(v);checkCmSaveBtn();
-}
+function renderCmMedPills(sel){var h="";for(var i=0;i<QDAYS.length;i++){var d=QDAYS[i];var s=String(sel)===String(d)?" sel":"";h+='<button class="mq-pill'+s+'" data-val="'+d+'" onclick="selCmMed('+d+')">'+d+'d</button>';}document.getElementById("cm-med-pills").innerHTML=h;}
+function selCmMed(val){cmMedVal=String(val);document.getElementById("cm-med-custom").value=val;var pills=document.querySelectorAll("#cm-med-pills .mq-pill");for(var i=0;i<pills.length;i++){if(pills[i].getAttribute("data-val")===String(val))pills[i].classList.add("sel");else pills[i].classList.remove("sel");}updCmBar(val);checkCmSaveBtn();}
+function onCmMedInput(v){cmMedVal=v;renderCmMedPills(v);updCmBar(v);checkCmSaveBtn();}
 function updCmBar(v){var b=document.getElementById("cm-next-bar");if(v&&!isNaN(v)&&parseInt(v,10)>0){b.textContent="Next follow-up: "+fmt(addDays(v));b.style.display="block";}else b.style.display="none";}
 function selectRx(v){selRxVal=v;var mp={yes:"rx-yes",no:"rx-no",na:"rx-na"};for(var k in mp){if(k===v)document.getElementById(mp[k]).classList.add("sel");else document.getElementById(mp[k]).classList.remove("sel");}checkCmSaveBtn();}
-function checkCmSaveBtn(){
-  var days=cmMedVal||document.getElementById("cm-med-custom").value.trim();
-  var daysOk=days&&!isNaN(days)&&parseInt(days,10)>0;
-  var isTele=consultPt&&consultPt.isTele;
-  var ok=isTele?true:daysOk;  // tele: always allow; clinic: need days
-  var btn=document.getElementById("cm-save-btn");btn.style.opacity=ok?"1":"0.4";btn.style.cursor=ok?"pointer":"not-allowed";
-}
+function checkCmSaveBtn(){var days=cmMedVal||document.getElementById("cm-med-custom").value.trim();var daysOk=days&&!isNaN(days)&&parseInt(days,10)>0;var isTele=consultPt&&consultPt.isTele;var ok=isTele?true:daysOk;var btn=document.getElementById("cm-save-btn");btn.style.opacity=ok?"1":"0.4";btn.style.cursor=ok?"pointer":"not-allowed";}
 function saveConsultation(){
-  var btn=document.getElementById("cm-save-btn");
-  if(btn&&btn.disabled)return;
+  var btn=document.getElementById("cm-save-btn");if(btn&&btn.disabled)return;
   var days=cmMedVal||document.getElementById("cm-med-custom").value.trim();
   var isTele=consultPt&&consultPt.isTele;
   if(!isTele&&(!days||isNaN(days)||parseInt(days,10)<1)){toast("Enter medicine days");return;}
@@ -1025,38 +793,20 @@ function saveConsultation(){
   var daysValid=days&&!isNaN(days)&&parseInt(days,10)>0;
   var nd=daysValid?addDays(days):null;
   var notes=document.getElementById("cm-notes").value.trim();var t=todayStr();
-  for(var i=0;i<queue.length;i++){
-    if(queue[i].id===consultPt.qid){
-      queue[i].status="done";queue[i].doneBy=curUser;queue[i].doneAt=new Date().toLocaleString("en-IN");
-      queue[i].medDays=daysValid?days:"—";queue[i].nextFollowup=nd||"";queue[i].notes=notes;queue[i].rx=selRxVal;break;
-    }
-  }
+  for(var i=0;i<queue.length;i++){if(queue[i].id===consultPt.qid){queue[i].status="done";queue[i].doneBy=curUser;queue[i].doneAt=new Date().toLocaleString("en-IN");queue[i].medDays=daysValid?days:"—";queue[i].nextFollowup=nd||"";queue[i].notes=notes;queue[i].rx=selRxVal;break;}}
   saveQueue();
   var visit={date:t,medDays:daysValid?days:"—",notes:notes,flag:isTele?"Teleconsultation":"Consultation",staff:curUser,nextFollowup:nd||"",type:isTele?"teleconsult":"consultation",rx:selRxVal};
-  for(var j=0;j<patients.length;j++){
-    if(patients[j].uid===consultPt.uid){
-      if(nd)patients[j].followupDate=nd;
-      patients[j].status="pending";
-      patients[j].visits=[visit].concat(patients[j].visits||[]);break;
-    }
-  }
+  for(var j=0;j<patients.length;j++){if(patients[j].uid===consultPt.uid){if(nd)patients[j].followupDate=nd;patients[j].status="pending";patients[j].visits=[visit].concat(patients[j].visits||[]);break;}}
   savePts();
   var logMsg=(isTele?"Teleconsult":"Consultation")+" Done"+(daysValid?" - "+days+"d medicine":" - No medicine");
   addLog(logMsg,consultPt.name,consultPt.uid);
   toast("Done!"+(nd?" Next follow-up: "+fmt(nd):" (No follow-up date changed)"));
   closeConsultModal();renderQueue();renderHome();
 }
-function addNewPatientToQueue(uid,name){
-  var token=queue.length+1;
-  var entry={id:"q"+Date.now(),uid:uid,token:token,visitType:"New Patient",status:"waiting",date:todayStr(),addedBy:curUser,addedAt:new Date().toLocaleString("en-IN")};
-  queue.push(entry);saveQueue();
-}
 
-// TODAY LIST
+// ── Today List ──────────────────────────────────────────
 function renderToday(){
-  var t=todayStr();
-  var pts=patients.filter(function(p){return p.followupDate<=t&&p.status==="pending";});
-  pts.sort(function(a,b){return a.followupDate.localeCompare(b.followupDate);});
+  var t=todayStr();var pts=patients.filter(function(p){return p.followupDate<=t&&p.status==="pending";});pts.sort(function(a,b){return a.followupDate.localeCompare(b.followupDate);});
   var dropouts=patients.filter(function(p){return p.status==="dropout";});
   var nd=new Date();var mos=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];var days=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
   document.getElementById("today-date-sub").textContent=days[nd.getDay()]+", "+nd.getDate()+" "+mos[nd.getMonth()]+" "+nd.getFullYear();
@@ -1065,219 +815,43 @@ function renderToday(){
   for(var i=0;i<pts.length;i++){
     var p=pts[i];var ov=p.followupDate<t;var bg=ov?"#fff5f5":"#f0fdf4";var br=ov?"2.5px solid #fca5a5":"2.5px solid #6ee7b7";var tg=ov?"tag-red":"tag-green";
     h+='<div class="pt-card" id="ptcard-'+p.uid+'" style="background:'+bg+';border:'+br+';">';
-    h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;"><div>';
-    h+='<div style="font-size:19px;font-weight:bold;color:#0c4a6e;">'+eh(p.name)+'</div>';
-    h+='<div style="font-size:13px;color:#64748b;margin-top:2px;">'+eh(p.uid)+' &bull; '+(p.age||"")+'y &bull; '+(p.sex||"")+'</div>';
-    h+='<div style="font-size:13px;color:#0e7490;margin-top:2px;font-weight:bold;">'+(p.category||"")+'</div></div>';
-    h+='<span class="tag '+tg+'">'+daysDiff(p.followupDate)+'</span></div>';
+    h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;"><div><div style="font-size:19px;font-weight:bold;color:#0c4a6e;">'+eh(p.name)+'</div><div style="font-size:13px;color:#64748b;margin-top:2px;">'+eh(p.uid)+' &bull; '+(p.age||"")+'y &bull; '+(p.sex||"")+'</div><div style="font-size:13px;color:#0e7490;margin-top:2px;font-weight:bold;">'+(p.category||"")+'</div></div><span class="tag '+tg+'">'+daysDiff(p.followupDate)+'</span></div>';
     h+='<div class="contact-row">'+contactRow(p.phone,p.name,p.followupDate)+'</div>';
     if(p.address)h+='<div style="font-size:13px;color:#64748b;margin-bottom:8px;">'+eh(p.address)+'</div>';
     if(p.createdBy)h+='<div style="font-size:11px;color:#94a3b8;margin-bottom:10px;">Added by '+badge(p.createdBy,true)+'</div>';
-    // Row 1 actions
-    h+='<div class="act-row">';
-    h+='<button class="act-btn" style="background:#f59e0b;" onclick="openEarlyFromList(\''+p.uid+'\')">&#x26A1; Early</button>';
-    h+='<button class="act-btn" style="background:#b45309;" onclick="addToQueueFromToday(\''+p.uid+'\')">&#x1F4CB; Queue</button>';
-    h+='<button class="act-btn" style="background:#059669;" onclick="markDone(\''+p.uid+'\',\'Done\')">&#x2713; Done</button>';
-    h+='<button class="act-btn" style="background:#64748b;" onclick="markDone(\''+p.uid+'\',\'No Answer\')">No Ans</button>';
-    h+='</div>';
-    // Row 2 actions - Reschedule & Dropout
-    h+='<div class="act-row2">';
-    h+='<button class="act-btn" style="background:#6366f1;flex:1;margin-right:6px;" onclick="toggleReschedule(\''+p.uid+'\')">&#x1F4C5; Reschedule</button>';
-    h+='<button class="act-btn" style="background:#be185d;flex:1;" onclick="confirmDropout(\''+p.uid+'\')">&#x1F6AB; Drop Out</button>';
-    h+='</div>';
-    // Reschedule inline panel
-    h+='<div id="rs-panel-'+p.uid+'" class="reschedule-panel">';
-    h+='<div style="font-size:13px;font-weight:bold;color:#1d4ed8;margin-bottom:8px;">Reschedule after how many days?</div>';
-    h+='<div class="rs-days" id="rs-days-'+p.uid+'">';
-    var rsDays=[3,5,7,10,14,21,30];
-    for(var rd=0;rd<rsDays.length;rd++){h+='<button class="rs-pill" onclick="selRsDay(\''+p.uid+'\','+rsDays[rd]+')">'+rsDays[rd]+'d</button>';}
-    h+='</div>';
-    h+='<input id="rs-custom-'+p.uid+'" class="inp" type="number" placeholder="Or type custom days" style="margin-bottom:8px;" oninput="selRsDay(\''+p.uid+'\',this.value)">';
-    h+='<div id="rs-preview-'+p.uid+'" style="font-size:13px;color:#059669;font-weight:bold;margin-bottom:10px;display:none;"></div>';
-    h+='<div style="display:flex;gap:8px;">';
-    h+='<button class="btn btn-blue" style="flex:2;padding:12px;" onclick="saveReschedule(\''+p.uid+'\')">Confirm Reschedule</button>';
-    h+='<button class="btn btn-gray" style="flex:1;padding:12px;" onclick="toggleReschedule(\''+p.uid+'\')">Cancel</button>';
-    h+='</div></div>';
+    h+='<div class="act-row"><button class="act-btn" style="background:#f59e0b;" onclick="openEarlyFromList(\''+p.uid+'\')">&#x26A1; Early</button><button class="act-btn" style="background:#b45309;" onclick="addToQueueFromToday(\''+p.uid+'\')">&#x1F4CB; Queue</button><button class="act-btn" style="background:#059669;" onclick="markDone(\''+p.uid+'\',\'Done\')">&#x2713; Done</button><button class="act-btn" style="background:#64748b;" onclick="markDone(\''+p.uid+'\',\'No Answer\')">No Ans</button></div>';
+    h+='<div class="act-row2"><button class="act-btn" style="background:#6366f1;flex:1;margin-right:6px;" onclick="toggleReschedule(\''+p.uid+'\')">&#x1F4C5; Reschedule</button><button class="act-btn" style="background:#be185d;flex:1;" onclick="confirmDropout(\''+p.uid+'\')">&#x1F6AB; Drop Out</button></div>';
+    h+='<div id="rs-panel-'+p.uid+'" class="reschedule-panel"><div style="font-size:13px;font-weight:bold;color:#1d4ed8;margin-bottom:8px;">Reschedule after how many days?</div><div class="rs-days" id="rs-days-'+p.uid+'">';
+    var rsDays=[3,5,7,10,14,21,30];for(var rd=0;rd<rsDays.length;rd++){h+='<button class="rs-pill" onclick="selRsDay(\''+p.uid+'\','+rsDays[rd]+')">'+rsDays[rd]+'d</button>';}
+    h+='</div><input id="rs-custom-'+p.uid+'" class="inp" type="number" placeholder="Or type custom days" style="margin-bottom:8px;" oninput="selRsDay(\''+p.uid+'\',this.value)"><div id="rs-preview-'+p.uid+'" style="font-size:13px;color:#059669;font-weight:bold;margin-bottom:10px;display:none;"></div><div style="display:flex;gap:8px;"><button class="btn btn-blue" style="flex:2;padding:12px;" onclick="saveReschedule(\''+p.uid+'\')">Confirm Reschedule</button><button class="btn btn-gray" style="flex:1;padding:12px;" onclick="toggleReschedule(\''+p.uid+'\')">Cancel</button></div></div>';
     if(p.doneBy)h+='<div class="done-bar">Done by '+badge(p.doneBy,true)+'<span style="color:#94a3b8;font-size:11px;">'+p.doneAt+'</span></div>';
     if(p.visits&&p.visits.length>0)h+='<div style="border-top:1px solid #e2e8f0;padding-top:10px;margin-top:8px;"><div class="sec-lbl">LAST VISIT</div>'+vCard(p.visits[0])+'</div>';
     h+='</div>';
   }
-  // Dropout section
-  if(dropouts.length>0){
-    h+='<div style="margin-top:16px;border-top:2px dashed #fbcfe8;padding-top:14px;">';
-    h+='<div style="font-size:11px;font-weight:bold;color:#be185d;letter-spacing:1px;margin-bottom:10px;">&#x1F6AB; DROPPED OUT ('+dropouts.length+')</div>';
-    for(var di=0;di<dropouts.length;di++){
-      var dp=dropouts[di];
-      h+='<div style="background:#fdf2f8;border:1.5px solid #fbcfe8;border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">';
-      h+='<div>';
-      h+='<div style="font-size:15px;font-weight:bold;color:#0c4a6e;">'+eh(dp.name)+'</div>';
-      h+='<div style="font-size:12px;color:#64748b;">'+eh(dp.uid)+' &bull; '+(dp.category||"")+'</div>';
-      if(dp.dropoutReason)h+='<div style="font-size:12px;color:#be185d;font-weight:bold;margin-top:3px;">Reason: '+eh(dp.dropoutReason)+'</div>';
-      if(dp.dropoutBy)h+='<div style="font-size:11px;color:#94a3b8;margin-top:2px;">Logged by '+badge(dp.dropoutBy,true)+' &bull; '+eh(dp.dropoutAt||"")+'</div>';
-      h+='</div>';
-      h+='<button onclick="reactivatePatient(\''+dp.uid+'\')" style="background:#059669;border:none;color:#fff;border-radius:10px;padding:9px 14px;font-size:12px;font-weight:bold;cursor:pointer;flex-shrink:0;margin-left:10px;">Reactivate</button>';
-      h+='</div>';
-    }
-    h+='</div>';
-  }
+  if(dropouts.length>0){h+='<div style="margin-top:16px;border-top:2px dashed #fbcfe8;padding-top:14px;"><div style="font-size:11px;font-weight:bold;color:#be185d;letter-spacing:1px;margin-bottom:10px;">&#x1F6AB; DROPPED OUT ('+dropouts.length+')</div>';for(var di=0;di<dropouts.length;di++){var dp=dropouts[di];h+='<div style="background:#fdf2f8;border:1.5px solid #fbcfe8;border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"><div><div style="font-size:15px;font-weight:bold;color:#0c4a6e;">'+eh(dp.name)+'</div><div style="font-size:12px;color:#64748b;">'+eh(dp.uid)+' &bull; '+(dp.category||"")+'</div>';if(dp.dropoutReason)h+='<div style="font-size:12px;color:#be185d;font-weight:bold;margin-top:3px;">Reason: '+eh(dp.dropoutReason)+'</div>';if(dp.dropoutBy)h+='<div style="font-size:11px;color:#94a3b8;margin-top:2px;">Logged by '+badge(dp.dropoutBy,true)+' &bull; '+eh(dp.dropoutAt||"")+'</div>';h+='</div><button onclick="reactivatePatient(\''+dp.uid+'\')" style="background:#059669;border:none;color:#fff;border-radius:10px;padding:9px 14px;font-size:12px;font-weight:bold;cursor:pointer;flex-shrink:0;margin-left:10px;">Reactivate</button></div>';}h+='</div>';}
   document.getElementById("today-list").innerHTML=h;
 }
-function markDone(uid,action){
-  var nm="";
-  for(var i=0;i<patients.length;i++){
-    if(patients[i].uid===uid){
-      nm=patients[i].name;
-      if(action!=="No Answer"){
-        patients[i].status=action;patients[i].doneBy=curUser;patients[i].doneAt=new Date().toLocaleString("en-IN");
-      }
-      break;
-    }
-  }
-  if(action==="No Answer"){
-    savePts();addLog("No Answer",nm,uid);
-    if(confirm("No answer from "+nm+".\nSet a reminder to call again in 3 hours?")){remindLater(uid);}
-    renderToday();return;
-  }
-  savePts();addLog("Marked: "+action,nm,uid);toast(action+" by "+curUser);renderToday();
-}
+function markDone(uid,action){var nm="";for(var i=0;i<patients.length;i++){if(patients[i].uid===uid){nm=patients[i].name;if(action!=="No Answer"){patients[i].status=action;patients[i].doneBy=curUser;patients[i].doneAt=new Date().toLocaleString("en-IN");}break;}}if(action==="No Answer"){savePts();addLog("No Answer",nm,uid);if(confirm("No answer from "+nm+".\nSet a reminder to call again in 3 hours?")){remindLater(uid);}renderToday();return;}savePts();addLog("Marked: "+action,nm,uid);toast(action+" by "+curUser);renderToday();}
 
-// RESCHEDULE
+// ── Reschedule ──────────────────────────────────────────
 var rsDaysSel={};
-function toggleReschedule(uid){
-  var panel=document.getElementById("rs-panel-"+uid);
-  if(!panel)return;
-  var isOpen=panel.classList.contains("open");
-  // Close all panels first
-  var all=document.querySelectorAll(".reschedule-panel");for(var i=0;i<all.length;i++)all[i].classList.remove("open");
-  if(!isOpen){panel.classList.add("open");rsDaysSel[uid]="";}
-}
-function selRsDay(uid,val){
-  rsDaysSel[uid]=val;
-  // Highlight selected pill
-  var pills=document.querySelectorAll("#rs-days-"+uid+" .rs-pill");
-  for(var i=0;i<pills.length;i++){if(parseInt(pills[i].textContent)===parseInt(val))pills[i].classList.add("sel");else pills[i].classList.remove("sel");}
-  var prev=document.getElementById("rs-preview-"+uid);
-  if(prev&&val&&!isNaN(val)&&parseInt(val,10)>0){prev.textContent="New follow-up date: "+fmt(addDays(val));prev.style.display="block";}
-  else if(prev){prev.style.display="none";}
-}
-function saveReschedule(uid){
-  var days=rsDaysSel[uid]||document.getElementById("rs-custom-"+uid).value.trim();
-  if(!days||isNaN(days)||parseInt(days,10)<1){toast("Select number of days first");return;}
-  var nd=addDays(days);var nm="";
-  for(var i=0;i<patients.length;i++){
-    if(patients[i].uid===uid){
-      nm=patients[i].name;
-      patients[i].followupDate=nd;
-      patients[i].status="pending";
-      var visit={date:todayStr(),medDays:"",notes:"Rescheduled by "+curUser+" (+"+days+"d)",flag:"Rescheduled",staff:curUser,nextFollowup:nd,type:"reschedule"};
-      patients[i].visits=[visit].concat(patients[i].visits||[]);
-      break;
-    }
-  }
-  savePts();addLog("Rescheduled +"+days+"d → "+fmt(nd),nm,uid);
-  toast(nm+" rescheduled to "+fmt(nd));
-  renderToday();renderHome();
-}
+function toggleReschedule(uid){var panel=document.getElementById("rs-panel-"+uid);if(!panel)return;var isOpen=panel.classList.contains("open");var all=document.querySelectorAll(".reschedule-panel");for(var i=0;i<all.length;i++)all[i].classList.remove("open");if(!isOpen){panel.classList.add("open");rsDaysSel[uid]="";}}
+function selRsDay(uid,val){rsDaysSel[uid]=val;var pills=document.querySelectorAll("#rs-days-"+uid+" .rs-pill");for(var i=0;i<pills.length;i++){if(parseInt(pills[i].textContent)===parseInt(val))pills[i].classList.add("sel");else pills[i].classList.remove("sel");}var prev=document.getElementById("rs-preview-"+uid);if(prev&&val&&!isNaN(val)&&parseInt(val,10)>0){prev.textContent="New follow-up date: "+fmt(addDays(val));prev.style.display="block";}else if(prev){prev.style.display="none";}}
+function saveReschedule(uid){var days=rsDaysSel[uid]||document.getElementById("rs-custom-"+uid).value.trim();if(!days||isNaN(days)||parseInt(days,10)<1){toast("Select number of days first");return;}var nd=addDays(days);var nm="";for(var i=0;i<patients.length;i++){if(patients[i].uid===uid){nm=patients[i].name;patients[i].followupDate=nd;patients[i].status="pending";var visit={date:todayStr(),medDays:"",notes:"Rescheduled by "+curUser+" (+"+days+"d)",flag:"Rescheduled",staff:curUser,nextFollowup:nd,type:"reschedule"};patients[i].visits=[visit].concat(patients[i].visits||[]);break;}}savePts();addLog("Rescheduled +"+days+"d → "+fmt(nd),nm,uid);toast(nm+" rescheduled to "+fmt(nd));renderToday();renderHome();}
 
-// DROPOUT
+// ── Dropout ─────────────────────────────────────────────
 var DROPOUT_REASONS=["Shifted / Moved away","Treatment complete - no further follow-up","Refused further treatment","Financial constraints","Side effects - self-stopped","Death","Other"];
-function confirmDropout(uid){
-  var p=null;for(var i=0;i<patients.length;i++){if(patients[i].uid===uid){p=patients[i];break;}}
-  if(!p)return;
-  // Build a small confirm UI via a simple modal approach using existing modal-bg
-  var reasonOpts=DROPOUT_REASONS.map(function(r,idx){return '<option value="'+eh(r)+'">'+eh(r)+'</option>';}).join("");
-  var box=document.createElement("div");
-  box.style.cssText="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:850;display:flex;align-items:center;justify-content:center;padding:20px;";
-  box.innerHTML='<div style="background:#fff;border-radius:20px;padding:24px;width:100%;max-width:380px;box-shadow:0 8px 32px rgba(0,0,0,0.25);">'
-    +'<div style="font-size:20px;font-weight:bold;color:#be185d;margin-bottom:4px;">&#x1F6AB; Mark as Drop Out</div>'
-    +'<div style="font-size:13px;color:#64748b;margin-bottom:16px;">'+eh(p.name)+' &bull; '+eh(p.uid)+'</div>'
-    +'<div style="font-size:13px;font-weight:bold;color:#0c4a6e;margin-bottom:8px;">Reason for dropping out *</div>'
-    +'<select id="dropout-reason-sel" style="width:100%;padding:13px;border-radius:12px;border:2px solid #fbcfe8;font-size:14px;font-weight:bold;color:#0c4a6e;background:#fdf2f8;margin-bottom:12px;">'
-    +'<option value="">-- Select reason --</option>'+reasonOpts+'</select>'
-    +'<textarea id="dropout-notes-inp" placeholder="Additional notes (optional)" style="width:100%;padding:13px;border-radius:12px;border:2px solid #fbcfe8;background:#fdf2f8;font-size:13px;color:#0c4a6e;resize:none;height:70px;margin-bottom:14px;font-family:Arial;"></textarea>'
-    +'<button onclick="saveDropout(\''+uid+'\',this.parentElement.parentElement)" style="width:100%;padding:16px;background:#be185d;border:none;color:#fff;font-size:16px;font-weight:bold;border-radius:14px;cursor:pointer;margin-bottom:8px;">Confirm Drop Out</button>'
-    +'<button onclick="this.parentElement.parentElement.remove()" style="width:100%;padding:13px;background:transparent;border:2px solid #bae6fd;color:#0e7490;font-size:14px;font-weight:bold;border-radius:14px;cursor:pointer;">Cancel</button>'
-    +'</div>';
-  document.body.appendChild(box);
-}
-function saveDropout(uid,overlay){
-  var reason=document.getElementById("dropout-reason-sel").value;
-  var notes=document.getElementById("dropout-notes-inp").value.trim();
-  if(!reason){toast("Please select a reason");return;}
-  var nm="";
-  for(var i=0;i<patients.length;i++){
-    if(patients[i].uid===uid){
-      nm=patients[i].name;
-      patients[i].status="dropout";
-      patients[i].dropoutReason=reason;
-      patients[i].dropoutNotes=notes;
-      patients[i].dropoutBy=curUser;
-      patients[i].dropoutAt=new Date().toLocaleString("en-IN");
-      var visit={date:todayStr(),medDays:"",notes:"DROP OUT: "+reason+(notes?" — "+notes:""),flag:"Dropout",staff:curUser,nextFollowup:"",type:"dropout"};
-      patients[i].visits=[visit].concat(patients[i].visits||[]);
-      break;
-    }
-  }
-  // Also cancel any reminders for this patient
-  reminders=reminders.filter(function(r){return r.uid!==uid;});saveReminders();
-  savePts();addLog("Dropout: "+reason,nm,uid);
-  if(overlay)overlay.remove();
-  toast(nm+" marked as dropped out");
-  renderToday();renderHome();
-}
-function reactivatePatient(uid){
-  var nm="";
-  for(var i=0;i<patients.length;i++){
-    if(patients[i].uid===uid){
-      nm=patients[i].name;
-      patients[i].status="pending";
-      patients[i].followupDate=todayStr();
-      delete patients[i].dropoutReason;delete patients[i].dropoutBy;delete patients[i].dropoutAt;delete patients[i].dropoutNotes;
-      var visit={date:todayStr(),medDays:"",notes:"Reactivated by "+curUser,flag:"Reactivated",staff:curUser,nextFollowup:"",type:"reactivate"};
-      patients[i].visits=[visit].concat(patients[i].visits||[]);
-      break;
-    }
-  }
-  savePts();addLog("Reactivated",nm,uid);toast(nm+" reactivated — set a new follow-up date");
-  renderToday();renderHome();
-}
+function confirmDropout(uid){var p=null;for(var i=0;i<patients.length;i++){if(patients[i].uid===uid){p=patients[i];break;}}if(!p)return;var reasonOpts=DROPOUT_REASONS.map(function(r){return'<option value="'+eh(r)+'">'+eh(r)+'</option>';}).join("");var box=document.createElement("div");box.style.cssText="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:850;display:flex;align-items:center;justify-content:center;padding:20px;";box.innerHTML='<div style="background:#fff;border-radius:20px;padding:24px;width:100%;max-width:380px;box-shadow:0 8px 32px rgba(0,0,0,0.25);"><div style="font-size:20px;font-weight:bold;color:#be185d;margin-bottom:4px;">&#x1F6AB; Mark as Drop Out</div><div style="font-size:13px;color:#64748b;margin-bottom:16px;">'+eh(p.name)+' &bull; '+eh(p.uid)+'</div><div style="font-size:13px;font-weight:bold;color:#0c4a6e;margin-bottom:8px;">Reason for dropping out *</div><select id="dropout-reason-sel" style="width:100%;padding:13px;border-radius:12px;border:2px solid #fbcfe8;font-size:14px;font-weight:bold;color:#0c4a6e;background:#fdf2f8;margin-bottom:12px;"><option value="">-- Select reason --</option>'+reasonOpts+'</select><textarea id="dropout-notes-inp" placeholder="Additional notes (optional)" style="width:100%;padding:13px;border-radius:12px;border:2px solid #fbcfe8;background:#fdf2f8;font-size:13px;color:#0c4a6e;resize:none;height:70px;margin-bottom:14px;font-family:Arial;"></textarea><button onclick="saveDropout(\''+uid+'\',this.parentElement.parentElement)" style="width:100%;padding:16px;background:#be185d;border:none;color:#fff;font-size:16px;font-weight:bold;border-radius:14px;cursor:pointer;margin-bottom:8px;">Confirm Drop Out</button><button onclick="this.parentElement.parentElement.remove()" style="width:100%;padding:13px;background:transparent;border:2px solid #bae6fd;color:#0e7490;font-size:14px;font-weight:bold;border-radius:14px;cursor:pointer;">Cancel</button></div>';document.body.appendChild(box);}
+function saveDropout(uid,overlay){var reason=document.getElementById("dropout-reason-sel").value;var notes=document.getElementById("dropout-notes-inp").value.trim();if(!reason){toast("Please select a reason");return;}var nm="";for(var i=0;i<patients.length;i++){if(patients[i].uid===uid){nm=patients[i].name;patients[i].status="dropout";patients[i].dropoutReason=reason;patients[i].dropoutNotes=notes;patients[i].dropoutBy=curUser;patients[i].dropoutAt=new Date().toLocaleString("en-IN");var visit={date:todayStr(),medDays:"",notes:"DROP OUT: "+reason+(notes?" — "+notes:""),flag:"Dropout",staff:curUser,nextFollowup:"",type:"dropout"};patients[i].visits=[visit].concat(patients[i].visits||[]);break;}}reminders=reminders.filter(function(r){return r.uid!==uid;});saveReminders();savePts();addLog("Dropout: "+reason,nm,uid);if(overlay)overlay.remove();toast(nm+" marked as dropped out");renderToday();renderHome();}
+function reactivatePatient(uid){var nm="";for(var i=0;i<patients.length;i++){if(patients[i].uid===uid){nm=patients[i].name;patients[i].status="pending";patients[i].followupDate=todayStr();delete patients[i].dropoutReason;delete patients[i].dropoutBy;delete patients[i].dropoutAt;delete patients[i].dropoutNotes;var visit={date:todayStr(),medDays:"",notes:"Reactivated by "+curUser,flag:"Reactivated",staff:curUser,nextFollowup:"",type:"reactivate"};patients[i].visits=[visit].concat(patients[i].visits||[]);break;}}savePts();addLog("Reactivated",nm,uid);toast(nm+" reactivated — set a new follow-up date");renderToday();renderHome();}
 
-// LIVE SEARCH DROPDOWN — debounced 350ms to prevent browser freeze on fast typing
+// ── Live Search ─────────────────────────────────────────
 var _lsTimer=null,_lsLastVal="";
-function liveSearch(val){
-  val=(val||"").toUpperCase();
-  clearTimeout(_lsTimer);
-  var dd=document.getElementById("live-dropdown");
-  if(!val||val.length<2){if(dd)dd.classList.remove("open");_lsLastVal="";return;}
-  if(val===_lsLastVal)return; // identical value — skip entirely
-  _lsTimer=setTimeout(function(){
-    _lsLastVal=val;
-    var matches=[];
-    for(var i=0;i<patients.length&&matches.length<4;i++){
-      var p=patients[i];
-      if(p.uid.indexOf(val)>=0||p.name.toUpperCase().indexOf(val)>=0){matches.push(p);}
-    }
-    if(!matches.length){dd.classList.remove("open");return;}
-    var h="";
-    for(var j=0;j<matches.length;j++){
-      var m=matches[j];var t=todayStr();
-      var st=m.status==="dropout"?"DROPOUT":m.followupDate<t?"OVERDUE":m.followupDate===t?"TODAY":"";
-      var stc=m.status==="dropout"?"#be185d":m.followupDate<t?"#dc2626":"#059669";
-      h+='<div class="live-item" onmousedown="pickLiveResult(\''+m.uid+'\')">';
-      h+='<div><div class="live-name">'+eh(m.name)+'</div><div class="live-uid">'+eh(m.uid)+' &bull; '+(m.age||"")+'y &bull; '+(m.category||"")+'</div></div>';
-      if(st)h+='<span class="live-badge" style="background:'+stc+'22;color:'+stc+';">'+st+'</span>';
-      h+='</div>';
-    }
-    dd.innerHTML=h;dd.classList.add("open");
-  },350);
-}
-function pickLiveResult(uid){
-  document.getElementById("search-uid").value=uid;
-  document.getElementById("live-dropdown").classList.remove("open");
-  doSearch();
-}
+function liveSearch(val){val=(val||"").toUpperCase();clearTimeout(_lsTimer);var dd=document.getElementById("live-dropdown");if(!val||val.length<2){if(dd)dd.classList.remove("open");_lsLastVal="";return;}if(val===_lsLastVal)return;_lsTimer=setTimeout(function(){_lsLastVal=val;var matches=[];for(var i=0;i<patients.length&&matches.length<4;i++){var p=patients[i];if(p.uid.indexOf(val)>=0||p.name.toUpperCase().indexOf(val)>=0){matches.push(p);}}if(!matches.length){dd.classList.remove("open");return;}var h="";for(var j=0;j<matches.length;j++){var m=matches[j];var t=todayStr();var st=m.status==="dropout"?"DROPOUT":m.followupDate<t?"OVERDUE":m.followupDate===t?"TODAY":"";var stc=m.status==="dropout"?"#be185d":m.followupDate<t?"#dc2626":"#059669";h+='<div class="live-item" onmousedown="pickLiveResult(\''+m.uid+'\')"><div><div class="live-name">'+eh(m.name)+'</div><div class="live-uid">'+eh(m.uid)+' &bull; '+(m.age||"")+'y &bull; '+(m.category||"")+'</div></div>';if(st)h+='<span class="live-badge" style="background:'+stc+'22;color:'+stc+';">'+st+'</span>';h+='</div>';}dd.innerHTML=h;dd.classList.add("open");},350);}
+function pickLiveResult(uid){document.getElementById("search-uid").value=uid;document.getElementById("live-dropdown").classList.remove("open");doSearch();}
 function hideLiveDropdown(){setTimeout(function(){var dd=document.getElementById("live-dropdown");if(dd)dd.classList.remove("open");},200);}
-// SEARCH
+
+// ── Search ──────────────────────────────────────────────
 function clearFoundPt(){document.getElementById("search-not-found").style.display="none";document.getElementById("search-found").style.display="none";foundPt=null;}
 function clearSearch(){var el=document.getElementById("search-uid");if(el)el.value="";clearFoundPt();selFuDays="";var fn=document.getElementById("fu-notes");if(fn)fn.value="";}
 function doSearch(){
@@ -1295,32 +869,12 @@ function doSearch(){
   if(f.visits&&f.visits.length>0){var h="";var sl=f.visits.slice(0,4);for(var j=0;j<sl.length;j++)h+=vCard(sl[j]);document.getElementById("sf-history-list").innerHTML=h;document.getElementById("sf-history").style.display="block";}
   else document.getElementById("sf-history").style.display="none";
 }
-function renderMedPills(cid,pfx,cur){
-  var h="";for(var i=0;i<QDAYS.length;i++){var d=QDAYS[i];var s=String(cur)===String(d)?" sel":"";h+='<button class="med-pill'+s+'" data-val="'+d+'" onclick="selMed(\''+pfx+'\','+d+')">'+d+'d</button>';}
-  document.getElementById(cid).innerHTML=h;
-}
-// FIX medicine days: toggle class only — do NOT re-render (mobile DOM-mid-click bug)
-function selMed(pfx,val){
-  val=String(val);
-  if(pfx==="fu"){
-    selFuDays=val;document.getElementById("fu-med-custom").value=val;
-    var pills=document.querySelectorAll("#fu-med-pills .med-pill");for(var i=0;i<pills.length;i++){if(pills[i].getAttribute("data-val")===val)pills[i].classList.add("sel");else pills[i].classList.remove("sel");}
-    updFuBar(val);
-  } else if(pfx==="em"){
-    selEmDays=val;document.getElementById("em-med-custom").value=val;
-    var epills=document.querySelectorAll("#em-med-pills .med-pill");for(var i=0;i<epills.length;i++){if(epills[i].getAttribute("data-val")===val)epills[i].classList.add("sel");else epills[i].classList.remove("sel");}
-    updEmBar(val);checkEmBtn();
-  } else if(pfx==="imp"){
-    selImpMed=val;document.getElementById("imp-med-custom").value=val;
-    var ipills=document.querySelectorAll("#imp-med-pills .med-pill");for(var i=0;i<ipills.length;i++){if(ipills[i].getAttribute("data-val")===val)ipills[i].classList.add("sel");else ipills[i].classList.remove("sel");}
-    updImpBar(val);
-  }
-}
+function renderMedPills(cid,pfx,cur){var h="";for(var i=0;i<QDAYS.length;i++){var d=QDAYS[i];var s=String(cur)===String(d)?" sel":"";h+='<button class="med-pill'+s+'" data-val="'+d+'" onclick="selMed(\''+pfx+'\','+d+')">'+d+'d</button>';}document.getElementById(cid).innerHTML=h;}
+function selMed(pfx,val){val=String(val);if(pfx==="fu"){selFuDays=val;document.getElementById("fu-med-custom").value=val;var pills=document.querySelectorAll("#fu-med-pills .med-pill");for(var i=0;i<pills.length;i++){if(pills[i].getAttribute("data-val")===val)pills[i].classList.add("sel");else pills[i].classList.remove("sel");}updFuBar(val);}else if(pfx==="em"){selEmDays=val;document.getElementById("em-med-custom").value=val;var epills=document.querySelectorAll("#em-med-pills .med-pill");for(var i=0;i<epills.length;i++){if(epills[i].getAttribute("data-val")===val)epills[i].classList.add("sel");else epills[i].classList.remove("sel");}updEmBar(val);checkEmBtn();}else if(pfx==="imp"){selImpMed=val;document.getElementById("imp-med-custom").value=val;var ipills=document.querySelectorAll("#imp-med-pills .med-pill");for(var i=0;i<ipills.length;i++){if(ipills[i].getAttribute("data-val")===val)ipills[i].classList.add("sel");else ipills[i].classList.remove("sel");}updImpBar(val);}}
 function onFuMedInput(v){selFuDays=v;updFuBar(v);renderMedPills("fu-med-pills","fu",v);}
 function updFuBar(v){var b=document.getElementById("fu-next-bar");if(v&&!isNaN(v)&&parseInt(v,10)>0){b.textContent="Next follow-up: "+fmt(addDays(v));b.style.display="block";}else b.style.display="none";}
 function saveFollowUp(){
-  var btn=document.querySelector("#screen-search .btn-green");
-  if(btn&&btn.disabled)return;
+  var btn=document.querySelector("#screen-search .btn-green");if(btn&&btn.disabled)return;
   var md=selFuDays||document.getElementById("fu-med-custom").value.trim();if(!md||isNaN(md)||parseInt(md,10)<1){toast("Enter medicine days");return;}if(!foundPt)return;
   if(btn){btn.disabled=true;btn.textContent="Saving...";btn.style.opacity="0.6";}
   var nd=addDays(md);var t=todayStr();var diff=Math.round((new Date(t)-new Date(foundPt.followupDate))/86400000);var flag=diff<-1?"Early":diff>1?"Late":"On Time";var notes=document.getElementById("fu-notes").value.trim();
@@ -1331,15 +885,14 @@ function saveFollowUp(){
 function goToAddNewFromSearch(){var uid=document.getElementById("search-uid").value.trim().toUpperCase();document.getElementById("an-uid").value=uid;document.getElementById("addnew-user").innerHTML=badge(curUser,true);resetAddNew();showScreen("addNew");}
 function deleteFoundPatient(){if(!foundPt)return;var nm=foundPt.name;var uid=foundPt.uid;patients=patients.filter(function(p){return p.uid!==uid;});savePts();addLog("DELETED PATIENT",nm,uid);toast("Deleted: "+nm);clearSearch();goHome();}
 
-// ADD NEW PATIENT
+// ── Add New Patient ─────────────────────────────────────
 function selectAnQueue(v){anAddToQueue=v;if(v==="yes"){document.getElementById("an-q-yes").classList.add("sel");document.getElementById("an-q-no").classList.remove("sel");}else{document.getElementById("an-q-no").classList.add("sel");document.getElementById("an-q-yes").classList.remove("sel");}}
 function resetAddNew(){selSex="";selCat="";anAddToQueue="yes";["an-name","an-phone","an-age","an-address","an-uid"].forEach(function(id){var el=document.getElementById(id);if(el)el.value="";});resetGrp("sex-row","sex-btn");resetGrp("cat-wrap","cat-btn");document.getElementById("an-q-yes").classList.add("sel");document.getElementById("an-q-no").classList.remove("sel");}
 function resetGrp(wid,cls){var b=document.getElementById(wid).querySelectorAll("."+cls);for(var i=0;i<b.length;i++)b[i].classList.remove("sel");}
 function selectSex(v){selSex=v;var b=document.getElementById("sex-row").querySelectorAll(".sex-btn");for(var i=0;i<b.length;i++){if(b[i].textContent===v)b[i].classList.add("sel");else b[i].classList.remove("sel");}}
 function selectCat(v){selCat=v;var b=document.getElementById("cat-wrap").querySelectorAll(".cat-btn");for(var i=0;i<b.length;i++){if(b[i].textContent===v)b[i].classList.add("sel");else b[i].classList.remove("sel");}}
 function saveNewPatient(){
-  var btn=document.querySelector("#screen-addNew .btn-green");
-  if(btn&&btn.disabled)return;
+  var btn=document.querySelector("#screen-addNew .btn-green");if(btn&&btn.disabled)return;
   if(btn){btn.disabled=true;btn.textContent="Saving...";btn.style.opacity="0.6";}
   var uid=document.getElementById("an-uid").value.trim().toUpperCase();var name=document.getElementById("an-name").value.trim();var phone=document.getElementById("an-phone").value.trim();var age=document.getElementById("an-age").value.trim();var addr=document.getElementById("an-address").value.trim();
   function reenable(){if(btn){btn.disabled=false;btn.textContent="Save New Patient";btn.style.opacity="1";}}
@@ -1351,139 +904,85 @@ function saveNewPatient(){
   resetAddNew();reenable();
 }
 
-// EARLY VISIT
+// ── Early Visit ─────────────────────────────────────────
 function clearEarlyFound(){document.getElementById("early-not-found").style.display="none";document.getElementById("early-found").style.display="none";earlyFndPt=null;}
 function clearEarlySearch(){var el=document.getElementById("early-uid");if(el)el.value="";clearEarlyFound();}
-function doEarlySearch(){
-  var uid=document.getElementById("early-uid").value.trim().toUpperCase();if(!uid)return;
-  var f=null;for(var i=0;i<patients.length;i++){if(patients[i].uid===uid){f=patients[i];break;}}
-  if(!f){document.getElementById("early-not-found").style.display="block";document.getElementById("early-found").style.display="none";earlyFndPt=null;return;}
-  earlyFndPt=f;document.getElementById("early-not-found").style.display="none";document.getElementById("early-found").style.display="block";
-  document.getElementById("ef-name").textContent=f.name;document.getElementById("ef-meta").textContent=f.uid+" - "+(f.age||"")+"y - "+(f.sex||"")+" - "+(f.category||"");
-  var t=todayStr();var s="Scheduled: "+fmt(f.followupDate);if(f.followupDate>t)s+=" - "+Math.round((new Date(f.followupDate)-new Date(t))/86400000)+" days before schedule";if(f.followupDate<t)s+=" - Overdue";if(f.followupDate===t)s+=" - Due today";
-  document.getElementById("ef-schedule").textContent=s;document.getElementById("ef-contact-row").innerHTML=contactRow(f.phone,f.name);
-}
+function doEarlySearch(){var uid=document.getElementById("early-uid").value.trim().toUpperCase();if(!uid)return;var f=null;for(var i=0;i<patients.length;i++){if(patients[i].uid===uid){f=patients[i];break;}}if(!f){document.getElementById("early-not-found").style.display="block";document.getElementById("early-found").style.display="none";earlyFndPt=null;return;}earlyFndPt=f;document.getElementById("early-not-found").style.display="none";document.getElementById("early-found").style.display="block";document.getElementById("ef-name").textContent=f.name;document.getElementById("ef-meta").textContent=f.uid+" - "+(f.age||"")+"y - "+(f.sex||"")+" - "+(f.category||"");var t=todayStr();var s="Scheduled: "+fmt(f.followupDate);if(f.followupDate>t)s+=" - "+Math.round((new Date(f.followupDate)-new Date(t))/86400000)+" days before schedule";if(f.followupDate<t)s+=" - Overdue";if(f.followupDate===t)s+=" - Due today";document.getElementById("ef-schedule").textContent=s;document.getElementById("ef-contact-row").innerHTML=contactRow(f.phone,f.name);}
 function openEarlyModal(){if(!earlyFndPt)return;earlyPt=earlyFndPt;fillEarlyModal(earlyPt);document.getElementById("early-modal").classList.add("open");}
-function addEarlyFoundToQueue(){
-  if(!earlyFndPt){toast("Search a patient first");return;}
-  var uid=earlyFndPt.uid;
-  for(var i=0;i<queue.length;i++){if(queue[i].uid===uid&&queue[i].status!=="done"){toast(earlyFndPt.name+" is already in queue");return;}}
-  var token=queue.length+1;
-  var entry={id:"q"+Date.now(),uid:uid,token:token,visitType:"Walk-In",status:"waiting",date:todayStr(),addedBy:curUser,addedAt:new Date().toLocaleString("en-IN")};
-  queue.push(entry);saveQueue();addLog("Walk-In added to Queue",earlyFndPt.name,uid);
-  toast(earlyFndPt.name+" added to Queue - Token #"+token);
-  clearEarlySearch();showScreen("queue");
-}
+function addEarlyFoundToQueue(){if(!earlyFndPt){toast("Search a patient first");return;}var uid=earlyFndPt.uid;for(var i=0;i<queue.length;i++){if(queue[i].uid===uid&&queue[i].status!=="done"){toast(earlyFndPt.name+" is already in queue");return;}}var token=queue.length+1;var entry={id:"q"+Date.now(),uid:uid,token:token,visitType:"Walk-In",status:"waiting",date:todayStr(),addedBy:curUser,addedAt:new Date().toLocaleString("en-IN")};queue.push(entry);saveQueue();addLog("Walk-In added to Queue",earlyFndPt.name,uid);toast(earlyFndPt.name+" added to Queue - Token #"+token);clearEarlySearch();showScreen("queue");}
 function openEarlyFromList(uid){var f=null;for(var i=0;i<patients.length;i++){if(patients[i].uid===uid){f=patients[i];break;}}if(!f)return;earlyPt=f;fillEarlyModal(earlyPt);document.getElementById("early-modal").classList.add("open");}
-// FIX #4: fillEarlyModal now resets selConsultType UI properly
-function fillEarlyModal(p){
-  selEmReason="";selEmDays="";
-  document.getElementById("em-user").innerHTML=badge(curUser,true);
-  document.getElementById("em-name").textContent=p.name;
-  document.getElementById("em-meta").textContent=p.uid+" - "+(p.age||"")+"y - "+(p.sex||"")+" - "+(p.category||"");
-  var t=todayStr();var de=p.followupDate>t?Math.round((new Date(p.followupDate)-new Date(t))/86400000):0;var s="Scheduled: "+fmt(p.followupDate);if(de>0)s+=" - "+de+" day(s) early";if(p.followupDate<t)s+=" - Overdue";
-  document.getElementById("em-schedule").textContent=s;
-  document.getElementById("em-custom-reason").value="";
-  document.getElementById("em-custom-reason").style.display="none";
-  document.getElementById("em-med-custom").value="";
-  document.getElementById("em-next-bar").style.display="none";
-  document.getElementById("em-notes").value="";
-  selectConsultType("clinic");  // FIX: reset consult type to default
-  renderEmReasons("");renderEmMedPills("");checkEmBtn();
-}
+function fillEarlyModal(p){selEmReason="";selEmDays="";document.getElementById("em-user").innerHTML=badge(curUser,true);document.getElementById("em-name").textContent=p.name;document.getElementById("em-meta").textContent=p.uid+" - "+(p.age||"")+"y - "+(p.sex||"")+" - "+(p.category||"");var t=todayStr();var de=p.followupDate>t?Math.round((new Date(p.followupDate)-new Date(t))/86400000):0;var s="Scheduled: "+fmt(p.followupDate);if(de>0)s+=" - "+de+" day(s) early";if(p.followupDate<t)s+=" - Overdue";document.getElementById("em-schedule").textContent=s;document.getElementById("em-custom-reason").value="";document.getElementById("em-custom-reason").style.display="none";document.getElementById("em-med-custom").value="";document.getElementById("em-next-bar").style.display="none";document.getElementById("em-notes").value="";selectConsultType("clinic");renderEmReasons("");renderEmMedPills("");checkEmBtn();}
+function selectConsultType(v){selConsultType=v;var c=document.getElementById("consult-type-clinic");var t=document.getElementById("consult-type-tele");if(v==="clinic"){c.classList.add("sel");t.classList.remove("sel");}else{t.classList.add("sel");c.classList.remove("sel");}var emNote=document.getElementById("em-tele-note");if(emNote)emNote.style.display=v==="tele"?"block":"none";checkEmBtn();}
 function renderEmReasons(sel){var h="";for(var i=0;i<REASONS.length;i++){var r=REASONS[i];var s=sel===r?" sel":"";h+='<button class="reason-pill'+s+'" onclick="selReason(\''+r+'\')">'+r+'</button>';}document.getElementById("em-reasons").innerHTML=h;}
 function renderEmMedPills(sel){var h="";for(var i=0;i<QDAYS.length;i++){var d=QDAYS[i];var s=String(sel)===String(d)?" sel":"";h+='<button class="med-pill'+s+'" data-val="'+d+'" onclick="selMed(\'em\','+d+')">'+d+'d</button>';}document.getElementById("em-med-pills").innerHTML=h;}
 function selReason(r){selEmReason=r;renderEmReasons(r);document.getElementById("em-custom-reason").style.display=r==="Other"?"block":"none";checkEmBtn();}
 function onEmMedInput(v){selEmDays=v;renderEmMedPills(v);updEmBar(v);checkEmBtn();}
 function updEmBar(v){var b=document.getElementById("em-next-bar");if(v&&!isNaN(v)&&parseInt(v,10)>0){b.textContent="Next follow-up: "+fmt(addDays(v));b.style.display="block";}else b.style.display="none";}
-function checkEmBtn(){
-  var days=selEmDays||document.getElementById("em-med-custom").value.trim();
-  var reason=selEmReason==="Other"?document.getElementById("em-custom-reason").value.trim():selEmReason;
-  var isTele=selConsultType==="tele";
-  // For tele: only reason required; for clinic: both required
-  var ok=reason&&(isTele||(days&&!isNaN(days)&&parseInt(days,10)>0));
-  var btn=document.getElementById("em-save-btn");btn.style.opacity=ok?"1":"0.4";btn.style.cursor=ok?"pointer":"not-allowed";
-}
+function checkEmBtn(){var days=selEmDays||document.getElementById("em-med-custom").value.trim();var reason=selEmReason==="Other"?document.getElementById("em-custom-reason").value.trim():selEmReason;var isTele=selConsultType==="tele";var ok=reason&&(isTele||(days&&!isNaN(days)&&parseInt(days,10)>0));var btn=document.getElementById("em-save-btn");btn.style.opacity=ok?"1":"0.4";btn.style.cursor=ok?"pointer":"not-allowed";}
 function closeEarlyModal(){document.getElementById("early-modal").classList.remove("open");earlyPt=null;}
-function saveEarlyVisit(){
-  var days=selEmDays||document.getElementById("em-med-custom").value.trim();
-  var reason=selEmReason==="Other"?document.getElementById("em-custom-reason").value.trim():selEmReason;
-  var isTele=selConsultType==="tele";
-  if(!reason){toast("Please select a reason");return;}
-  if(!isTele&&(!days||isNaN(days)||parseInt(days,10)<1)){toast("Fill reason and medicine days");return;}
-  var nd=days&&!isNaN(days)&&parseInt(days,10)>0?addDays(days):null;
-  var notes=document.getElementById("em-notes").value.trim();var t=todayStr();
-  var consultTypeLbl=isTele?" (Teleconsultation)":"";
-  var visit={date:t,medDays:days||"—",notes:notes,reason:reason,flag:"Early Walk-In"+consultTypeLbl,staff:curUser,nextFollowup:nd||earlyPt.followupDate,type:isTele?"teleconsult":"early"};
-  for(var i=0;i<patients.length;i++){if(patients[i].uid===earlyPt.uid){if(nd){patients[i].followupDate=nd;}patients[i].status="pending";patients[i].visits=[visit].concat(patients[i].visits||[]);break;}}
-  savePts();
-  addLog("Early Walk-In"+consultTypeLbl+" - "+reason+(days?" - "+days+"d":""),earlyPt.name,earlyPt.uid);
-  toast("Visit logged!"+(nd?" Next: "+fmt(nd):" (No new date set)"));
-  closeEarlyModal();clearEarlySearch();goHome();
-}
+function saveEarlyVisit(){var days=selEmDays||document.getElementById("em-med-custom").value.trim();var reason=selEmReason==="Other"?document.getElementById("em-custom-reason").value.trim():selEmReason;var isTele=selConsultType==="tele";if(!reason){toast("Please select a reason");return;}if(!isTele&&(!days||isNaN(days)||parseInt(days,10)<1)){toast("Fill reason and medicine days");return;}var nd=days&&!isNaN(days)&&parseInt(days,10)>0?addDays(days):null;var notes=document.getElementById("em-notes").value.trim();var t=todayStr();var consultTypeLbl=isTele?" (Teleconsultation)":"";var visit={date:t,medDays:days||"—",notes:notes,reason:reason,flag:"Early Walk-In"+consultTypeLbl,staff:curUser,nextFollowup:nd||earlyPt.followupDate,type:isTele?"teleconsult":"early"};for(var i=0;i<patients.length;i++){if(patients[i].uid===earlyPt.uid){if(nd){patients[i].followupDate=nd;}patients[i].status="pending";patients[i].visits=[visit].concat(patients[i].visits||[]);break;}}savePts();addLog("Early Walk-In"+consultTypeLbl+" - "+reason+(days?" - "+days+"d":""),earlyPt.name,earlyPt.uid);toast("Visit logged!"+(nd?" Next: "+fmt(nd):" (No new date set)"));closeEarlyModal();clearEarlySearch();goHome();}
 
-// IMPORT OLD DATA
+// ── Import Old Data ─────────────────────────────────────
 function selectImpSex(v){selImpSex=v;var b=document.getElementById("imp-sex-row").querySelectorAll(".sex-btn");for(var i=0;i<b.length;i++){if(b[i].textContent===v)b[i].classList.add("sel");else b[i].classList.remove("sel");}}
 function selectImpCat(v){selImpCat=v;var b=document.getElementById("imp-cat-wrap").querySelectorAll(".cat-btn");for(var i=0;i<b.length;i++){if(b[i].textContent===v)b[i].classList.add("sel");else b[i].classList.remove("sel");}}
 function renderImpMedPills(sel){var h="";for(var i=0;i<QDAYS.length;i++){var d=QDAYS[i];var s=String(sel)===String(d)?" sel":"";h+='<button class="med-pill'+s+'" data-val="'+d+'" onclick="selMed(\'imp\','+d+')">'+d+'d</button>';}document.getElementById("imp-med-pills").innerHTML=h;}
 function onImpMedInput(v){selImpMed=v;renderImpMedPills(v);updImpBar(v);}
 function updImpBar(v){var b=document.getElementById("imp-next-bar");var lv=document.getElementById("imp-lastvisit").value||todayStr();if(v&&!isNaN(v)&&parseInt(v,10)>0){b.textContent="Follow-up: "+fmt(addDaysToDate(lv,v));b.style.display="block";}else b.style.display="none";}
-function saveImportedPatient(){
-  var uid=document.getElementById("imp-uid").value.trim().toUpperCase();var name=document.getElementById("imp-name").value.trim();var phone=document.getElementById("imp-phone").value.trim();var age=document.getElementById("imp-age").value.trim();var addr=document.getElementById("imp-address").value.trim();var lastVisit=document.getElementById("imp-lastvisit").value||todayStr();var med=selImpMed||document.getElementById("imp-med-custom").value.trim();var notes=document.getElementById("imp-notes").value.trim();
-  if(!uid||!name||!phone){toast("UID, Name and Phone required");return;}for(var i=0;i<patients.length;i++){if(patients[i].uid===uid){toast("UID exists: "+uid);return;}}
-  var fuDate=med&&!isNaN(med)&&parseInt(med,10)>0?addDaysToDate(lastVisit,med):lastVisit;var visit=med?{date:lastVisit,medDays:med,notes:notes,flag:"Imported",staff:curUser,nextFollowup:fuDate,type:"imported"}:null;
-  var p={uid:uid,name:name,phone:phone,age:age,sex:selImpSex,address:addr,category:selImpCat,followupDate:fuDate,status:"pending",createdBy:curUser,createdAt:new Date().toLocaleString("en-IN"),visits:visit?[visit]:[]};
-  patients.push(p);savePts();addLog("Imported",name,uid);toast("Imported: "+name+" | Follow-up: "+fmt(fuDate));
-  document.getElementById("imp-uid").value="";document.getElementById("imp-name").value="";document.getElementById("imp-phone").value="";document.getElementById("imp-age").value="";document.getElementById("imp-address").value="";document.getElementById("imp-lastvisit").value="";document.getElementById("imp-med-custom").value="";document.getElementById("imp-notes").value="";document.getElementById("imp-next-bar").style.display="none";selImpSex="";selImpCat="";selImpMed="";resetGrp("imp-sex-row","sex-btn");resetGrp("imp-cat-wrap","cat-btn");renderImpMedPills("");
-}
-function parseBulkPaste(){
-  var raw=document.getElementById("bulk-paste").value.trim();if(!raw){toast("Paste some data first");return;}var lines=raw.split("\n");bulkParsed=[];
-  var hdr='<div class="import-row"><span class="import-cell import-cell-hdr">UID</span><span class="import-cell import-cell-hdr">Name</span><span class="import-cell import-cell-hdr">Phone</span><span class="import-cell import-cell-hdr">Category</span><span class="import-cell import-cell-hdr">Follow-Up</span></div>';
-  var rows=hdr;var ok=0;var skip=0;
-  for(var i=0;i<lines.length;i++){var line=lines[i].trim();if(!line)continue;var cols=line.split(",");var uid=(cols[0]||"").trim().toUpperCase();var name=(cols[1]||"").trim();var phone=(cols[2]||"").trim();var age=(cols[3]||"").trim();var sex=(cols[4]||"").trim();var cat=(cols[5]||"").trim();var addr=(cols[6]||"").trim();var lastVisit=(cols[7]||"").trim()||todayStr();var med=(cols[8]||"").trim();
-    if(!uid||!name||!phone){skip++;continue;}var dup=false;for(var j=0;j<patients.length;j++){if(patients[j].uid===uid){dup=true;break;}}
-    if(dup){skip++;rows+='<div class="import-row" style="background:#fee2e2;"><span class="import-cell">'+eh(uid)+'</span><span class="import-cell">'+eh(name)+'</span><span class="import-cell">'+eh(phone)+'</span><span class="import-cell">DUPLICATE</span><span class="import-cell">-</span></div>';continue;}
-    var fuDate=med&&!isNaN(med)&&parseInt(med,10)>0?addDaysToDate(lastVisit,med):lastVisit;bulkParsed.push({uid:uid,name:name,phone:phone,age:age,sex:sex,address:addr,category:cat,lastVisit:lastVisit,med:med,fuDate:fuDate});
-    rows+='<div class="import-row"><span class="import-cell">'+eh(uid)+'</span><span class="import-cell">'+eh(name)+'</span><span class="import-cell">'+eh(phone)+'</span><span class="import-cell">'+eh(cat)+'</span><span class="import-cell">'+fmt(fuDate)+'</span></div>';ok++;
-  }
-  document.getElementById("bulk-preview-table").innerHTML=rows;document.getElementById("bulk-preview-count").textContent=ok+" records ready"+(skip>0?" ("+skip+" skipped)":"");document.getElementById("bulk-preview").style.display="block";
-}
-function saveBulkImport(){
-  if(!bulkParsed.length){toast("Nothing to import");return;}var added=0;
-  for(var i=0;i<bulkParsed.length;i++){var r=bulkParsed[i];var visit=r.med&&!isNaN(r.med)&&parseInt(r.med,10)>0?{date:r.lastVisit,medDays:r.med,notes:"",flag:"Imported",staff:curUser,nextFollowup:r.fuDate,type:"imported"}:null;var p={uid:r.uid,name:r.name,phone:r.phone,age:r.age,sex:r.sex,address:r.address,category:r.category,followupDate:r.fuDate,status:"pending",createdBy:curUser,createdAt:new Date().toLocaleString("en-IN"),visits:visit?[visit]:[]};patients.push(p);added++;}
-  savePts();addLog("Bulk Import: "+added+" records","BULK","IMPORT");toast(added+" patients imported!");document.getElementById("bulk-paste").value="";document.getElementById("bulk-preview").style.display="none";bulkParsed=[];goHome();
-}
+function saveImportedPatient(){var uid=document.getElementById("imp-uid").value.trim().toUpperCase();var name=document.getElementById("imp-name").value.trim();var phone=document.getElementById("imp-phone").value.trim();var age=document.getElementById("imp-age").value.trim();var addr=document.getElementById("imp-address").value.trim();var lastVisit=document.getElementById("imp-lastvisit").value||todayStr();var med=selImpMed||document.getElementById("imp-med-custom").value.trim();var notes=document.getElementById("imp-notes").value.trim();if(!uid||!name||!phone){toast("UID, Name and Phone required");return;}for(var i=0;i<patients.length;i++){if(patients[i].uid===uid){toast("UID exists: "+uid);return;}}var fuDate=med&&!isNaN(med)&&parseInt(med,10)>0?addDaysToDate(lastVisit,med):lastVisit;var visit=med?{date:lastVisit,medDays:med,notes:notes,flag:"Imported",staff:curUser,nextFollowup:fuDate,type:"imported"}:null;var p={uid:uid,name:name,phone:phone,age:age,sex:selImpSex,address:addr,category:selImpCat,followupDate:fuDate,status:"pending",createdBy:curUser,createdAt:new Date().toLocaleString("en-IN"),visits:visit?[visit]:[]};patients.push(p);savePts();addLog("Imported",name,uid);toast("Imported: "+name+" | Follow-up: "+fmt(fuDate));document.getElementById("imp-uid").value="";document.getElementById("imp-name").value="";document.getElementById("imp-phone").value="";document.getElementById("imp-age").value="";document.getElementById("imp-address").value="";document.getElementById("imp-lastvisit").value="";document.getElementById("imp-med-custom").value="";document.getElementById("imp-notes").value="";document.getElementById("imp-next-bar").style.display="none";selImpSex="";selImpCat="";selImpMed="";resetGrp("imp-sex-row","sex-btn");resetGrp("imp-cat-wrap","cat-btn");renderImpMedPills("");}
+function parseBulkPaste(){var raw=document.getElementById("bulk-paste").value.trim();if(!raw){toast("Paste some data first");return;}var lines=raw.split("\n");bulkParsed=[];var hdr='<div class="import-row"><span class="import-cell import-cell-hdr">UID</span><span class="import-cell import-cell-hdr">Name</span><span class="import-cell import-cell-hdr">Phone</span><span class="import-cell import-cell-hdr">Category</span><span class="import-cell import-cell-hdr">Follow-Up</span></div>';var rows=hdr;var ok=0;var skip=0;for(var i=0;i<lines.length;i++){var line=lines[i].trim();if(!line)continue;var cols=line.split(",");var uid=(cols[0]||"").trim().toUpperCase();var name=(cols[1]||"").trim();var phone=(cols[2]||"").trim();var age=(cols[3]||"").trim();var sex=(cols[4]||"").trim();var cat=(cols[5]||"").trim();var addr=(cols[6]||"").trim();var lastVisit=(cols[7]||"").trim()||todayStr();var med=(cols[8]||"").trim();if(!uid||!name||!phone){skip++;continue;}var dup=false;for(var j=0;j<patients.length;j++){if(patients[j].uid===uid){dup=true;break;}}if(dup){skip++;rows+='<div class="import-row" style="background:#fee2e2;"><span class="import-cell">'+eh(uid)+'</span><span class="import-cell">'+eh(name)+'</span><span class="import-cell">'+eh(phone)+'</span><span class="import-cell">DUPLICATE</span><span class="import-cell">-</span></div>';continue;}var fuDate=med&&!isNaN(med)&&parseInt(med,10)>0?addDaysToDate(lastVisit,med):lastVisit;bulkParsed.push({uid:uid,name:name,phone:phone,age:age,sex:sex,address:addr,category:cat,lastVisit:lastVisit,med:med,fuDate:fuDate});rows+='<div class="import-row"><span class="import-cell">'+eh(uid)+'</span><span class="import-cell">'+eh(name)+'</span><span class="import-cell">'+eh(phone)+'</span><span class="import-cell">'+eh(cat)+'</span><span class="import-cell">'+fmt(fuDate)+'</span></div>';ok++;}document.getElementById("bulk-preview-table").innerHTML=rows;document.getElementById("bulk-preview-count").textContent=ok+" records ready"+(skip>0?" ("+skip+" skipped)":"");document.getElementById("bulk-preview").style.display="block";}
+function saveBulkImport(){if(!bulkParsed.length){toast("Nothing to import");return;}var added=0;for(var i=0;i<bulkParsed.length;i++){var r=bulkParsed[i];var visit=r.med&&!isNaN(r.med)&&parseInt(r.med,10)>0?{date:r.lastVisit,medDays:r.med,notes:"",flag:"Imported",staff:curUser,nextFollowup:r.fuDate,type:"imported"}:null;var p={uid:r.uid,name:r.name,phone:r.phone,age:r.age,sex:r.sex,address:r.address,category:r.category,followupDate:r.fuDate,status:"pending",createdBy:curUser,createdAt:new Date().toLocaleString("en-IN"),visits:visit?[visit]:[]};patients.push(p);added++;}savePts();addLog("Bulk Import: "+added+" records","BULK","IMPORT");toast(added+" patients imported!");document.getElementById("bulk-paste").value="";document.getElementById("bulk-preview").style.display="none";bulkParsed=[];goHome();}
 
-// VISIT CARD
+// ── Visit Card ──────────────────────────────────────────
 function vCard(v){var fc="#059669";if(v.flag&&v.flag.indexOf("Early")>=0)fc="#d97706";if(v.flag&&v.flag.indexOf("Late")>=0)fc="#dc2626";var h='<div class="v-card"><div style="display:flex;justify-content:space-between;"><span style="font-weight:bold;color:#0c4a6e;font-size:13px;">'+fmt(v.date)+'</span><span style="font-size:12px;font-weight:bold;color:'+fc+';">'+(v.flag||"")+'</span></div>';if(v.medDays)h+='<div style="color:#0e7490;font-size:12px;margin-top:3px;">Medicine: '+v.medDays+' days - Next: '+fmt(v.nextFollowup)+'</div>';if(v.reason)h+='<div style="color:#92400e;font-size:12px;">'+eh(v.reason)+'</div>';if(v.notes)h+='<div style="color:#64748b;font-size:12px;">'+eh(v.notes)+'</div>';if(v.staff)h+='<div style="margin-top:4px;">'+badge(v.staff,true)+'</div>';h+='</div>';return h;}
 
-function renderLog(){
-  document.getElementById("log-count").textContent=logs.length+" total actions";
-  if(logs.length===0){document.getElementById("log-list").innerHTML='<div style="text-align:center;color:#94a3b8;padding:60px;">No activity yet</div>';return;}
-  var h="";
-  for(var i=0;i<logs.length;i++){
-    var l=logs[i];
-    var isLogin=l.action==="Login";
-    var borderColor=isLogin?"#a78bfa":"#7c3aed";
-    var bg=isLogin?"#faf5ff":"#fff";
-    h+='<div class="card" style="border-left:4px solid '+borderColor+';padding:14px 16px;background:'+bg+';">';
-    h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;">';
-    h+='<div style="font-size:15px;font-weight:bold;color:#0c4a6e;">'+(isLogin?"&#x1F513; ":"")+eh(l.action)+'</div>';
-    h+='<span style="color:#94a3b8;font-size:10px;white-space:nowrap;margin-left:8px;">'+l.time+'</span>';
-    h+='</div>';
-    if(l.patientName&&l.patientName!==l.uid&&l.patientName!=="Login")
-      h+='<div style="font-size:13px;color:#059669;margin-top:3px;font-weight:bold;">'+eh(l.patientName)+(l.uid&&l.uid!=="--"?' &bull; <span style="color:#0e7490;">'+eh(l.uid)+'</span>':"")+'</div>';
-    h+='<div style="margin-top:6px;">'+badge(l.staff,true)+'</div>';
-    h+='</div>';
+// ── Log ─────────────────────────────────────────────────
+function renderLog(){document.getElementById("log-count").textContent=logs.length+" total actions";if(logs.length===0){document.getElementById("log-list").innerHTML='<div style="text-align:center;color:#94a3b8;padding:60px;">No activity yet</div>';return;}var h="";for(var i=0;i<logs.length;i++){var l=logs[i];var isLogin=l.action==="Login";var borderColor=isLogin?"#a78bfa":"#7c3aed";var bg=isLogin?"#faf5ff":"#fff";h+='<div class="card" style="border-left:4px solid '+borderColor+';padding:14px 16px;background:'+bg+';"><div style="display:flex;justify-content:space-between;align-items:flex-start;"><div style="font-size:15px;font-weight:bold;color:#0c4a6e;">'+(isLogin?"&#x1F513; ":"")+eh(l.action)+'</div><span style="color:#94a3b8;font-size:10px;white-space:nowrap;margin-left:8px;">'+l.time+'</span></div>';if(l.patientName&&l.patientName!==l.uid&&l.patientName!=="Login")h+='<div style="font-size:13px;color:#059669;margin-top:3px;font-weight:bold;">'+eh(l.patientName)+(l.uid&&l.uid!=="--"?' &bull; <span style="color:#0e7490;">'+eh(l.uid)+'</span>':"")+'</div>';h+='<div style="margin-top:6px;">'+badge(l.staff,true)+'</div></div>';}document.getElementById("log-list").innerHTML=h;}
+
+// ── Download ────────────────────────────────────────────
+function openDownloadModal(){document.getElementById("dl-count-line").textContent=patients.length+" patients in database";document.getElementById("download-modal").classList.add("open");}
+function closeDownloadModal(){document.getElementById("download-modal").classList.remove("open");}
+function escCsv(v){var s=String(v===null||v===undefined?"":v);if(s.indexOf(",")>=0||s.indexOf('"')>=0||s.indexOf("\n")>=0)return'"'+s.replace(/"/g,'""')+'"';return s;}
+function buildCsv(list){var hdr=["UID","Name","Phone","Age","Sex","Category","Address","Follow-Up","Status","Dropout Reason","Visits","Last Visit","Med Days","Created By"];var rows=[hdr.join(",")];var t=todayStr();for(var i=0;i<list.length;i++){var p=list[i];var st=p.status==="dropout"?"Dropout":p.status==="pending"?(p.followupDate<t?"Overdue":p.followupDate===t?"Due Today":"Upcoming"):p.status;var lv=p.visits&&p.visits.length>0?p.visits[0]:null;rows.push([escCsv(p.uid),escCsv(p.name),escCsv(p.phone),escCsv(p.age),escCsv(p.sex),escCsv(p.category),escCsv(p.address),escCsv(fmt(p.followupDate)),escCsv(st),escCsv(p.dropoutReason||""),escCsv(p.visits?p.visits.length:0),escCsv(lv?fmt(lv.date):""),escCsv(lv?lv.medDays:""),escCsv(p.createdBy)].join(","));}return rows.join("\r\n");}
+function dlFile(content,name,mime){var b=new Blob([content],{type:mime});var u=URL.createObjectURL(b);var a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){URL.revokeObjectURL(u);},1000);}
+function downloadExcel(){if(!patients.length){toast("No patients");return;}dlFile("\uFEFF"+buildCsv(patients),"Asha_Patients_"+todayStr()+".csv","text/csv;charset=utf-8");closeDownloadModal();toast("Downloading Excel...");}
+function downloadTodayExcel(){var t=todayStr();var list=patients.filter(function(p){return p.followupDate<=t&&p.status==="pending";});if(!list.length){toast("No pending follow-ups today");return;}dlFile("\uFEFF"+buildCsv(list),"Asha_Today_"+t+".csv","text/csv;charset=utf-8");closeDownloadModal();toast("Downloading today's list...");}
+function downloadWord(){if(!patients.length){toast("No patients");return;}var t=todayStr();var html='<html><head><meta charset="UTF-8"><style>body{font-family:Arial;font-size:11pt;margin:25px;}h1{color:#0e7490;}h2{color:#059669;border-bottom:1px solid #ccc;margin-top:18px;}table{width:100%;border-collapse:collapse;}th{background:#0e7490;color:#fff;padding:7px;font-size:10pt;}td{padding:6px 8px;border-bottom:1px solid #e2e8f0;font-size:10pt;}tr:nth-child(even){background:#f0fafa;}</style></head><body>';html+='<h1>Asha Wellness Sanctuary</h1><p>Follow-Up Report - Generated: '+new Date().toLocaleString("en-IN")+'</p><p>Total: <b>'+patients.length+'</b></p>';var ovd=patients.filter(function(p){return p.followupDate<t&&p.status==="pending";});var tod=patients.filter(function(p){return p.followupDate===t&&p.status==="pending";});var upc=patients.filter(function(p){return p.followupDate>t;});var dn=patients.filter(function(p){return p.status!=="pending";});function tbl(list,tt){var h='<h2>'+tt+' ('+list.length+')</h2><table><tr><th>UID</th><th>Name</th><th>Phone</th><th>Age</th><th>Category</th><th>Follow-Up</th><th>Status</th><th>Last Medicine</th></tr>';for(var i=0;i<list.length;i++){var p=list[i];var st=p.status==="pending"?(p.followupDate<t?"Overdue":p.followupDate===t?"Due Today":"Upcoming"):p.status;var lv=p.visits&&p.visits.length>0?p.visits[0]:null;h+='<tr><td>'+eh(p.uid)+'</td><td><b>'+eh(p.name)+'</b></td><td>'+eh(p.phone)+'</td><td>'+(p.age||"")+'</td><td>'+(p.category||"")+'</td><td>'+fmt(p.followupDate)+'</td><td>'+st+'</td><td>'+(lv?lv.medDays+"d":"")+'</td></tr>';}return h+'</table>';}if(ovd.length)html+=tbl(ovd,"OVERDUE");if(tod.length)html+=tbl(tod,"DUE TODAY");if(upc.length)html+=tbl(upc,"UPCOMING");if(dn.length)html+=tbl(dn,"COMPLETED");html+='</body></html>';dlFile(html,"Asha_Report_"+t+".doc","application/msword");closeDownloadModal();toast("Downloading Word report...");}
+
+// ══════════════════════════════════════════════════════════
+// ▼▼▼ COMPLETE CLOUD SYNC — sends ALL data to Google Sheets ▼▼▼
+// ══════════════════════════════════════════════════════════
+
+function buildVisitsFlat(){
+  var rows=[];
+  for(var i=0;i<patients.length;i++){
+    var p=patients[i];
+    if(p.visits&&p.visits.length>0){
+      for(var j=0;j<p.visits.length;j++){
+        var v=p.visits[j];
+        rows.push({
+          uid:p.uid,patientName:p.name,phone:p.phone,category:p.category,
+          visitDate:v.date,medDays:v.medDays,nextFollowup:v.nextFollowup,
+          type:v.type,flag:v.flag,reason:v.reason||"",notes:v.notes||"",
+          staff:v.staff,rx:v.rx||""
+        });
+      }
+    }
   }
-  document.getElementById("log-list").innerHTML=h;
+  return rows;
 }
 
-// CLOUD SYNC
-function setSyncStatus(state,msg){var dot=document.getElementById("sync-dot");var txt=document.getElementById("sync-status-txt");var btn=document.getElementById("sync-btn");if(!dot)return;dot.className="sync-dot"+(state==="offline"?" offline":state==="syncing"?" syncing":"");txt.textContent=msg;if(btn)btn.disabled=state==="syncing";}
-
-// FIX 3: syncedAt uses ISO format for reliable multi-phone conflict resolution in Google Script
-function isoNow(){return new Date().toISOString();}
+function buildQueueWithNames(){
+  var result=[];
+  for(var i=0;i<queue.length;i++){
+    var qe=queue[i];
+    var pname="";
+    for(var j=0;j<patients.length;j++){if(patients[j].uid===qe.uid){pname=patients[j].name;break;}}
+    var entry={};for(var k in qe)entry[k]=qe[k];
+    entry.patientName=pname;
+    result.push(entry);
+  }
+  return result;
+}
 
 function buildDailySummary(){
   var t=todayStr();
@@ -1493,96 +992,176 @@ function buildDailySummary(){
   var dropouts=patients.filter(function(p){return p.status==="dropout";}).length;
   var qDone=queue.filter(function(q){return q.status==="done";}).length;
   var qWaiting=queue.filter(function(q){return q.status==="waiting"||q.status==="consulting";}).length;
-  // Count new registrations today from logs
-  var newToday=logs.filter(function(l){return l.action==="New Patient Added"&&l.time.indexOf(todayStr().split("-").reverse().join("/"))>=0;}).length;
+  var newToday=logs.filter(function(l){return l.action==="New Patient Added"&&l.time&&l.time.indexOf(new Date().getDate()+"/")>=0;}).length;
   return{date:t,totalPatients:total,pendingFollowups:pending,overdueFollowups:overdue,dropouts:dropouts,seenInQueue:qDone,currentlyWaiting:qWaiting,newRegistrationsToday:newToday,generatedAt:isoNow(),generatedBy:curUser};
+}
+
+function setSyncStatus(state,msg){
+  var dot=document.getElementById("sync-dot");var txt=document.getElementById("sync-status-txt");var btn=document.getElementById("sync-btn");var prog=document.getElementById("sync-progress");
+  if(!dot)return;
+  dot.className="sync-dot"+(state==="offline"?" offline":state==="syncing"?" syncing":"");
+  txt.textContent=msg;
+  if(btn)btn.disabled=state==="syncing";
+  if(prog)prog.style.display=state==="syncing"?"block":"none";
+}
+
+function animateSyncProgress(){
+  var bar=document.getElementById("sync-progress-bar");if(!bar)return;
+  var w=0;var iv=setInterval(function(){w+=8;if(w>90){clearInterval(iv);}bar.style.width=w+"%";},200);
+  return iv;
 }
 
 function doCloudSync(){
   var syncBtn=document.getElementById("sync-btn");
   if(syncBtn&&syncBtn.disabled)return;
-  setSyncStatus("syncing","Syncing...");
-  // FIX 3: ISO timestamp for multi-phone conflict resolution
-  var payload={action:"sync",patients:patients,logs:logs.slice(0,100),syncedBy:curUser,syncedAt:isoNow(),deviceId:navigator.userAgent.slice(-20),appVersion:"v4",dailySummary:buildDailySummary()};
+  if(CLOUD_URL==="PASTE_YOUR_NEW_APPS_SCRIPT_URL_HERE"){toast("⚠️ Please set your Apps Script URL in the code first!");return;}
+  setSyncStatus("syncing","Syncing all data…");
+  var iv=animateSyncProgress();
+
+  var payload={
+    action:"sync",
+    patients:patients,
+    visits:buildVisitsFlat(),
+    queue:buildQueueWithNames(),
+    enquiries:enquiries,
+    logs:logs.slice(0,200),
+    syncedBy:curUser,
+    syncedAt:isoNow(),
+    deviceId:navigator.userAgent.slice(-20),
+    appVersion:"v8.5",
+    dailySummary:buildDailySummary()
+  };
+
   var xhr=new XMLHttpRequest();xhr.open("POST",CLOUD_URL,true);xhr.setRequestHeader("Content-Type","text/plain");
   xhr.onreadystatechange=function(){
     if(xhr.readyState===4){
+      clearInterval(iv);
+      var bar=document.getElementById("sync-progress-bar");if(bar)bar.style.width="100%";
+      setTimeout(function(){var prog=document.getElementById("sync-progress");if(prog)prog.style.display="none";},600);
       if(xhr.status===200){
-        setSyncStatus("online","Synced: "+new Date().toLocaleTimeString("en-IN"));
-        addLog("Cloud Sync OK",curUser,"--");
-        toast("Cloud sync successful! Dashboard updated.");
-      } else {
+        setSyncStatus("online","Synced ✓ "+new Date().toLocaleTimeString("en-IN"));
+        addLog("Cloud Sync OK — "+patients.length+" patients, "+buildVisitsFlat().length+" visits, "+enquiries.length+" enquiries",curUser,"--");
+        toast("✅ Google Sheets updated! All 5 tabs synced.");
+      }else{
         setSyncStatus("offline","Sync failed ("+xhr.status+")");
-        toast("Sync failed — will retry on next tap");
+        toast("Sync failed — check your internet and try again");
       }
     }
   };
-  xhr.onerror=function(){setSyncStatus("offline","No internet");toast("No internet — data saved locally");};
+  xhr.onerror=function(){clearInterval(iv);setSyncStatus("offline","No internet");toast("No internet — data is saved locally, sync when online");};
   xhr.send(JSON.stringify(payload));
 }
 
 function pushDashboard(){
-  // Push ONLY the daily summary — lightweight, no patient data
-  setSyncStatus("syncing","Pushing dashboard...");
+  if(CLOUD_URL==="PASTE_YOUR_NEW_APPS_SCRIPT_URL_HERE"){toast("⚠️ Please set your Apps Script URL first!");return;}
+  setSyncStatus("syncing","Pushing dashboard…");
   var payload={action:"dashboard",summary:buildDailySummary()};
   var xhr=new XMLHttpRequest();xhr.open("POST",CLOUD_URL,true);xhr.setRequestHeader("Content-Type","text/plain");
-  xhr.onreadystatechange=function(){
-    if(xhr.readyState===4){
-      if(xhr.status===200){setSyncStatus("online","Dashboard pushed \u2714");toast("Dashboard sent to Google Sheets!");}
-      else{setSyncStatus("offline","Dashboard push failed");toast("Could not reach Google Sheets");}
-    }
-  };
+  xhr.onreadystatechange=function(){if(xhr.readyState===4){if(xhr.status===200){setSyncStatus("online","Dashboard pushed ✓");toast("Dashboard sent to Google Sheets!");}else{setSyncStatus("offline","Dashboard push failed");toast("Could not reach Google Sheets");}}};
   xhr.onerror=function(){setSyncStatus("offline","Offline");toast("No internet");};
   xhr.send(JSON.stringify(payload));
 }
 
 function fetchFromCloud(){
-  setSyncStatus("syncing","Connecting to cloud...");
-  var xhr=new XMLHttpRequest();xhr.open("GET",CLOUD_URL+"?action=get&t="+Date.now(),true);
-  xhr.onreadystatechange=function(){
-    if(xhr.readyState===4){
-      if(xhr.status===200){
-        try{
-          var resp=JSON.parse(xhr.responseText);
-          if(resp&&resp.patients&&resp.patients.length>0){
-            // FIX 3: Only update if cloud data is newer (multi-phone conflict resolution)
-            if(!resp.syncedAt||!patients.length||new Date(resp.syncedAt)>new Date()){
-              patients=resp.patients;savePts();
-            }
-            setSyncStatus("online","Synced from cloud \u2714");renderHome();
-          } else setSyncStatus("online","Cloud connected \u2714");
-        } catch(e){setSyncStatus("online","Cloud ready");}
-      } else setSyncStatus("offline","Offline mode");
-    }
-  };
+  if(CLOUD_URL==="PASTE_YOUR_NEW_APPS_SCRIPT_URL_HERE")return;
+  setSyncStatus("syncing","Connecting…");
+  var xhr=new XMLHttpRequest();xhr.open("GET",CLOUD_URL+"?action=ping&t="+Date.now(),true);
+  xhr.onreadystatechange=function(){if(xhr.readyState===4){if(xhr.status===200){setSyncStatus("online","Cloud connected ✓");}else{setSyncStatus("offline","Offline mode");}}};
   xhr.onerror=function(){setSyncStatus("offline","Offline mode");};xhr.send();
 }
 
-// DOWNLOAD
-function openDownloadModal(){document.getElementById("dl-count-line").textContent=patients.length+" patients in database";document.getElementById("download-modal").classList.add("open");}
-function closeDownloadModal(){document.getElementById("download-modal").classList.remove("open");}
-function escCsv(v){var s=String(v===null||v===undefined?"":v);if(s.indexOf(",")>=0||s.indexOf('"')>=0||s.indexOf("\n")>=0)return'"'+s.replace(/"/g,'""')+'"';return s;}
-function buildCsv(list){var hdr=["UID","Name","Phone","Age","Sex","Category","Address","Follow-Up","Status","Dropout Reason","Visits","Last Visit","Med Days","Created By"];var rows=[hdr.join(",")];var t=todayStr();for(var i=0;i<list.length;i++){var p=list[i];var st=p.status==="dropout"?"Dropout":p.status==="pending"?(p.followupDate<t?"Overdue":p.followupDate===t?"Due Today":"Upcoming"):p.status;var lv=p.visits&&p.visits.length>0?p.visits[0]:null;rows.push([escCsv(p.uid),escCsv(p.name),escCsv(p.phone),escCsv(p.age),escCsv(p.sex),escCsv(p.category),escCsv(p.address),escCsv(fmt(p.followupDate)),escCsv(st),escCsv(p.dropoutReason||""),escCsv(p.visits?p.visits.length:0),escCsv(lv?fmt(lv.date):""),escCsv(lv?lv.medDays:""),escCsv(p.createdBy)].join(","));}return rows.join("\r\n");}
-function dlFile(content,name,mime){var b=new Blob([content],{type:mime});var u=URL.createObjectURL(b);var a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){URL.revokeObjectURL(u);},1000);}
-function downloadExcel(){if(!patients.length){toast("No patients");return;}dlFile("\uFEFF"+buildCsv(patients),"Asha_Patients_"+todayStr()+".csv","text/csv;charset=utf-8");closeDownloadModal();toast("Downloading Excel...");}
-function downloadTodayExcel(){var t=todayStr();var list=patients.filter(function(p){return p.followupDate<=t&&p.status==="pending";});if(!list.length){toast("No pending follow-ups today");return;}dlFile("\uFEFF"+buildCsv(list),"Asha_Today_"+t+".csv","text/csv;charset=utf-8");closeDownloadModal();toast("Downloading today's list...");}
-function downloadWord(){
-  if(!patients.length){toast("No patients");return;}var t=todayStr();
-  var html='<html><head><meta charset="UTF-8"><style>body{font-family:Arial;font-size:11pt;margin:25px;}h1{color:#0e7490;}h2{color:#059669;border-bottom:1px solid #ccc;margin-top:18px;}table{width:100%;border-collapse:collapse;}th{background:#0e7490;color:#fff;padding:7px;font-size:10pt;}td{padding:6px 8px;border-bottom:1px solid #e2e8f0;font-size:10pt;}tr:nth-child(even){background:#f0fafa;}</style></head><body>';
-  html+='<h1>Asha Wellness Sanctuary</h1><p>Follow-Up Report - Generated: '+new Date().toLocaleString("en-IN")+'</p><p>Total: <b>'+patients.length+'</b></p>';
-  var ovd=patients.filter(function(p){return p.followupDate<t&&p.status==="pending";});var tod=patients.filter(function(p){return p.followupDate===t&&p.status==="pending";});var upc=patients.filter(function(p){return p.followupDate>t;});var dn=patients.filter(function(p){return p.status!=="pending";});
-  function tbl(list,tt){var h='<h2>'+tt+' ('+list.length+')</h2><table><tr><th>UID</th><th>Name</th><th>Phone</th><th>Age</th><th>Category</th><th>Follow-Up</th><th>Status</th><th>Last Medicine</th></tr>';for(var i=0;i<list.length;i++){var p=list[i];var st=p.status==="pending"?(p.followupDate<t?"Overdue":p.followupDate===t?"Due Today":"Upcoming"):p.status;var lv=p.visits&&p.visits.length>0?p.visits[0]:null;h+='<tr><td>'+eh(p.uid)+'</td><td><b>'+eh(p.name)+'</b></td><td>'+eh(p.phone)+'</td><td>'+(p.age||"")+'</td><td>'+(p.category||"")+'</td><td>'+fmt(p.followupDate)+'</td><td>'+st+'</td><td>'+(lv?lv.medDays+"d":"")+'</td></tr>';}return h+'</table>';}
-  if(ovd.length)html+=tbl(ovd,"OVERDUE");if(tod.length)html+=tbl(tod,"DUE TODAY");if(upc.length)html+=tbl(upc,"UPCOMING");if(dn.length)html+=tbl(dn,"COMPLETED");
-  html+='</body></html>';dlFile(html,"Asha_Report_"+t+".doc","application/msword");closeDownloadModal();toast("Downloading Word report...");
+// ══════════════════════════════════════════════════════════
+// ENQUIRIES MODULE
+// ══════════════════════════════════════════════════════════
+var EK="asha_enq_v1";
+var enquiries=[];
+var enqFilter="all";
+var enqSaveSource="Facebook Ad";
+var enqSaveTopic="";
+var evmCurrentId=null;
+var evmDays=null;
+
+function loadEnquiries(){try{var e=localStorage.getItem(EK);if(e)enquiries=JSON.parse(e);}catch(ex){enquiries=[];}}
+function saveEnquiries(){try{localStorage.setItem(EK,JSON.stringify(enquiries));}catch(ex){}}
+function enqId(){return"enq"+Date.now()+Math.floor(Math.random()*1000);}
+
+function renderEnquiries(){
+  var t=todayStr();
+  var all=enquiries;
+  var nw=all.filter(function(e){return e.status==="new";});
+  var na=all.filter(function(e){return e.status==="noanswer";});
+  var vis=all.filter(function(e){return e.status==="visiting";});
+  var conv=all.filter(function(e){return e.status==="converted";});
+  document.getElementById("enq-stat-total").textContent=all.length;
+  document.getElementById("enq-stat-new").textContent=nw.length;
+  document.getElementById("enq-stat-noanswer").textContent=na.length;
+  document.getElementById("enq-stat-visiting").textContent=vis.length;
+  document.getElementById("enq-stat-converted").textContent=conv.length;
+  document.getElementById("enq-hdr-sub").textContent=all.length+" leads · "+nw.length+" new · "+conv.length+" converted";
+  var homeCount=nw.length+na.length;
+  var homeEl=document.getElementById("home-enq-count");if(homeEl)homeEl.textContent=homeCount+" need follow-up";
+  var list=all;
+  if(enqFilter==="new")list=nw;
+  else if(enqFilter==="called")list=all.filter(function(e){return e.status==="called";});
+  else if(enqFilter==="noanswer")list=na;
+  else if(enqFilter==="visiting")list=vis;
+  else if(enqFilter==="converted")list=conv;
+  list=list.slice().sort(function(a,b){return(b.createdAt||0)-(a.createdAt||0);});
+  if(!list.length){document.getElementById("enq-list").innerHTML='<div class="empty-state"><div style="font-size:48px;">📭</div><div style="font-size:18px;font-weight:bold;color:#0c4a6e;margin-top:12px;">No enquiries here</div><div style="font-size:13px;color:#64748b;margin-top:6px;">Tap + Add to enter a new lead</div></div>';return;}
+  var statusCfg={new:{bg:"#eff6ff",br:"2px solid #93c5fd",label:"🔵 New",lc:"#1d4ed8"},called:{bg:"#f0fdf4",br:"2px solid #6ee7b7",label:"✅ Called",lc:"#059669"},noanswer:{bg:"#fff5f5",br:"2px solid #fca5a5",label:"📵 No Answer",lc:"#dc2626"},visiting:{bg:"#fffbeb",br:"2px solid #fde68a",label:"🏥 Visiting",lc:"#d97706"},converted:{bg:"#f0fdf4",br:"2.5px solid #059669",label:"⭐ Converted to Patient",lc:"#059669"},cold:{bg:"#f8fafc",br:"1.5px solid #e2e8f0",label:"❄️ Cold",lc:"#94a3b8"}};
+  var h="";
+  for(var i=0;i<list.length;i++){
+    var e=list[i];var cfg=statusCfg[e.status]||statusCfg.new;var daysAgo=Math.floor((Date.now()-(e.createdAt||Date.now()))/86400000);var daysAgoTxt=daysAgo===0?"Today":daysAgo===1?"Yesterday":daysAgo+"d ago";
+    h+='<div style="background:'+cfg.bg+';border:'+cfg.br+';border-radius:16px;padding:16px;margin-bottom:12px;">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;"><div><div style="font-size:17px;font-weight:bold;color:#0c4a6e;">'+eh(e.name||"Unknown")+'</div><div style="font-size:14px;color:#0e7490;font-weight:bold;margin-top:2px;">'+eh(e.phone)+'</div></div><div style="text-align:right;"><span style="background:'+cfg.lc+'22;color:'+cfg.lc+';border-radius:8px;padding:3px 9px;font-size:11px;font-weight:bold;">'+cfg.label+'</span><div style="font-size:10px;color:#94a3b8;margin-top:4px;">'+daysAgoTxt+'</div></div></div>';
+    h+='<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">';
+    if(e.source)h+='<span style="background:#e0f2fe;color:#0e7490;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:bold;">'+eh(e.source)+'</span>';
+    if(e.topic)h+='<span style="background:#ede9fe;color:#6d28d9;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:bold;">'+eh(e.topic)+'</span>';
+    if(e.visitDate)h+='<span style="background:#fef3c7;color:#92400e;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:bold;">📅 Visit: '+fmt(e.visitDate)+'</span>';
+    if(e.addedBy)h+='<span style="font-size:10px;color:#94a3b8;">by '+eh(e.addedBy)+'</span>';
+    h+='</div>';
+    if(e.notes)h+='<div style="font-size:13px;color:#64748b;background:#f8fafc;border-radius:8px;padding:8px 10px;margin-bottom:10px;">'+eh(e.notes)+'</div>';
+    h+='<div style="display:flex;gap:6px;margin-bottom:8px;"><a href="tel:'+eh(e.phone)+'" class="contact-btn" style="background:#0e7490;flex:1;border-radius:12px;padding:12px;text-align:center;text-decoration:none;color:#fff;font-size:14px;font-weight:bold;" onclick="markEnqCalled(\''+e.id+'\')">📞 Call</a><a href="https://wa.me/91'+eh(e.phone.replace(/\D/g,""))+'" target="_blank" class="contact-btn" style="background:#25D366;flex:1;border-radius:12px;padding:12px;text-align:center;text-decoration:none;color:#fff;font-size:14px;font-weight:bold;">💬 WhatsApp</a></div>';
+    h+='<div style="display:flex;flex-wrap:wrap;gap:6px;">';
+    if(e.status!=="called")h+='<button onclick="setEnqStatus(\''+e.id+'\',\'called\')" style="flex:1;min-width:80px;padding:9px 6px;background:#059669;border:none;color:#fff;border-radius:10px;font-size:12px;font-weight:bold;cursor:pointer;">✅ Called</button>';
+    if(e.status!=="noanswer")h+='<button onclick="setEnqStatus(\''+e.id+'\',\'noanswer\')" style="flex:1;min-width:80px;padding:9px 6px;background:#dc2626;border:none;color:#fff;border-radius:10px;font-size:12px;font-weight:bold;cursor:pointer;">📵 No Answer</button>';
+    if(e.status!=="visiting")h+='<button onclick="openEnqVisitModal(\''+e.id+'\')" style="flex:1;min-width:80px;padding:9px 6px;background:#d97706;border:none;color:#fff;border-radius:10px;font-size:12px;font-weight:bold;cursor:pointer;">🏥 Will Visit</button>';
+    if(e.status!=="converted")h+='<button onclick="convertEnquiry(\''+e.id+'\')" style="flex:1;min-width:80px;padding:9px 6px;background:#0f766e;border:none;color:#fff;border-radius:10px;font-size:12px;font-weight:bold;cursor:pointer;">⭐ Converted</button>';
+    if(e.status!=="cold")h+='<button onclick="setEnqStatus(\''+e.id+'\',\'cold\')" style="flex:1;min-width:60px;padding:9px 6px;background:#94a3b8;border:none;color:#fff;border-radius:10px;font-size:12px;font-weight:bold;cursor:pointer;">❄️ Cold</button>';
+    if(e.callCount>0)h+='<span style="background:#f0fafa;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:bold;color:#0e7490;">📞 ×'+e.callCount+'</span>';
+    h+='</div>';
+    if(e.lastActionAt)h+='<div style="font-size:10px;color:#94a3b8;margin-top:8px;">Last action: '+e.lastActionAt+' by '+eh(e.lastActionBy||"")+'</div>';
+    h+='</div>';
+  }
+  document.getElementById("enq-list").innerHTML=h;
 }
 
-// INIT
+function setEnqFilter(f){enqFilter=f;var tabs=["all","new","called","noanswer","visiting","converted"];for(var i=0;i<tabs.length;i++){var el=document.getElementById("enq-tab-"+tabs[i]);if(!el)continue;el.style.color=tabs[i]===f?"#0f766e":"#94a3b8";el.style.borderBottomColor=tabs[i]===f?"#0f766e":"transparent";}renderEnquiries();}
+function showAddEnqModal(){document.getElementById("enq-phone").value="";document.getElementById("enq-name").value="";document.getElementById("enq-notes").value="";enqSaveSource="Facebook Ad";enqSaveTopic="";var sp=document.getElementById("enq-source-pills").querySelectorAll(".cat-btn");for(var i=0;i<sp.length;i++){sp[i].classList.toggle("sel",sp[i].getAttribute("data-src")==="Facebook Ad");}var tp=document.getElementById("enq-topic-pills").querySelectorAll(".cat-btn");for(var i=0;i<tp.length;i++)tp[i].classList.remove("sel");var btn=document.getElementById("enq-save-btn");btn.disabled=false;btn.textContent="Save Enquiry";btn.style.opacity="1";document.getElementById("add-enq-modal").classList.add("open");setTimeout(function(){document.getElementById("enq-phone").focus();},300);}
+function closeAddEnqModal(){document.getElementById("add-enq-modal").classList.remove("open");}
+function selectEnqSource(btn){enqSaveSource=btn.getAttribute("data-src");var pills=document.getElementById("enq-source-pills").querySelectorAll(".cat-btn");for(var i=0;i<pills.length;i++)pills[i].classList.toggle("sel",pills[i]===btn);}
+function selectEnqTopic(btn){enqSaveTopic=btn.getAttribute("data-topic");var pills=document.getElementById("enq-topic-pills").querySelectorAll(".cat-btn");for(var i=0;i<pills.length;i++)pills[i].classList.toggle("sel",pills[i]===btn);}
+function saveEnquiry(){var btn=document.getElementById("enq-save-btn");if(btn&&btn.disabled)return;var phone=document.getElementById("enq-phone").value.trim().replace(/\D/g,"");var name=document.getElementById("enq-name").value.trim()||"Unknown";var notes=document.getElementById("enq-notes").value.trim();if(!phone||phone.length<6){toast("Enter a valid phone number");return;}for(var i=0;i<enquiries.length;i++){if(enquiries[i].phone===phone&&enquiries[i].status!=="converted"&&enquiries[i].status!=="cold"){toast("This number already exists as a lead!");return;}}if(btn){btn.disabled=true;btn.textContent="Saving...";btn.style.opacity="0.6";}var now=new Date();var entry={id:enqId(),phone:phone,name:name,source:enqSaveSource,topic:enqSaveTopic,notes:notes,status:"new",createdAt:now.getTime(),createdDate:todayStr(),addedBy:curUser,callCount:0,lastActionAt:"",lastActionBy:""};enquiries.unshift(entry);saveEnquiries();addLog("New Enquiry: "+name,phone,"ENQ");closeAddEnqModal();renderEnquiries();toast("Enquiry saved — "+phone);}
+function tsNow(){var d=new Date();var p=function(n){return n<10?"0"+n:n;};return p(d.getDate())+"/"+p(d.getMonth()+1)+" "+p(d.getHours())+":"+p(d.getMinutes());}
+function setEnqStatus(id,status){for(var i=0;i<enquiries.length;i++){if(enquiries[i].id===id){enquiries[i].status=status;enquiries[i].lastActionAt=tsNow();enquiries[i].lastActionBy=curUser;if(status==="noanswer")enquiries[i].noAnswerCount=(enquiries[i].noAnswerCount||0)+1;break;}}saveEnquiries();addLog("Enquiry → "+status,getEnqName(id),"ENQ");renderEnquiries();}
+function markEnqCalled(id){for(var i=0;i<enquiries.length;i++){if(enquiries[i].id===id){enquiries[i].callCount=(enquiries[i].callCount||0)+1;enquiries[i].status="called";enquiries[i].lastActionAt=tsNow();enquiries[i].lastActionBy=curUser;break;}}saveEnquiries();renderEnquiries();}
+function getEnqName(id){for(var i=0;i<enquiries.length;i++){if(enquiries[i].id===id)return enquiries[i].name||enquiries[i].phone;}return"Unknown";}
+function openEnqVisitModal(id){evmCurrentId=id;evmDays=null;var e=null;for(var i=0;i<enquiries.length;i++){if(enquiries[i].id===id){e=enquiries[i];break;}}if(!e)return;document.getElementById("evm-name").textContent=e.name||"Unknown";document.getElementById("evm-phone").textContent=e.phone;document.getElementById("evm-custom-days").value="";document.getElementById("evm-preview").style.display="none";var evmBtn=document.getElementById("evm-save-btn");evmBtn.style.opacity="0.4";evmBtn.style.cursor="not-allowed";var pills=document.getElementById("evm-day-pills").querySelectorAll(".cat-btn");for(var i=0;i<pills.length;i++)pills[i].classList.remove("sel");document.getElementById("enq-visit-modal").classList.add("open");}
+function closeEnqVisitModal(){document.getElementById("enq-visit-modal").classList.remove("open");evmCurrentId=null;evmDays=null;}
+function setEvmDays(v){v=parseInt(v,10);if(isNaN(v)||v<1){return;}evmDays=v;var vd=addDays(v);var prev=document.getElementById("evm-preview");prev.textContent="Expected visit: "+fmt(vd);prev.style.display="block";var evmBtn=document.getElementById("evm-save-btn");evmBtn.style.opacity="1";evmBtn.style.cursor="pointer";}
+function saveEnqVisit(){if(!evmDays||!evmCurrentId)return;var vd=addDays(evmDays);for(var i=0;i<enquiries.length;i++){if(enquiries[i].id===evmCurrentId){enquiries[i].status="visiting";enquiries[i].visitDate=vd;enquiries[i].visitDays=evmDays;enquiries[i].lastActionAt=tsNow();enquiries[i].lastActionBy=curUser;break;}}saveEnquiries();addLog("Enquiry visiting in "+evmDays+"d → "+fmt(vd),getEnqName(evmCurrentId),"ENQ");closeEnqVisitModal();renderEnquiries();toast("Visit expected: "+fmt(vd));}
+function convertEnquiry(id){var e=null;for(var i=0;i<enquiries.length;i++){if(enquiries[i].id===id){e=enquiries[i];break;}}if(!e)return;for(var i=0;i<enquiries.length;i++){if(enquiries[i].id===id){enquiries[i].status="converted";enquiries[i].convertedAt=tsNow();enquiries[i].convertedBy=curUser;break;}}saveEnquiries();addLog("Enquiry converted → Patient",e.name,e.phone);document.getElementById("an-phone").value=e.phone;document.getElementById("an-name").value=(e.name&&e.name!=="Unknown")?e.name:"";document.getElementById("addnew-user").innerHTML=badge(curUser,true);resetAddNew();document.getElementById("an-phone").value=e.phone;if(e.name&&e.name!=="Unknown")document.getElementById("an-name").value=e.name;toast("Phone prefilled — complete patient registration");showScreen("addNew");}
+function downloadEnqCsv(){if(!enquiries.length){toast("No enquiries to export");return;}var hdr=["ID","Phone","Name","Source","Topic","Status","Notes","Visit Date","Call Count","Added By","Added Date","Last Action","Last Action By"];var rows=[hdr.join(",")];for(var i=0;i<enquiries.length;i++){var e=enquiries[i];var d=e.createdAt?new Date(e.createdAt).toLocaleDateString("en-IN"):"";rows.push([escCsv(e.id),escCsv(e.phone),escCsv(e.name),escCsv(e.source),escCsv(e.topic),escCsv(e.status),escCsv(e.notes),escCsv(e.visitDate?fmt(e.visitDate):""),escCsv(e.callCount||0),escCsv(e.addedBy),escCsv(d),escCsv(e.lastActionAt),escCsv(e.lastActionBy)].join(","));}dlFile("\uFEFF"+rows.join("\r\n"),"Asha_Enquiries_"+todayStr()+".csv","text/csv;charset=utf-8");toast("Enquiries exported!");}
+
+// ── INIT ────────────────────────────────────────────────
 loadData();
+loadEnquiries();
 loadReminders();
 renderLogin();
 startReminderChecker();
 setTimeout(function(){fetchFromCloud();},1500);
 </script>
+
 <!-- ══════════════════════════════════════════════════════
      ENQUIRIES SCREEN
      ══════════════════════════════════════════════════════ -->
@@ -1595,18 +1174,14 @@ setTimeout(function(){fetchFromCloud();},1500);
     </div>
     <button onclick="showAddEnqModal()" style="background:#fff;color:#0f766e;border:none;border-radius:10px;padding:8px 14px;font-size:13px;font-weight:bold;cursor:pointer;">+ Add</button>
   </div>
-
-  <!-- Filter tabs -->
   <div style="display:flex;background:#fff;border-bottom:2px solid #e2e8f0;overflow-x:auto;">
-    <button id="enq-tab-all"    onclick="setEnqFilter('all')"     style="flex:1;padding:12px 4px;border:none;background:transparent;font-size:12px;font-weight:bold;color:#0f766e;border-bottom:3px solid #0f766e;cursor:pointer;white-space:nowrap;">All</button>
-    <button id="enq-tab-new"    onclick="setEnqFilter('new')"     style="flex:1;padding:12px 4px;border:none;background:transparent;font-size:12px;font-weight:bold;color:#94a3b8;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;">🔵 New</button>
-    <button id="enq-tab-called" onclick="setEnqFilter('called')"  style="flex:1;padding:12px 4px;border:none;background:transparent;font-size:12px;font-weight:bold;color:#94a3b8;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;">✅ Called</button>
+    <button id="enq-tab-all" onclick="setEnqFilter('all')" style="flex:1;padding:12px 4px;border:none;background:transparent;font-size:12px;font-weight:bold;color:#0f766e;border-bottom:3px solid #0f766e;cursor:pointer;white-space:nowrap;">All</button>
+    <button id="enq-tab-new" onclick="setEnqFilter('new')" style="flex:1;padding:12px 4px;border:none;background:transparent;font-size:12px;font-weight:bold;color:#94a3b8;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;">🔵 New</button>
+    <button id="enq-tab-called" onclick="setEnqFilter('called')" style="flex:1;padding:12px 4px;border:none;background:transparent;font-size:12px;font-weight:bold;color:#94a3b8;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;">✅ Called</button>
     <button id="enq-tab-noanswer" onclick="setEnqFilter('noanswer')" style="flex:1;padding:12px 4px;border:none;background:transparent;font-size:12px;font-weight:bold;color:#94a3b8;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;">📵 No Ans</button>
     <button id="enq-tab-visiting" onclick="setEnqFilter('visiting')" style="flex:1;padding:12px 4px;border:none;background:transparent;font-size:12px;font-weight:bold;color:#94a3b8;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;">🏥 Visiting</button>
     <button id="enq-tab-converted" onclick="setEnqFilter('converted')" style="flex:1;padding:12px 4px;border:none;background:transparent;font-size:12px;font-weight:bold;color:#94a3b8;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;">⭐ Patient</button>
   </div>
-
-  <!-- Stats strip -->
   <div style="display:flex;background:#f0fdfa;border-bottom:1px solid #ccfbf1;padding:10px 16px;gap:14px;">
     <div style="text-align:center;"><div style="font-size:20px;font-weight:bold;color:#0f766e;" id="enq-stat-total">0</div><div style="font-size:9px;font-weight:bold;color:#0f766e;">TOTAL</div></div>
     <div style="text-align:center;"><div style="font-size:20px;font-weight:bold;color:#3b82f6;" id="enq-stat-new">0</div><div style="font-size:9px;font-weight:bold;color:#3b82f6;">NEW</div></div>
@@ -1617,7 +1192,6 @@ setTimeout(function(){fetchFromCloud();},1500);
       <button onclick="downloadEnqCsv()" style="background:#0f766e;border:none;color:#fff;font-size:11px;font-weight:bold;padding:6px 12px;border-radius:8px;cursor:pointer;">&#x1F4CA; Export</button>
     </div>
   </div>
-
   <div class="pad-b" id="enq-list" style="padding-top:12px;"></div>
 </div>
 
@@ -1625,10 +1199,7 @@ setTimeout(function(){fetchFromCloud();},1500);
 <div id="add-enq-modal" class="modal-bg">
   <div class="modal-box">
     <div class="modal-top">
-      <div>
-        <div style="font-size:20px;font-weight:bold;color:#0f766e;">New Enquiry</div>
-        <div style="font-size:12px;color:#64748b;margin-top:2px;">FB Ad / WhatsApp lead</div>
-      </div>
+      <div><div style="font-size:20px;font-weight:bold;color:#0f766e;">New Enquiry</div><div style="font-size:12px;color:#64748b;margin-top:2px;">FB Ad / WhatsApp lead</div></div>
       <button class="close-btn" onclick="closeAddEnqModal()">X</button>
     </div>
     <div class="lbl">Phone Number *</div>
@@ -1686,306 +1257,5 @@ setTimeout(function(){fetchFromCloud();},1500);
   </div>
 </div>
 
-<script>
-// ══════════════════════════════════════════════════════
-// ENQUIRIES MODULE
-// ══════════════════════════════════════════════════════
-var EK="asha_enq_v1";
-var enquiries=[];
-var enqFilter="all";
-var enqSaveSource="Facebook Ad";
-var enqSaveTopic="";
-var evmCurrentId=null;
-var evmDays=null;
-
-function loadEnquiries(){
-  try{var e=localStorage.getItem(EK);if(e)enquiries=JSON.parse(e);}catch(ex){enquiries=[];}
-}
-function saveEnquiries(){try{localStorage.setItem(EK,JSON.stringify(enquiries));}catch(ex){}}
-
-function enqId(){return"enq"+Date.now()+Math.floor(Math.random()*1000);}
-
-// ── Render ──────────────────────────────────────────
-function renderEnquiries(){
-  var t=todayStr();
-  // Update stats
-  var all=enquiries;
-  var nw=all.filter(function(e){return e.status==="new";});
-  var na=all.filter(function(e){return e.status==="noanswer";});
-  var vis=all.filter(function(e){return e.status==="visiting";});
-  var conv=all.filter(function(e){return e.status==="converted";});
-  document.getElementById("enq-stat-total").textContent=all.length;
-  document.getElementById("enq-stat-new").textContent=nw.length;
-  document.getElementById("enq-stat-noanswer").textContent=na.length;
-  document.getElementById("enq-stat-visiting").textContent=vis.length;
-  document.getElementById("enq-stat-converted").textContent=conv.length;
-  document.getElementById("enq-hdr-sub").textContent=all.length+" leads · "+nw.length+" new · "+conv.length+" converted";
-
-  // Home screen count (new + no-answer = needs attention)
-  var homeCount=nw.length+na.length;
-  var homeEl=document.getElementById("home-enq-count");
-  if(homeEl)homeEl.textContent=homeCount+" need follow-up";
-
-  // Filter
-  var list=all;
-  if(enqFilter==="new")list=nw;
-  else if(enqFilter==="called")list=all.filter(function(e){return e.status==="called";});
-  else if(enqFilter==="noanswer")list=na;
-  else if(enqFilter==="visiting")list=vis;
-  else if(enqFilter==="converted")list=conv;
-
-  // Sort: newest first
-  list=list.slice().sort(function(a,b){return(b.createdAt||0)-(a.createdAt||0);});
-
-  if(!list.length){
-    document.getElementById("enq-list").innerHTML='<div class="empty-state"><div style="font-size:48px;">📭</div><div style="font-size:18px;font-weight:bold;color:#0c4a6e;margin-top:12px;">No enquiries here</div><div style="font-size:13px;color:#64748b;margin-top:6px;">Tap + Add to enter a new lead</div></div>';
-    return;
-  }
-
-  var statusCfg={
-    new:   {bg:"#eff6ff",br:"2px solid #93c5fd",label:"🔵 New",lc:"#1d4ed8"},
-    called:{bg:"#f0fdf4",br:"2px solid #6ee7b7",label:"✅ Called",lc:"#059669"},
-    noanswer:{bg:"#fff5f5",br:"2px solid #fca5a5",label:"📵 No Answer",lc:"#dc2626"},
-    visiting:{bg:"#fffbeb",br:"2px solid #fde68a",label:"🏥 Visiting",lc:"#d97706"},
-    converted:{bg:"#f0fdf4",br:"2.5px solid #059669",label:"⭐ Converted to Patient",lc:"#059669"},
-    cold:  {bg:"#f8fafc",br:"1.5px solid #e2e8f0",label:"❄️ Cold",lc:"#94a3b8"}
-  };
-
-  var h="";
-  for(var i=0;i<list.length;i++){
-    var e=list[i];
-    var cfg=statusCfg[e.status]||statusCfg.new;
-    var daysAgo=Math.floor((Date.now()-(e.createdAt||Date.now()))/86400000);
-    var daysAgoTxt=daysAgo===0?"Today":daysAgo===1?"Yesterday":daysAgo+"d ago";
-
-    h+='<div style="background:'+cfg.bg+';border:'+cfg.br+';border-radius:16px;padding:16px;margin-bottom:12px;">';
-    // Header row
-    h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">';
-    h+='<div>';
-    h+='<div style="font-size:17px;font-weight:bold;color:#0c4a6e;">'+eh(e.name||"Unknown")+'</div>';
-    h+='<div style="font-size:14px;color:#0e7490;font-weight:bold;margin-top:2px;">'+eh(e.phone)+'</div>';
-    h+='</div>';
-    h+='<div style="text-align:right;">';
-    h+='<span style="background:'+cfg.lc+'22;color:'+cfg.lc+';border-radius:8px;padding:3px 9px;font-size:11px;font-weight:bold;">'+cfg.label+'</span>';
-    h+='<div style="font-size:10px;color:#94a3b8;margin-top:4px;">'+daysAgoTxt+'</div>';
-    h+='</div></div>';
-
-    // Meta row
-    h+='<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">';
-    if(e.source)h+='<span style="background:#e0f2fe;color:#0e7490;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:bold;">'+eh(e.source)+'</span>';
-    if(e.topic)h+='<span style="background:#ede9fe;color:#6d28d9;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:bold;">'+eh(e.topic)+'</span>';
-    if(e.visitDate)h+='<span style="background:#fef3c7;color:#92400e;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:bold;">📅 Visit: '+fmt(e.visitDate)+'</span>';
-    if(e.addedBy)h+='<span style="font-size:10px;color:#94a3b8;">by '+eh(e.addedBy)+'</span>';
-    h+='</div>';
-
-    if(e.notes)h+='<div style="font-size:13px;color:#64748b;background:#f8fafc;border-radius:8px;padding:8px 10px;margin-bottom:10px;">'+eh(e.notes)+'</div>';
-
-    // Call button always visible
-    h+='<div style="display:flex;gap:6px;margin-bottom:8px;">';
-    h+='<a href="tel:'+eh(e.phone)+'" class="contact-btn" style="background:#0e7490;flex:1;border-radius:12px;padding:12px;text-align:center;text-decoration:none;color:#fff;font-size:14px;font-weight:bold;" onclick="markEnqCalled(\''+e.id+'\')">📞 Call</a>';
-    h+='<a href="https://wa.me/91'+eh(e.phone.replace(/\D/g,""))+'" target="_blank" class="contact-btn" style="background:#25D366;flex:1;border-radius:12px;padding:12px;text-align:center;text-decoration:none;color:#fff;font-size:14px;font-weight:bold;">💬 WhatsApp</a>';
-    h+='</div>';
-
-    // Action buttons
-    h+='<div style="display:flex;flex-wrap:wrap;gap:6px;">';
-    if(e.status!=="called")
-      h+='<button onclick="setEnqStatus(\''+e.id+'\',\'called\')" style="flex:1;min-width:80px;padding:9px 6px;background:#059669;border:none;color:#fff;border-radius:10px;font-size:12px;font-weight:bold;cursor:pointer;">✅ Called</button>';
-    if(e.status!=="noanswer")
-      h+='<button onclick="setEnqStatus(\''+e.id+'\',\'noanswer\')" style="flex:1;min-width:80px;padding:9px 6px;background:#dc2626;border:none;color:#fff;border-radius:10px;font-size:12px;font-weight:bold;cursor:pointer;">📵 No Answer</button>';
-    if(e.status!=="visiting")
-      h+='<button onclick="openEnqVisitModal(\''+e.id+'\')" style="flex:1;min-width:80px;padding:9px 6px;background:#d97706;border:none;color:#fff;border-radius:10px;font-size:12px;font-weight:bold;cursor:pointer;">🏥 Will Visit</button>';
-    if(e.status!=="converted")
-      h+='<button onclick="convertEnquiry(\''+e.id+'\')" style="flex:1;min-width:80px;padding:9px 6px;background:#0f766e;border:none;color:#fff;border-radius:10px;font-size:12px;font-weight:bold;cursor:pointer;">⭐ Converted</button>';
-    if(e.status!=="cold")
-      h+='<button onclick="setEnqStatus(\''+e.id+'\',\'cold\')" style="flex:1;min-width:60px;padding:9px 6px;background:#94a3b8;border:none;color:#fff;border-radius:10px;font-size:12px;font-weight:bold;cursor:pointer;">❄️ Cold</button>';
-    // Call count badge
-    if(e.callCount>0)h+='<span style="background:#f0fafa;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:bold;color:#0e7490;">📞 ×'+e.callCount+'</span>';
-    h+='</div>';
-
-    // Last action
-    if(e.lastActionAt)h+='<div style="font-size:10px;color:#94a3b8;margin-top:8px;">Last action: '+e.lastActionAt+' by '+eh(e.lastActionBy||"")+'</div>';
-
-    h+='</div>';
-  }
-  document.getElementById("enq-list").innerHTML=h;
-}
-
-// ── Filter tabs ──────────────────────────────────────
-function setEnqFilter(f){
-  enqFilter=f;
-  var tabs=["all","new","called","noanswer","visiting","converted"];
-  for(var i=0;i<tabs.length;i++){
-    var el=document.getElementById("enq-tab-"+tabs[i]);if(!el)continue;
-    el.style.color=tabs[i]===f?"#0f766e":"#94a3b8";
-    el.style.borderBottomColor=tabs[i]===f?"#0f766e":"transparent";
-  }
-  renderEnquiries();
-}
-
-// ── Add enquiry modal ────────────────────────────────
-function showAddEnqModal(){
-  document.getElementById("enq-phone").value="";
-  document.getElementById("enq-name").value="";
-  document.getElementById("enq-notes").value="";
-  enqSaveSource="Facebook Ad";enqSaveTopic="";
-  // Reset source pills
-  var sp=document.getElementById("enq-source-pills").querySelectorAll(".cat-btn");
-  for(var i=0;i<sp.length;i++){sp[i].classList.toggle("sel",sp[i].getAttribute("data-src")==="Facebook Ad");}
-  var tp=document.getElementById("enq-topic-pills").querySelectorAll(".cat-btn");
-  for(var i=0;i<tp.length;i++)tp[i].classList.remove("sel");
-  var btn=document.getElementById("enq-save-btn");btn.disabled=false;btn.textContent="Save Enquiry";btn.style.opacity="1";
-  document.getElementById("add-enq-modal").classList.add("open");
-  setTimeout(function(){document.getElementById("enq-phone").focus();},300);
-}
-function closeAddEnqModal(){document.getElementById("add-enq-modal").classList.remove("open");}
-function selectEnqSource(btn){
-  enqSaveSource=btn.getAttribute("data-src");
-  var pills=document.getElementById("enq-source-pills").querySelectorAll(".cat-btn");
-  for(var i=0;i<pills.length;i++)pills[i].classList.toggle("sel",pills[i]===btn);
-}
-function selectEnqTopic(btn){
-  enqSaveTopic=btn.getAttribute("data-topic");
-  var pills=document.getElementById("enq-topic-pills").querySelectorAll(".cat-btn");
-  for(var i=0;i<pills.length;i++)pills[i].classList.toggle("sel",pills[i]===btn);
-}
-function saveEnquiry(){
-  var btn=document.getElementById("enq-save-btn");
-  if(btn&&btn.disabled)return;
-  var phone=document.getElementById("enq-phone").value.trim().replace(/\D/g,"");
-  var name=document.getElementById("enq-name").value.trim()||"Unknown";
-  var notes=document.getElementById("enq-notes").value.trim();
-  if(!phone||phone.length<6){toast("Enter a valid phone number");return;}
-  // Duplicate check
-  for(var i=0;i<enquiries.length;i++){if(enquiries[i].phone===phone&&enquiries[i].status!=="converted"&&enquiries[i].status!=="cold"){toast("This number already exists as a lead!");return;}}
-  if(btn){btn.disabled=true;btn.textContent="Saving...";btn.style.opacity="0.6";}
-  var now=new Date();
-  var entry={id:enqId(),phone:phone,name:name,source:enqSaveSource,topic:enqSaveTopic,notes:notes,status:"new",createdAt:now.getTime(),createdDate:todayStr(),addedBy:curUser,callCount:0,lastActionAt:"",lastActionBy:""};
-  enquiries.unshift(entry);
-  saveEnquiries();
-  addLog("New Enquiry: "+name,phone,"ENQ");
-  closeAddEnqModal();
-  renderEnquiries();
-  toast("Enquiry saved — "+phone);
-}
-
-// ── Status actions ───────────────────────────────────
-function tsNow(){
-  var d=new Date();var p=function(n){return n<10?"0"+n:n;};
-  return p(d.getDate())+"/"+p(d.getMonth()+1)+" "+p(d.getHours())+":"+p(d.getMinutes());
-}
-function setEnqStatus(id,status){
-  for(var i=0;i<enquiries.length;i++){
-    if(enquiries[i].id===id){
-      enquiries[i].status=status;
-      enquiries[i].lastActionAt=tsNow();
-      enquiries[i].lastActionBy=curUser;
-      if(status==="noanswer")enquiries[i].noAnswerCount=(enquiries[i].noAnswerCount||0)+1;
-      break;
-    }
-  }
-  saveEnquiries();addLog("Enquiry → "+status,getEnqName(id),"ENQ");renderEnquiries();
-}
-function markEnqCalled(id){
-  for(var i=0;i<enquiries.length;i++){
-    if(enquiries[i].id===id){
-      enquiries[i].callCount=(enquiries[i].callCount||0)+1;
-      enquiries[i].status="called";
-      enquiries[i].lastActionAt=tsNow();
-      enquiries[i].lastActionBy=curUser;
-      break;
-    }
-  }
-  saveEnquiries();renderEnquiries();
-}
-function getEnqName(id){for(var i=0;i<enquiries.length;i++){if(enquiries[i].id===id)return enquiries[i].name||enquiries[i].phone;}return "Unknown";}
-
-// ── Visit date modal ─────────────────────────────────
-function openEnqVisitModal(id){
-  evmCurrentId=id;evmDays=null;
-  var e=null;for(var i=0;i<enquiries.length;i++){if(enquiries[i].id===id){e=enquiries[i];break;}}
-  if(!e)return;
-  document.getElementById("evm-name").textContent=e.name||"Unknown";
-  document.getElementById("evm-phone").textContent=e.phone;
-  document.getElementById("evm-custom-days").value="";
-  document.getElementById("evm-preview").style.display="none";
-  var evmBtn=document.getElementById("evm-save-btn");evmBtn.style.opacity="0.4";evmBtn.style.cursor="not-allowed";
-  // Reset day pills
-  var pills=document.getElementById("evm-day-pills").querySelectorAll(".cat-btn");
-  for(var i=0;i<pills.length;i++)pills[i].classList.remove("sel");
-  document.getElementById("enq-visit-modal").classList.add("open");
-}
-function closeEnqVisitModal(){document.getElementById("enq-visit-modal").classList.remove("open");evmCurrentId=null;evmDays=null;}
-function setEvmDays(v){
-  v=parseInt(v,10);if(isNaN(v)||v<1){return;}
-  evmDays=v;
-  var vd=addDays(v);
-  var prev=document.getElementById("evm-preview");prev.textContent="Expected visit: "+fmt(vd);prev.style.display="block";
-  var evmBtn=document.getElementById("evm-save-btn");evmBtn.style.opacity="1";evmBtn.style.cursor="pointer";
-  // Highlight pill if matches
-  var pills=document.getElementById("evm-day-pills").querySelectorAll(".cat-btn");
-  for(var i=0;i<pills.length;i++)pills[i].classList.remove("sel");
-}
-function saveEnqVisit(){
-  if(!evmDays||!evmCurrentId)return;
-  var vd=addDays(evmDays);
-  for(var i=0;i<enquiries.length;i++){
-    if(enquiries[i].id===evmCurrentId){
-      enquiries[i].status="visiting";
-      enquiries[i].visitDate=vd;
-      enquiries[i].visitDays=evmDays;
-      enquiries[i].lastActionAt=tsNow();
-      enquiries[i].lastActionBy=curUser;
-      break;
-    }
-  }
-  saveEnquiries();addLog("Enquiry visiting in "+evmDays+"d → "+fmt(vd),getEnqName(evmCurrentId),"ENQ");
-  closeEnqVisitModal();renderEnquiries();
-  toast("Visit expected: "+fmt(vd));
-}
-
-// ── Convert to patient ───────────────────────────────
-function convertEnquiry(id){
-  var e=null;for(var i=0;i<enquiries.length;i++){if(enquiries[i].id===id){e=enquiries[i];break;}}
-  if(!e)return;
-  // Mark as converted
-  for(var i=0;i<enquiries.length;i++){
-    if(enquiries[i].id===id){enquiries[i].status="converted";enquiries[i].convertedAt=tsNow();enquiries[i].convertedBy=curUser;break;}
-  }
-  saveEnquiries();addLog("Enquiry converted → Patient",e.name,e.phone);
-  // Pre-fill Add New Patient screen
-  document.getElementById("an-phone").value=e.phone;
-  document.getElementById("an-name").value=(e.name&&e.name!=="Unknown")?e.name:"";
-  document.getElementById("addnew-user").innerHTML=badge(curUser,true);
-  resetAddNew();
-  document.getElementById("an-phone").value=e.phone;
-  if(e.name&&e.name!=="Unknown")document.getElementById("an-name").value=e.name;
-  toast("Phone prefilled — complete patient registration");
-  showScreen("addNew");
-}
-
-// ── Export ───────────────────────────────────────────
-function downloadEnqCsv(){
-  if(!enquiries.length){toast("No enquiries to export");return;}
-  var hdr=["ID","Phone","Name","Source","Topic","Status","Notes","Visit Date","Call Count","Added By","Added Date","Last Action","Last Action By"];
-  var rows=[hdr.join(",")];
-  for(var i=0;i<enquiries.length;i++){
-    var e=enquiries[i];
-    var d=e.createdAt?new Date(e.createdAt).toLocaleDateString("en-IN"):"";
-    rows.push([escCsv(e.id),escCsv(e.phone),escCsv(e.name),escCsv(e.source),escCsv(e.topic),escCsv(e.status),escCsv(e.notes),escCsv(e.visitDate?fmt(e.visitDate):""),escCsv(e.callCount||0),escCsv(e.addedBy),escCsv(d),escCsv(e.lastActionAt),escCsv(e.lastActionBy)].join(","));
-  }
-  dlFile("\uFEFF"+rows.join("\r\n"),"Asha_Enquiries_"+todayStr()+".csv","text/csv;charset=utf-8");
-  toast("Enquiries exported!");
-}
-
-// ── Screen hook ──────────────────────────────────────
-var _origShowScreen=showScreen;
-showScreen=function(name){
-  _origShowScreen(name);
-  if(name==="enquiries"){renderEnquiries();setEnqFilter(enqFilter);}
-};
-
-// Load on init
-loadEnquiries();
-</script>
 </body>
 </html>
